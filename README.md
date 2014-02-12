@@ -3,6 +3,12 @@
 
 Bomberman game for the SYSC 3303 Project
 
+###Usage Instructions
+
+- TODO
+- Instructions here
+- shall we configure game through command-line arguments, or json config files?
+
 ###Deadlines
 - Milestone 1: March 3rd
 - Milestone 2: March 17
