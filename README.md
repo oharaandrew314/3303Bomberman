@@ -14,6 +14,12 @@ Bomberman game for the SYSC 3303 Project
 - Milestone 2: March 17
 - Milestone 3: March 31
 
+###Contributors
+- Andrew O'Hara - 100815259
+- Caleb Simpson
+- Dennis Dionne
+- Darrell Penner
+
 ###Contribution Rules
 
 Feel free to challenge my rules, or add your own.
