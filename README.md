@@ -15,7 +15,7 @@ It may look like there is a lot, but they're mostly just steps.
 
 - I don't really care about style nitpicking (as long as it's readable and using Windows/CRLF line-endings)
 - Create feature branches for each feature (no personal development branches!)
-  1. Create feature branch off dev
+  1. Create feature branch off dev (if it's related to a Github issue, put the issue # in branch name)
   2. Make commits
   3. Ensure tests pass
   4. Make a pull request to merge into dev
