@@ -4,9 +4,9 @@
 Bomberman game for the SYSC 3303 Project
 
 ###Deadlines
-Milestone 1: March 3rd
-Milestone 2: March 17
-Milestone 3: March 31
+-Milestone 1: March 3rd
+-Milestone 2: March 17
+-Milestone 3: March 31
 
 ###Contribution Rules
 
