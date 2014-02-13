@@ -17,7 +17,7 @@ Bomberman game for the SYSC 3303 Project
 ###Contributors
 - Andrew O'Hara - 100815259
 - Caleb Simpson - 100819001
-- Dennis Dionne
+- Dennis Dionne - 100822373
 - Darrell Penner
 
 ###Contribution Rules
