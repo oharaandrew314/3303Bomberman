@@ -23,7 +23,7 @@ Bomberman game for the SYSC 3303 Project
 ###Contribution Rules
 
 Feel free to challenge my rules, or add your own.
-It may look like there is a lot, but they're mostly just steps.
+It may look like there is a lot, but they're mostly just steps
 
 - I don't really care about style nitpicking (as long as it's readable and using Windows/CRLF line-endings)
 - Create feature branches for each feature (no personal development branches!)
