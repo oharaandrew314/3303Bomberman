@@ -1,3 +1,4 @@
+package controllers;
 
 public class Server extends GameController {
 
