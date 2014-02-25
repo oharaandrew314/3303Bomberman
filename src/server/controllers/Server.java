@@ -1,6 +1,6 @@
 package server.controllers;
 
-import controllers.GameController;
+import common.controllers.GameController;
 
 public class Server extends GameController {
 

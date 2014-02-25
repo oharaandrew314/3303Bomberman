@@ -1,4 +1,4 @@
-package controllers;
+package common.controllers;
 
 public class GameController {
 
