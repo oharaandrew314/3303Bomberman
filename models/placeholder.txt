@@ -1,1 +1,0 @@
-Common models across server and client such as Player, enemy, bomb, Grid, etc.
