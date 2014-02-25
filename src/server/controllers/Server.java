@@ -1,4 +1,6 @@
-package controllers;
+package server.controllers;
+
+import controllers.GameController;
 
 public class Server extends GameController {
 

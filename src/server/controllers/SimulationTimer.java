@@ -1,4 +1,4 @@
-package controllers;
+package server.controllers;
 
 import java.util.Timer;
 import java.util.TimerTask;
