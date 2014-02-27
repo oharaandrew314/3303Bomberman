@@ -1,8 +1,8 @@
 package server.model;
 
 public abstract class Unit extends Entity {
-	public Unit(int id, String name) {
-		super(id, name);
+	public Unit(String name) {
+		super(name);
 	}
 
 	@Override

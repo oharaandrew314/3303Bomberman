@@ -2,17 +2,12 @@ package server.model;
 
 public class Door extends Entity {
 
-	public Door(int id, String name) {
-		super(id, name);
+	public Door(String name) {
+		super(name);
 	}
 
 	@Override
 	public boolean isPassable() {
 		return true;
-	}
-
-	@Override
-	public String toString(){
-		return "D";
 	}
 }

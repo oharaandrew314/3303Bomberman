@@ -2,13 +2,14 @@ package server.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Grid {
 
 	private final Dimension size;
-	private Square[][] squares;
+	private final Square[][] squares;
 	
 	public Grid(Dimension size){
 		squares = new Square[size.width][size.height];
@@ -32,20 +33,20 @@ public class Grid {
 			}
 		}
 		
-		return null; //throw exception?
+		throw new IllegalArgumentException("Square not found in grid");
 	}
 	
 	
 	public Set<Square> getPossibleMoves(Point point){
-		Point[] adjacents = new Point[4];
-		adjacents[0] = new Point(point.x - 1, point.y);
-		adjacents[1] = new Point(point.x + 1, point.y);
-		adjacents[2] = new Point(point.x, point.y - 1);
-		adjacents[3] = new Point(point.x, point.y + 1);
+		Set<Point> adjacents = new HashSet<Point>();
+		adjacents.add(new Point(point.x - 1, point.y));
+		adjacents.add(new Point(point.x + 1, point.y));
+		adjacents.add(new Point(point.x, point.y - 1));
+		adjacents.add(new Point(point.x, point.y + 1));
 		
 		Set<Square> retval = new HashSet<Square>();
 		for (Point p : adjacents){
-			if (p.x >= 0 && p.y >= 0 && p.x < size.width && p.y < size.height){
+			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
 				Square candidate = this.get(p);
 				if (candidate.isPassable()) { // can't move into impassible squares
 					retval.add(candidate);
@@ -63,45 +64,24 @@ public class Grid {
 	@Override
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < size.width + 3; i++){
+		final int EXTRA_WIDTH = 2; //compensates for the '|' taking up two extra rows
+		
+		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
 		sb.append("\n");
 		
-		for (int i = 0; i < squares.length; i++){
+		for (int i = 0; i < size.height; i++){
 			sb.append("|");
-			for (int j = 0; j < squares[i].length; j++){
-				sb.append(squares[i][j].toString());
+			for (int j = 0; j < size.width; j++){
+				sb.append(squares[j][i].toString());
 			}
 			sb.append("|\n");
 		}
 		
-		for (int i = 0; i < size.width + 3; i++){
+		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
 		return sb.toString();
 	}
-	
-	// Temp? main for testing...might not be temp since this would be
-	// part of the client
-	public static void main(String[] args) {
-		Grid g = new Grid(new Dimension (2, 3));
-		
-		Square[] squares = new Square[6];
-		for (int i = 0; i < squares.length; i++){
-			squares[i] = new Square();
-		}
-		
-		squares[0].add(new Player(0, "Fred"));
-		squares[4].add(new Door(6, "Exit of Freedom"));
-		
-		for (int i = 0; i < g.getSize().width; i++){
-			for (int j = 0; j < g.getSize().height; j++){
-				g.set(squares[i * 3 + j], new Point(i, j));
-			}
-		}
-		
-		System.out.println(g);
-	}
-
 }

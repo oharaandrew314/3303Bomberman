@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class Square {
 	List<Entity> entities;
+	private static final String EMPTY_SQUARE_SYMBOL = " "; 
 	
 	public Square(){
 		entities = new ArrayList<Entity>();
@@ -43,11 +44,7 @@ public class Square {
 			if (!entity.isPassable()) return entity.toString();
 		}
 		
-		// Otherwise, pick a passable object
-		for (Entity entity : entities){
-			return entity.toString();
-		}
-		
-		return " "; //no entities, return blank
+		// Otherwise, pick a passable object if one exists
+		return entities.isEmpty() ? EMPTY_SQUARE_SYMBOL : entities.iterator().next().toString();
 	}
 }

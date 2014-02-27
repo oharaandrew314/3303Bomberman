@@ -5,17 +5,12 @@ public class Player extends Unit {
 	
 	private int numBombs; // no bombs in milestone 1
 	
-	public Player(int id, String name){
-		super(id, name);
+	public Player(String name){
+		super(name);
 		numBombs = START_NUM_BOMBS;
 	}
 	
 	public void drobBomb(){
 		throw new UnsupportedOperationException(); // no bombs in milestone 1
-	}
-	
-	@Override
-	public String toString(){
-		return "P";
 	}
 }
