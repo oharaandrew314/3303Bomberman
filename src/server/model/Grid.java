@@ -3,8 +3,7 @@ package server.model;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Grid {
 
@@ -12,24 +11,30 @@ public class Grid {
 	private final Square[][] squares;
 	
 	public Grid(Dimension size){
-		squares = new Square[size.width][size.height];
+		// Note that due to row-major order, we have width as last coordinate
+		// This is transparent to users of this class.
+		squares = new Square[size.height][size.width];
 		this.size = size;
 	}
 	
 	public Square get(Point point){
-		return squares[point.x][point.y];
+		return squares[point.y][point.x];
 	}
 	public void set(Square square, Point point){
-		squares[point.x][point.y] = square;
+		squares[point.y][point.x] = square;
 	}
 	public Dimension getSize(){
 		return new Dimension(size);
 	}
 	
 	public Point find(Square square){
-		for (int i = 0; i < size.width; i++){
-			for (int j = 0; j < size.height; j++){
-				if (square == squares[i][j]) return new Point(i, j);
+		for (int j = 0; j < size.height; j++){
+			for (int i = 0; i < size.width; i++){
+				if (square == squares[j][i]){
+					// implementation has y/j coordinate first, but this is transparent
+					// to the user so, we switch i, j for the user.
+					return new Point(i, j); 
+				}
 			}
 		}
 		
@@ -66,20 +71,20 @@ public class Grid {
 		StringBuffer sb = new StringBuffer();
 		final int EXTRA_WIDTH = 2; //compensates for the '|' taking up two extra rows
 		
-		for (int i = 0; i < size.height + EXTRA_WIDTH; i++){
+		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
 		sb.append("\n");
 		
-		for (int i = 0; i < size.height; i++){
+		for (int j = 0; j < size.height; j++){
 			sb.append("|");
-			for (int j = 0; j < size.width; j++){
+			for (int i = 0; i < size.width; i++){
 				sb.append(squares[j][i].toString());
 			}
 			sb.append("|\n");
 		}
 		
-		for (int i = 0; i < size.height + EXTRA_WIDTH; i++){
+		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
 		return sb.toString();

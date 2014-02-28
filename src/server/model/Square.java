@@ -10,11 +10,13 @@ import java.util.List;
  * 
  */
 public class Square {
-	private List<Entity> entities;
+	private Entity impassableEntity;
+	private List<Entity> passableEntities;
 	private static final String EMPTY_SQUARE_SYMBOL = " "; 
 	
 	public Square(){
-		entities = new ArrayList<Entity>();
+		impassableEntity = null;
+		passableEntities = new ArrayList<Entity>();
 	}
 	
 	/**
@@ -23,28 +25,44 @@ public class Square {
 	 * @return true if the square is passable, false otherwise.
 	 */
 	public boolean isPassable(){
-		for (Entity entity : entities){
-			if (!entity.isPassable()) return false;
-		}
-		
-		return true;
+		return impassableEntity == null;
 	}
 	
 	public boolean add(Entity entity){
-		return entities.add(entity);
+		if (entity == null){
+			throw new IllegalArgumentException("Cannot add null entity");
+		}
+		
+		if (!entity.isPassable()){
+			if (!isPassable()) return false; //tried to add second impassable entity
+			impassableEntity = entity;
+			return true;
+		}
+		return passableEntities.add(entity);
 	}
+	
 	public boolean remove(Entity entity){
-		return entities.remove(entity);
+		if (entity == null){
+			throw new IllegalArgumentException("Cannot remove null entity");
+		}
+		
+		if (entity == impassableEntity){
+			impassableEntity = null;
+			return true;
+		}
+		return passableEntities.remove(entity);
+	}
+	
+	public boolean contains(Entity entity){
+		return entity == impassableEntity || passableEntities.contains(entity);
 	}
 	
 	@Override
 	public String toString(){
 		// Impassable object gets priority
-		for (Entity entity : entities){
-			if (!entity.isPassable()) return entity.toString();
-		}
+		if (!isPassable()) return impassableEntity.toString();
 		
 		// Otherwise, pick a passable object if one exists
-		return entities.isEmpty() ? EMPTY_SQUARE_SYMBOL : entities.iterator().next().toString();
+		return passableEntities.isEmpty() ? EMPTY_SQUARE_SYMBOL : passableEntities.iterator().next().toString();
 	}
 }

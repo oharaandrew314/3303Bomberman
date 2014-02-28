@@ -67,6 +67,6 @@ public class TestGrid {
 		Set<Square> test = grid.getPossibleMoves(new Point(2, 1));
 		assertTrue(test.contains(grid.get(new Point(1, 1))));
 		assertTrue(test.contains(grid.get(new Point(2, 2))));
-		assertTrue(test.size() == 2);
+		assertEquals(test.size(), 2);
 	}
 }
