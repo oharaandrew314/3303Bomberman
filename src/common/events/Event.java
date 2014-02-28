@@ -1,6 +1,5 @@
 package common.events;
 
-
-public interface Event {
+public abstract class Event implements java.io.Serializable {
 
 }
