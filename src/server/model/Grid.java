@@ -27,8 +27,8 @@ public class Grid {
 	}
 	
 	public Point find(Square square){
-		for (int i = 0; i < squares.length; i++){
-			for (int j = 0; j < squares[i].length; j++){
+		for (int i = 0; i < size.width; i++){
+			for (int j = 0; j < size.height; j++){
 				if (square == squares[i][j]) return new Point(i, j);
 			}
 		}
@@ -66,7 +66,7 @@ public class Grid {
 		StringBuffer sb = new StringBuffer();
 		final int EXTRA_WIDTH = 2; //compensates for the '|' taking up two extra rows
 		
-		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
+		for (int i = 0; i < size.height + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
 		sb.append("\n");
@@ -79,7 +79,7 @@ public class Grid {
 			sb.append("|\n");
 		}
 		
-		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
+		for (int i = 0; i < size.height + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
 		return sb.toString();

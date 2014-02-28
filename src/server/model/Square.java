@@ -10,7 +10,7 @@ import java.util.List;
  * 
  */
 public class Square {
-	List<Entity> entities;
+	private List<Entity> entities;
 	private static final String EMPTY_SQUARE_SYMBOL = " "; 
 	
 	public Square(){

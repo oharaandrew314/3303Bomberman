@@ -16,7 +16,7 @@ public class Box extends Entity {
 	
 	@Override
 	public String toString(){
-		return destructible ? "X" : ".";
+		return destructible ? "." : "X";
 	}
 
 }
