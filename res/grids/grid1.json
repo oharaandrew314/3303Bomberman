@@ -4,6 +4,7 @@
 		{"point": {"x": 1, "y": 1}, "entities": ["pillar"]},
 		{"point": {"x": 1, "y": 2}, "entities": ["wall", "door"]},
 		{"point": {"x": 2, "y": 2}, "entities": ["player"]},
+		{"point": {"x": 3, "y": 2}, "entities": ["player"]},
 		{"point": {"x": 3, "y": 3}, "entities": ["pillar"]},
 	]
 }

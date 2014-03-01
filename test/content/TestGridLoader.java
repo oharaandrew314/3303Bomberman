@@ -33,22 +33,34 @@ public class TestGridLoader {
 		grid = GridLoader.loadGrid("grid1.json");
 		assertEquals(grid.getSize(), new Dimension(4, 4));
 		
-		check(1, 1, Pillar.class);
-		check(1, 2, Wall.class);
-		check(1, 2, Door.class);
-		check(2, 2, Player.class);
-		check(3, 3, Pillar.class);
+		assertEntity(1, 1, Pillar.class);
+		assertEntity(1, 2, Wall.class);
+		assertEntity(1, 2, Door.class);
+		assertPlayer(2, 2, "Player 1");
+		assertPlayer(3, 2, "Player 2");
+		assertEntity(3, 3, Pillar.class);
 		assertRemaining();
 	}
 	
-	private boolean check(int x, int y, Class<? extends Entity> type) {
+	private void assertPlayer(int x, int y, String name){
+		Player p = (Player) assertEntity(x, y, Player.class);
+		assertEquals(p.name, name);
+	}
+	
+	private Entity assertEntity(int x, int y, Class<? extends Entity> type){
+		Entity entity = getEntity(x, y, type);
+		assertNotNull(entity);
+		checked.add(entity);
+		return entity;
+	}
+	
+	private Entity getEntity(int x, int y, Class<? extends Entity> type){
 		for (Entity entity : grid.get(new Point(x, y))){
-			if (entity.getClass().equals(type)){
-				checked.add(entity);
-				return true;
+			if(entity.getClass().equals(type)){
+				return entity;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	private void assertRemaining(){
