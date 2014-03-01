@@ -7,3 +7,7 @@
 /bin
 .classpath
 .project
+/build/
+build.xml
+manifest.mf
+/nbproject/
