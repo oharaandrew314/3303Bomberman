@@ -1,4 +1,4 @@
-package server.model;
+package common.models;
 
 public class Wall extends Box {
 

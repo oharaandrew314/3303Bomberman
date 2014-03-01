@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import server.model.Door;
-import server.model.Grid;
-import server.model.Pillar;
-import server.model.Player;
-import server.model.Wall;
+import common.models.Door;
+import common.models.Grid;
+import common.models.Pillar;
+import common.models.Player;
+import common.models.Wall;
 
 public class GridGenerator {
 	

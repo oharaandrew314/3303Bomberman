@@ -1,4 +1,4 @@
-package server.model;
+package common.models;
 
 public abstract class Box extends Entity {
 	

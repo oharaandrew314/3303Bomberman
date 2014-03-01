@@ -16,13 +16,12 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import server.model.Door;
-import server.model.Grid;
-import server.model.Pillar;
-import server.model.Player;
-import server.model.Wall;
-
 import common.events.ViewUpdateEvent;
+import common.models.Door;
+import common.models.Grid;
+import common.models.Pillar;
+import common.models.Player;
+import common.models.Wall;
 
 public class TestViewUpdateEvent {
     private ViewUpdateEvent viewUpdateEvent;

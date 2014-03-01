@@ -1,6 +1,12 @@
 package server.model;
 
 import org.junit.*;
+
+import common.models.Pillar;
+import common.models.Player;
+import common.models.Square;
+import common.models.Wall;
+
 import static org.junit.Assert.*;
 
 public class TestSquare {
