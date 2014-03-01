@@ -1,14 +1,14 @@
 package common.events;
 
-public class KeyEvent implements Event {
+public class GameKeyEvent implements Event {
     private int keyCode;
     
     
-    public KeyEvent(java.awt.event.KeyEvent keyEvent) {
+    public GameKeyEvent(java.awt.event.KeyEvent keyEvent) {
         this(keyEvent.getKeyCode());
     }
     
-    public KeyEvent(int keyCode) {
+    public GameKeyEvent(int keyCode) {
         this.keyCode = keyCode;
     }
 
