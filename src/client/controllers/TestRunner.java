@@ -16,24 +16,25 @@ public class TestRunner extends Thread{
 		this.netController = netController;
 		this.events = events;
 		this.playerNumber = playerNumber;
+		this.netController.addServerPeer();
 	}
 	
 	/**
 	 * Generates KeyEvents based on the keycodes attained from the testCase
-	 * and sends the events to the NetworkController
+	 * and sends the events
 	 */
 	@Override
 	public void run(){
 		for(Integer i: events){
-			KeyEvent key = new KeyEvent(i);
-			System.out.println("Player: " + playerNumber + " - " + key.getKeyCode());
+			KeyEvent keyEvent = new KeyEvent(i);
+			netController.send(keyEvent);
+			System.out.println("Player: " + playerNumber + " - " + keyEvent.getKeyCode());
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//netController.send(key)
 		}
 	}
 }

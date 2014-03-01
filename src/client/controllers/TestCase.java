@@ -34,12 +34,8 @@ public class TestCase {
 		System.out.println(filename + ":");
 		Thread[] threads = new Thread[events.size()];
 		for(int i = 0 ; i != events.size();i++){
-			//System.out.println("player: " + (i+1));
-			//for(Integer j : ((ArrayList<ArrayList<Integer>>) events).get(i)){
 				threads[i] = new TestRunner(networkControllers[i], ((ArrayList<ArrayList<Integer>>) events).get(i) , i+1);
 				threads[i].start();
-				//System.out.println(j);
-			//}
 		}
 		for(Thread t: threads){
 			try {
@@ -49,9 +45,6 @@ public class TestCase {
 				e.printStackTrace();
 			}
 		}
-		//for(int i: events){
-		//	System.out.println(i);
-		//}
 	}
 	
 	
@@ -83,9 +76,9 @@ public class TestCase {
 		        while ((str = bufferedReader.readLine()) != null) { 
 		        	int player = Integer.parseInt(str.substring(0, 2).trim());
 		        	String newString = str.substring(2).trim();
-		        	if(newString.contains("Coordinates"))
-		        		playerLocations.add(parseCoordinates(player, newString));
-		        	else{
+		        	//if(newString.contains("Coordinates"))
+		        	//	playerLocations.add(parseCoordinates(player, newString));
+		        	//else{
 		        		switch(newString){
 			        		case "UP":  events.get(player-1).add(VK_UP);
 		                    	break;
@@ -98,7 +91,7 @@ public class TestCase {
 		                	default:
 		                		break;
 		        		}
-		        	}
+		        	
 		        }               
 		    }
 		}
@@ -115,11 +108,11 @@ public class TestCase {
 	 * @param str
 	 * @return
 	 */
-	private Point parseCoordinates(int player, String str){
-		String coordinates = str.split("=")[1];
-		String[] temp = coordinates.split(",");
-		Point playerLocation = new Point(Integer.parseInt(temp[0].trim()), Integer.parseInt(temp[1].trim()));
-		return playerLocation;
-	}
+	//private Point parseCoordinates(int player, String str){
+	//	String coordinates = str.split("=")[1];
+	//	String[] temp = coordinates.split(",");
+	//	Point playerLocation = new Point(Integer.parseInt(temp[0].trim()), Integer.parseInt(temp[1].trim()));
+	//	return playerLocation;
+	//}
 }
 

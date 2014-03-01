@@ -1,5 +1,4 @@
 Players = 1
-1  Coordinates.1 = 1,1
 1  UP
 1  DOWN
 1  LEFT
