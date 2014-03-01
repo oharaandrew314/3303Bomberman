@@ -159,6 +159,8 @@ public class NetworkController {
         try {
             Event event = deserialize(data);
             
+            gameController.receive(event);
+            
             if (event instanceof ConnectEvent) {
                 InetSocketAddress peer = new InetSocketAddress(data.getAddress(), data.getPort());
                 if (acceptNewPeers) {
@@ -168,8 +170,6 @@ public class NetworkController {
                     sendToOnePeer(new ConnectRejectedEvent(), peer);
                 }
             }
-
-            gameController.receive(event);
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
