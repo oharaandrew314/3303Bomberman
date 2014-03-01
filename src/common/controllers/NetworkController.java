@@ -127,9 +127,13 @@ public class NetworkController {
      * Send an event to all peers
      * @param event The event to send.
      */
-    public void send(Event event) {
-        for(InetSocketAddress peer : peers)
-            sendToOnePeer(event, peer);
+    public synchronized void send(Event event) {
+        try {
+            for(InetSocketAddress peer : peers)
+                sendToOnePeer(event, peer);
+        } catch (IOException ex) {
+            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -137,15 +141,11 @@ public class NetworkController {
      * @param event The event to send.
      * @param peer The peer to send the event to.
      */
-    private void sendToOnePeer(Event event, InetSocketAddress peer) {
-        try {
-            DatagramPacket packet = serialize(event);
-            packet.setAddress(peer.getAddress());
-            packet.setPort(peer.getPort());
-            socket.send(packet);
-        } catch (IOException ex) {
-            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void sendToOnePeer(Event event, InetSocketAddress peer) throws IOException {
+        DatagramPacket packet = serialize(event);
+        packet.setAddress(peer.getAddress());
+        packet.setPort(peer.getPort());
+        socket.send(packet);
     }
     
     /**
@@ -155,7 +155,7 @@ public class NetworkController {
      * acceptNewPeers.
      * @param data The incoming packet.
      */
-    public void receive(DatagramPacket data) {
+    public synchronized void receive(DatagramPacket data) throws IOException {
         try {
             Event event = deserialize(data);
             
@@ -170,7 +170,7 @@ public class NetworkController {
                     sendToOnePeer(new ConnectRejectedEvent(), peer);
                 }
             }
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
