@@ -11,12 +11,13 @@ import java.util.Set;
 import org.junit.Test;
 
 import server.controllers.GridGenerator;
-
 import common.models.Box;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
+import common.models.Pillar;
 import common.models.Player;
+import common.models.Wall;
 
 public class TestGridGenerator {
 	
@@ -71,7 +72,7 @@ public class TestGridGenerator {
 	private void testWalls(Grid grid) {
 		int numWalls = 0;
 		for (Entity entity : getEntities(grid)){
-			if (entity instanceof Box && ((Box)entity).isDestructible()){
+			if (entity instanceof Wall){
 				numWalls++;
 			}
 		}
@@ -123,7 +124,7 @@ public class TestGridGenerator {
 		// Check if square has a pillar
 		boolean hasPillar = false;
 		for (Entity entity : grid.get(point)){
-			if (entity instanceof Box && !((Box)entity).isDestructible()){
+			if (entity instanceof Pillar){
 				hasPillar = true;
 			}
 		}
@@ -133,11 +134,8 @@ public class TestGridGenerator {
 	
 	private Set<Entity> getEntities(Grid grid){
 		Set<Entity> entities = new HashSet<>();
-		
 		for (Point point : grid.keySet()){
-			for (Entity entity : grid.get(point)){
-				entities.add(entity);
-			}
+			entities.addAll(grid.get(point));
 		}
 		return entities;
 	}
