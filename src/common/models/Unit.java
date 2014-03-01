@@ -1,6 +1,9 @@
-package server.model;
+package common.models;
 
 public abstract class Unit extends Entity {
+
+	private static final long serialVersionUID = -891986997581475820L;
+
 	public Unit(String name) {
 		super(name);
 	}

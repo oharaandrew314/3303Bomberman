@@ -33,7 +33,7 @@ public class TestNetworkController extends GameController {
         clientA = new NetworkController(this);
         clientB = new NetworkController(this);
         server = new NetworkController(this);
-        receivedEvents = new LinkedList();
+        receivedEvents = new LinkedList<>();
     }
     
     @After
