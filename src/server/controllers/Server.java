@@ -46,7 +46,9 @@ public class Server extends GameController {
 			if (units.size() > 2){
 				for (Unit unit : units){
 					if (unit instanceof Player){
-						nwc.send(new PlayerDeadEvent((Player)unit));
+						Player player = (Player) unit;
+						nwc.send(new PlayerDeadEvent(player));
+						players.remove(player);
 					}
 					grid.remove(unit); // Remove from grid
 				}
