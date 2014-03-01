@@ -23,30 +23,11 @@ public class TestGrid {
 	@Before
 	public void SetupGrid(){
 		grid = new Grid(new Dimension(3, 3));
-		Square s = new Square();
 		
-		grid.set(new Square(), new Point(0, 0));
-		grid.set(new Square(), new Point(1, 0));
-		
-		s = new Square();
-		s.add(new Box("Box", true));
-		grid.set(s, new Point(2, 0));
-		
-		s = new Square();
-		s.add(new Box("Box", false));		
-		grid.set(s, new Point(0, 1));
-		
-		s = new Square();
-		s.add(new Player("Peter"));
-		grid.set(s, new Point(1, 1));
-		
-		grid.set(new Square(), new Point(2, 1));
-		grid.set(new Square(), new Point(0, 2));
-		grid.set(new Square(), new Point(1, 2));
-		
-		s = new Square();
-		s.add(new Door("Door"));
-		grid.set(s, new Point(2, 2));
+		grid.set(new Box(true), new Point(2, 0));
+		grid.set(new Box(false), new Point(0, 1));
+		grid.set(new Player("Peter"), new Point(1, 1));
+		grid.set(new Door(), new Point(2, 2));
 	}
 	
 	//sanity test to make sure other tests are meaningful
@@ -56,10 +37,11 @@ public class TestGrid {
 	}
 	
 	@Test
-	public void testFind(){
-		Square s = new Square();
-		grid.set(s, new Point(0, 2));
-		assertEquals(grid.find(s), new Point(0, 2));
+	public void testFind(){		
+		Door door = new Door();
+		Point point = new Point(0, 2);
+		grid.set(door, point);
+		assertEquals(grid.find(door), point);
 	}
 	
 	@Test

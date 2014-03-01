@@ -16,8 +16,8 @@ public class TestSquare {
 	@Test
 	public void testAddTwoImpassables(){
 		Square s = new Square();
-		assertTrue(s.add(new Box("Impassable 1", true)));
-		assertFalse(s.add(new Box("Impassable 2", true)));
+		assertTrue(s.add(new Box(true)));
+		assertFalse(s.add(new Box(true)));
 	}
 	
 	@Test

@@ -15,30 +15,44 @@ public class Grid {
 		// This is transparent to users of this class.
 		squares = new Square[size.height][size.width];
 		this.size = size;
+		
+		// initialize squares
+		for (Point point : keySet()){
+			squares[point.y][point.x]= new Square(); 
+		}
 	}
 	
 	public Square get(Point point){
 		return squares[point.y][point.x];
 	}
-	public void set(Square square, Point point){
-		squares[point.y][point.x] = square;
+	
+	public boolean set(Entity entity, Point point){
+		return squares[point.y][point.x].add(entity);
 	}
+	
 	public Dimension getSize(){
 		return new Dimension(size);
 	}
 	
-	public Point find(Square square){
+	public Point find(Entity entity){
+		for (Point point : keySet()){
+			if (get(point).contains(entity)){
+				return point;
+			}
+		}
+		throw new IllegalArgumentException("Square not found in grid");
+	}
+	
+	public Set<Point> keySet(){
+		Set<Point> points = new HashSet<Point>();
+		
 		for (int j = 0; j < size.height; j++){
 			for (int i = 0; i < size.width; i++){
-				if (square == squares[j][i]){
-					// implementation has y/j coordinate first, but this is transparent
-					// to the user so, we switch i, j for the user.
-					return new Point(i, j); 
-				}
+				points.add(new Point(i, j));
 			}
 		}
 		
-		throw new IllegalArgumentException("Square not found in grid");
+		return points;
 	}
 	
 	
