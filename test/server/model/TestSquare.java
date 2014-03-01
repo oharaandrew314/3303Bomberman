@@ -5,24 +5,52 @@ import static org.junit.Assert.*;
 
 public class TestSquare {
 	
+	private Square s;
+	
+	@Before
+	public void setUp(){
+		s = new Square();
+	}
+	
 	@Test
 	public void testAdd(){
-		Square s = new Square();
 		Player p = new Player("Clark");
 		assertTrue(s.add(p));
 		assertTrue(s.contains(p));
 	}
 	
-	@Test
+	@Test(expected=RuntimeException.class)
 	public void testAddTwoImpassables(){
-		Square s = new Square();
-		assertTrue(s.add(new Box(true)));
-		assertFalse(s.add(new Box(true)));
+		assertTrue(s.add(new Wall()));
+		s.add(new Pillar());
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testAddPlayerToPillar(){
+		s.add(new Pillar());
+		s.add(new Player("Pete"));
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testAddWallToPillar(){
+		s.add(new Pillar());
+		s.add(new Wall());
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testAddWallToWall(){
+		s.add(new Wall());
+		s.add(new Wall());
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testAddPillarToPillar(){
+		 s.add(new Pillar());
+		 s.add(new Pillar());
 	}
 	
 	@Test
 	public void testRemove(){
-		Square s = new Square();
 		Player p = new Player("Lois");
 		s.add(p);
 		
