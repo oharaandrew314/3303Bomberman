@@ -11,7 +11,6 @@ import java.util.Set;
 import org.junit.Test;
 
 import server.controllers.GridGenerator;
-import common.models.Box;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
