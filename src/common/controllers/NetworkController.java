@@ -126,9 +126,7 @@ public class NetworkController {
             ByteArrayInputStream baos = new ByteArrayInputStream(packet.getData());
             ObjectInputStream deserializer = new ObjectInputStream(baos);
             return (Event)deserializer.readObject();
-        } catch (IOException ex) {
-            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
