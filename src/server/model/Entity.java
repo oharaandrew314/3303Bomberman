@@ -14,6 +14,11 @@ public abstract class Entity {
 	}
 	abstract public boolean isPassable();
 	
+	/**
+	 * @return Whether an imPassable object can be placed on top of this entity
+	 */
+	public abstract boolean isHideable();
+	
 	public String getName(){
 		return name;
 	}

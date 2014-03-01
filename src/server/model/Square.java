@@ -33,8 +33,16 @@ public class Square {
 			throw new IllegalArgumentException("Cannot add null entity");
 		}
 		
+		if (!isPassable() && !entity.isHideable()){
+			throw new RuntimeException(
+				"Cannot place nonHidable object on impassable Square"
+			);
+		}
+		
 		if (!entity.isPassable()){
-			if (!isPassable()) return false; //tried to add second impassable entity
+			if (!isPassable()){
+				throw new RuntimeException("Tried to add second impassable entity");
+			}
 			impassableEntity = entity;
 			return true;
 		}

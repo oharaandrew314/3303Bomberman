@@ -13,4 +13,9 @@ public class Player extends Unit {
 	public void drobBomb(){
 		throw new UnsupportedOperationException(); // no bombs in milestone 1
 	}
+
+	@Override
+	public boolean isHideable() {
+		return false;
+	}
 }

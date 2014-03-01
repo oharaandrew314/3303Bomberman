@@ -24,4 +24,9 @@ public class Box extends Entity {
 		return destructible ? "." : "X";
 	}
 
+	@Override
+	public boolean isHideable() {
+		return false;
+	}
+
 }
