@@ -1,4 +1,4 @@
-package common.models;
+package server.model;
 
 public abstract class Unit extends Entity {
 	public Unit(String name) {

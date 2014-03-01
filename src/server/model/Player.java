@@ -1,4 +1,4 @@
-package common.models;
+package server.model;
 
 public class Player extends Unit {
 	private final int START_NUM_BOMBS = 1;

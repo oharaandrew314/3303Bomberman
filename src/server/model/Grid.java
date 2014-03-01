@@ -1,4 +1,4 @@
-package common.models;
+package server.model;
 
 import java.awt.Dimension;
 import java.awt.Point;

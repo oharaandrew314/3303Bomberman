@@ -5,14 +5,6 @@ import java.awt.Point;
 import java.util.Set;
 
 import org.junit.*;
-
-import common.models.Door;
-import common.models.Grid;
-import common.models.Pillar;
-import common.models.Player;
-import common.models.Square;
-import common.models.Wall;
-
 import static org.junit.Assert.*;
 
 public class TestGrid {

@@ -1,4 +1,4 @@
-package common.models;
+package server.model;
 
 public abstract class Entity {
 	private static int NEXT_ID = 1;
