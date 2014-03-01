@@ -1,3 +1,6 @@
+import models.TestGrid;
+import models.TestSquare;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -6,8 +9,6 @@ import controllers.TestNetworkController;
 import controllers.TestSimulationTimer;
 import events.TestSerializableKeyEvent;
 import events.TestViewUpdateEvent;
-import server.model.TestGrid;
-import server.model.TestSquare;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

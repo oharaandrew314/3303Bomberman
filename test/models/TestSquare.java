@@ -1,4 +1,4 @@
-package server.model;
+package models;
 
 import org.junit.*;
 

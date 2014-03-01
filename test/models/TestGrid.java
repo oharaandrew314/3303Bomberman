@@ -1,4 +1,4 @@
-package server.model;
+package models;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
