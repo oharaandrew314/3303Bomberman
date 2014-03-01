@@ -2,11 +2,8 @@ package common.models;
 
 public abstract class Box extends Entity {
 	
-	public final boolean destructible;
-	
-	public Box(String name, boolean destructible){
+	public Box(String name){
 		super(name);
-		this.destructible = destructible;
 	}
 	
 	@Override
@@ -16,12 +13,14 @@ public abstract class Box extends Entity {
 	
 	@Override
 	public String toString(){
-		return destructible ? "." : "X";
+		return isDestructible() ? "." : "X";
 	}
 
 	@Override
 	public boolean isHideable() {
 		return false;
 	}
+	
+	public abstract boolean isDestructible();
 
 }

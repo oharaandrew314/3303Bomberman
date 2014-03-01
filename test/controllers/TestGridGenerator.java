@@ -71,7 +71,7 @@ public class TestGridGenerator {
 	private void testWalls(Grid grid) {
 		int numWalls = 0;
 		for (Entity entity : getEntities(grid)){
-			if (entity instanceof Box && ((Box)entity).destructible){
+			if (entity instanceof Box && ((Box)entity).isDestructible()){
 				numWalls++;
 			}
 		}
@@ -125,7 +125,7 @@ public class TestGridGenerator {
 		// Check if square has a pillar
 		boolean hasPillar = false;
 		for (Entity entity : s.getEntities()){
-			if (entity instanceof Box && !((Box)entity).destructible){
+			if (entity instanceof Box && !((Box)entity).isDestructible()){
 				hasPillar = true;
 			}
 		}
