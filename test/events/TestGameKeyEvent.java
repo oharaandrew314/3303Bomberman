@@ -1,6 +1,6 @@
 package events;
 
-import common.events.KeyEvent;
+import common.events.GameKeyEvent;
 import java.awt.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,11 +14,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class TestSerializableKeyEvent extends Component {
+public class TestGameKeyEvent extends Component {
     @Test
     public void anAwtKeyEventCanBeRestoredAfterSerialization() {
         try {
-            KeyEvent keyEvent = new KeyEvent(42);
+            GameKeyEvent keyEvent = new GameKeyEvent(42);
             
             //Serialize
             ByteArrayOutputStream serializerOutput = new ByteArrayOutputStream();
@@ -30,15 +30,15 @@ public class TestSerializableKeyEvent extends Component {
             //De-serialize
             ByteArrayInputStream baos = new ByteArrayInputStream(buffer);
             ObjectInputStream deserializer = new ObjectInputStream(baos);
-            keyEvent = (KeyEvent)deserializer.readObject();
+            keyEvent = (GameKeyEvent)deserializer.readObject();
             
             //Ensure the resulting keycode has not changed.
             assertEquals(42, keyEvent.getKeyCode());
         } catch (IOException ex) {
-            Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestGameKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
             assertTrue("Failed to serialize / deserialize key event", false);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestGameKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

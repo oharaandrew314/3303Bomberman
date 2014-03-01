@@ -8,7 +8,7 @@ import content.TestGridLoader;
 import controllers.TestGridGenerator;
 import controllers.TestNetworkController;
 import controllers.TestSimulationTimer;
-import events.TestSerializableKeyEvent;
+import events.TestGameKeyEvent;
 import events.TestViewUpdateEvent;
 
 @RunWith(Suite.class)
@@ -18,7 +18,7 @@ import events.TestViewUpdateEvent;
    TestSimulationTimer.class,
    TestGridGenerator.class,
    TestNetworkController.class,
-   TestSerializableKeyEvent.class,
+   TestGameKeyEvent.class,
    TestViewUpdateEvent.class,
    TestGridLoader.class,
 })
