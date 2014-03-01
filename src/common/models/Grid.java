@@ -24,7 +24,11 @@ public class Grid implements Serializable {
 		}
 	}
 	
-	public Square get(Point point){
+	public List<Entity> get(Point point){
+		return getSquare(point).getEntities();
+	}
+	
+	private Square getSquare(Point point){
 		return squares[point.y][point.x];
 	}
 	
@@ -57,25 +61,28 @@ public class Grid implements Serializable {
 		return points;
 	}
 	
+	public boolean isPassable(Point point){
+		return getSquare(point).isPassable();
+	}
 	
-	public Set<Square> getPossibleMoves(Point point){
+	
+	public Set<Point> getPossibleMoves(Point point){
 		Set<Point> adjacents = new HashSet<Point>();
 		adjacents.add(new Point(point.x - 1, point.y));
 		adjacents.add(new Point(point.x + 1, point.y));
 		adjacents.add(new Point(point.x, point.y - 1));
 		adjacents.add(new Point(point.x, point.y + 1));
 		
-		Set<Square> retval = new HashSet<Square>();
+		Set<Point> points = new HashSet<>();
 		for (Point p : adjacents){
 			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
-				Square candidate = this.get(p);
-				if (candidate.isPassable()) { // can't move into impassible squares
-					retval.add(candidate);
+				if (isPassable(p)){
+					points.add(p);
 				}
 			}
 		}
 		
-		return retval;
+		return points;
 	}
 	
 	public Set<Square> getAffectedExplosionSquares(){

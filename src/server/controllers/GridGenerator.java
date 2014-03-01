@@ -27,14 +27,14 @@ public class GridGenerator {
 		
 		// Create Pillars
 		for (Point point : points){
-			if (canPlaceNonHidable(point) && pillarLoc(point)){
+			if (grid.isPassable(point) && pillarLoc(point)){
 				grid.set(new Pillar(), point);
 			}
 		}
 		
 		// Create random walls
 		for (Point point : points){
-			if (chance(WALL_DENSITY) && canPlaceNonHidable(point)){
+			if (chance(WALL_DENSITY) && grid.isPassable(point)){
 				grid.set(new Wall(), point);
 			}
 		}
@@ -51,7 +51,7 @@ public class GridGenerator {
 		int playersPlaced = 0;
 		while (playersPlaced < numPlayers){
 			Point p = points.get(r.nextInt(points.size()));
-			if (canPlaceNonHidable(p)){
+			if (grid.isPassable(p)){
 				grid.set(new Player("Player " + ++playersPlaced), p);
 			}
 		}
@@ -63,10 +63,6 @@ public class GridGenerator {
 	
 	private boolean pillarLoc(Point point){
 		return point.x % 2 == 1 && point.y %2 == 1;
-	}
-	
-	private boolean canPlaceNonHidable(Point point){
-		return grid.get(point).isPassable();
 	}
 	
 	// Generator functions
