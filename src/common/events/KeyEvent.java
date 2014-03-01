@@ -1,6 +1,6 @@
 package common.events;
 
-public class KeyEvent extends Event {
+public class KeyEvent implements Event {
     private int keyCode;
     
     

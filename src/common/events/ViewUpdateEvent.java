@@ -3,7 +3,7 @@ package common.events;
 import server.model.Grid;
 
 
-public class ViewUpdateEvent extends Event {
+public class ViewUpdateEvent implements Event {
     private Grid grid;
     
     public ViewUpdateEvent(Grid grid) {

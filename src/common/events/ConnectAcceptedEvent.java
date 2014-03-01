@@ -1,4 +1,4 @@
 package common.events;
 
-public class ConnectAcceptedEvent extends Event {
+public class ConnectAcceptedEvent implements Event {
 }
