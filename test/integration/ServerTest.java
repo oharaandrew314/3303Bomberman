@@ -16,7 +16,7 @@ public class ServerTest {
 	private Server server;
 	private Grid grid;
 
-	@BeforeClass
+	@Before
 	public void setUp() throws Exception {
 		grid = GridLoader.loadGrid("grid1.json");
 		server = new Server(grid);

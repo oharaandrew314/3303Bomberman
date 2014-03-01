@@ -31,8 +31,9 @@ public class Server extends GameController {
 		new SimulationTimer(this);
 		players = new HashMap<>();
 		this.grid = grid;
-		
-		// Start listening for connections
+	}
+	
+	public void startListening(){
 		nwc.startListeningOnServerPort();
 		nwc.acceptNewPeers();
 	}
@@ -120,6 +121,7 @@ public class Server extends GameController {
     public static void main(String[] args){
     	// FIXME: Default grid for now
     	Grid grid = GridLoader.loadGrid("grid1.json");
-		new Server(grid);
+		Server server = new Server(grid);
+		server.startListening();
 	}
 }
