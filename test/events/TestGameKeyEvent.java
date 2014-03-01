@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class TestSerializableKeyEvent extends Component {
+public class TestGameKeyEvent extends Component {
     @Test
     public void anAwtKeyEventCanBeRestoredAfterSerialization() {
         try {
@@ -35,10 +35,10 @@ public class TestSerializableKeyEvent extends Component {
             //Ensure the resulting keycode has not changed.
             assertEquals(42, keyEvent.getKeyCode());
         } catch (IOException ex) {
-            Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestGameKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
             assertTrue("Failed to serialize / deserialize key event", false);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestGameKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

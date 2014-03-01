@@ -2,7 +2,7 @@ package common.events;
 
 import common.models.Player;
 
-public class PlayerDeadEvent implements Event {
+public class PlayerDeadEvent extends Event {
 	
 	private static final long serialVersionUID = -3950085382776099065L;
 	public final Player player;
