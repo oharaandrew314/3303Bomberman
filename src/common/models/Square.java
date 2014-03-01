@@ -1,16 +1,16 @@
 /**
  * 
  */
-package server.model;
+package common.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 
- */
+
 public class Square implements Serializable {
+
+	private static final long serialVersionUID = 4935477501755008585L;
 	private Entity impassableEntity;
 	private List<Entity> passableEntities;
 	private static final String EMPTY_SQUARE_SYMBOL = " "; 
@@ -34,12 +34,28 @@ public class Square implements Serializable {
 			throw new IllegalArgumentException("Cannot add null entity");
 		}
 		
+		if (!isPassable() && !entity.isHideable()){
+			throw new IllegalArgumentException(
+				"Cannot place nonHidable object on impassable Square"
+			);
+		}
+		
 		if (!entity.isPassable()){
-			if (!isPassable()) return false; //tried to add second impassable entity
+			if (!isPassable()){
+				throw new IllegalArgumentException("Tried to add second impassable entity");
+			}
 			impassableEntity = entity;
 			return true;
 		}
 		return passableEntities.add(entity);
+	}
+	
+	public List<Entity> getEntities(){
+		List<Entity> entities = new ArrayList<>(passableEntities);
+		if (impassableEntity != null){
+			entities.add(impassableEntity);
+		}
+		return entities;
 	}
 	
 	public boolean remove(Entity entity){

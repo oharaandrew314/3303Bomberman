@@ -1,6 +1,6 @@
 package common.events;
 
-import server.model.Grid;
+import common.models.Grid;
 
 
 public class ViewUpdateEvent implements Event {

@@ -1,4 +1,4 @@
-package server.model;
+package common.models;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -8,6 +8,7 @@ import java.util.*;
 
 public class Grid implements Serializable {
 
+	private static final long serialVersionUID = -2951160259913748859L;
 	private final Dimension size;
 	private final Square[][] squares;
 	
@@ -16,54 +17,75 @@ public class Grid implements Serializable {
 		// This is transparent to users of this class.
 		squares = new Square[size.height][size.width];
 		this.size = size;
+		
+		// initialize squares
+		for (Point point : keySet()){
+			squares[point.y][point.x]= new Square(); 
+		}
 	}
 	
-	public Square get(Point point){
+	public List<Entity> get(Point point){
+		return getSquare(point).getEntities();
+	}
+	
+	private Square getSquare(Point point){
 		return squares[point.y][point.x];
 	}
-	public void set(Square square, Point point){
-		squares[point.y][point.x] = square;
+	
+	public boolean set(Entity entity, Point point){
+		return squares[point.y][point.x].add(entity);
 	}
+	
 	public Dimension getSize(){
 		return new Dimension(size);
 	}
 	
-	public Point find(Square square){
-		for (int j = 0; j < size.height; j++){
-			for (int i = 0; i < size.width; i++){
-				if (square == squares[j][i]){
-					// implementation has y/j coordinate first, but this is transparent
-					// to the user so, we switch i, j for the user.
-					return new Point(i, j); 
-				}
+	public Point find(Entity entity){
+		for (Point point : keySet()){
+			if (get(point).contains(entity)){
+				return point;
 			}
 		}
-		
 		throw new IllegalArgumentException("Square not found in grid");
 	}
 	
+	public Set<Point> keySet(){
+		Set<Point> points = new HashSet<Point>();
+		
+		for (int j = 0; j < size.height; j++){
+			for (int i = 0; i < size.width; i++){
+				points.add(new Point(i, j));
+			}
+		}
+		
+		return points;
+	}
 	
-	public Set<Square> getPossibleMoves(Point point){
+	public boolean isPassable(Point point){
+		return getSquare(point).isPassable();
+	}
+	
+	
+	public Set<Point> getPossibleMoves(Point point){
 		Set<Point> adjacents = new HashSet<Point>();
 		adjacents.add(new Point(point.x - 1, point.y));
 		adjacents.add(new Point(point.x + 1, point.y));
 		adjacents.add(new Point(point.x, point.y - 1));
 		adjacents.add(new Point(point.x, point.y + 1));
 		
-		Set<Square> retval = new HashSet<Square>();
+		Set<Point> points = new HashSet<>();
 		for (Point p : adjacents){
 			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
-				Square candidate = this.get(p);
-				if (candidate.isPassable()) { // can't move into impassible squares
-					retval.add(candidate);
+				if (isPassable(p)){
+					points.add(p);
 				}
 			}
 		}
 		
-		return retval;
+		return points;
 	}
 	
-	public Set<Square> getAffectedExplosionSquares(){
+	public Set<Point> getAffectedExplosionSquares(){
 		throw new UnsupportedOperationException(); //no bombs in milestone 1
 	}
 
