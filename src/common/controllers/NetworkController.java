@@ -189,7 +189,7 @@ public class NetworkController {
     }
     
     /**
-     * Deserializes a packet back into an event.
+     * De-serializes a packet back into an event.
      */
     private Event deserialize(DatagramPacket packet) throws IOException, ClassNotFoundException {
         ByteArrayInputStream baos = new ByteArrayInputStream(packet.getData());
