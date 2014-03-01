@@ -13,14 +13,11 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
 import common.models.Grid;
 
-public class GridLoader implements JsonSerializer<Grid>, JsonDeserializer<Grid>{
+public class GridLoader implements JsonDeserializer<Grid>{
 	
-	private static final String GRID_PATH = "grids.";
+	private static final String GRID_PATH = "grids/";
 	private static Gson gson;
 	
 	public static Grid loadGrid(String gridFileName){
@@ -38,20 +35,6 @@ public class GridLoader implements JsonSerializer<Grid>, JsonDeserializer<Grid>{
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Grid.class, new GridLoader());
 		gson = builder.serializeNulls().create();
-	}
-
-	@Override
-	public JsonElement serialize(
-		Grid grid, Type arg1, JsonSerializationContext arg2
-	) {
-		JsonObject sizeObj = new JsonObject();
-		sizeObj.addProperty("width", grid.getSize().width);
-		sizeObj.addProperty("height", grid.getSize().height);
-		
-		JsonObject gridObj = new JsonObject();
-		gridObj.add("size", sizeObj);
-		
-		return gridObj;
 	}
 
 	@Override

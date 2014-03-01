@@ -2,23 +2,20 @@ package content;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
+import java.awt.Dimension;
+
 import org.junit.Test;
+
+import common.models.Grid;
 
 import server.content.GridLoader;
 
 public class TestGridLoader {
-	
-	private GridLoader loader;
-
-	@Before
-	public void setUp() throws Exception {
-		loader = new GridLoader();
-	}
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		Grid grid = GridLoader.loadGrid("grid1.json");
+		assertEquals(grid.getSize(), new Dimension(4, 4));
 	}
 
 }
