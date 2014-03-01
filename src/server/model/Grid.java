@@ -3,9 +3,10 @@ package server.model;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.Serializable;
 import java.util.*;
 
-public class Grid {
+public class Grid implements Serializable {
 
 	private final Dimension size;
 	private final Square[][] squares;

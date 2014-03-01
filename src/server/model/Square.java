@@ -3,13 +3,14 @@
  */
 package server.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 
  */
-public class Square {
+public class Square implements Serializable {
 	private Entity impassableEntity;
 	private List<Entity> passableEntities;
 	private static final String EMPTY_SQUARE_SYMBOL = " "; 
