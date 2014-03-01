@@ -85,7 +85,7 @@ public class Grid implements Serializable {
 		return points;
 	}
 	
-	public Set<Square> getAffectedExplosionSquares(){
+	public Set<Point> getAffectedExplosionSquares(){
 		throw new UnsupportedOperationException(); //no bombs in milestone 1
 	}
 
