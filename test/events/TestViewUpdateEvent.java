@@ -1,6 +1,8 @@
 package events;
 
-import common.events.ViewUpdateEvent;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
@@ -10,15 +12,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
-import server.model.Box;
+
 import server.model.Door;
 import server.model.Grid;
+import server.model.Pillar;
 import server.model.Player;
-import server.model.Square;
+import server.model.Wall;
+
+import common.events.ViewUpdateEvent;
 
 public class TestViewUpdateEvent {
     private ViewUpdateEvent viewUpdateEvent;
@@ -26,29 +30,10 @@ public class TestViewUpdateEvent {
     @Before
     public void createViewUpdateEvent() {
         Grid grid = new Grid(new Dimension(3, 3));
-
-        grid.set(new Square(), new Point(0, 0));
-        grid.set(new Square(), new Point(1, 0));
-
-        Square s = new Square();
-        s.add(new Box("Box", true));
-        grid.set(s, new Point(2, 0));
-
-        s = new Square();
-        s.add(new Box("Box", false));		
-        grid.set(s, new Point(0, 1));
-
-        s = new Square();
-        s.add(new Player("Peter"));
-        grid.set(s, new Point(1, 1));
-
-        grid.set(new Square(), new Point(2, 1));
-        grid.set(new Square(), new Point(0, 2));
-        grid.set(new Square(), new Point(1, 2));
-
-        s = new Square();
-        s.add(new Door("Door"));
-        grid.set(s, new Point(2, 2));
+        grid.set(new Wall(), new Point(2, 0));	
+        grid.set(new Pillar(), new Point(0, 1));
+        grid.set(new Player("Peter"), new Point(1, 1));
+        grid.set(new Door(), new Point(2, 2));
         
         viewUpdateEvent = new ViewUpdateEvent(grid);
     }
