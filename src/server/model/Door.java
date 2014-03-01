@@ -2,8 +2,8 @@ package server.model;
 
 public class Door extends Entity {
 
-	public Door(String name) {
-		super(name);
+	public Door() {
+		super("Door");
 	}
 
 	@Override

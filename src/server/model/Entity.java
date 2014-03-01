@@ -4,7 +4,7 @@ public abstract class Entity {
 	private static int NEXT_ID = 1;
 	
 	final public int id;
-	final public String name;
+	private final String name;
 	
 	public Entity(String name){
 		this.id = NEXT_ID;
@@ -14,8 +14,20 @@ public abstract class Entity {
 	}
 	abstract public boolean isPassable();
 	
+	public String getName(){
+		return name;
+	}
+	
 	@Override
 	public String toString(){
 		return name.substring(0, 1);
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if (o instanceof Entity){
+			return ((Entity)o).id == id;
+		}
+		return false;
 	}
 }
