@@ -41,6 +41,14 @@ public class Square {
 		return passableEntities.add(entity);
 	}
 	
+	public List<Entity> getEntities(){
+		List<Entity> entities = new ArrayList<>(passableEntities);
+		if (impassableEntity != null){
+			entities.add(impassableEntity);
+		}
+		return entities;
+	}
+	
 	public boolean remove(Entity entity){
 		if (entity == null){
 			throw new IllegalArgumentException("Cannot remove null entity");
