@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import server.content.GridLoader;
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
@@ -14,6 +15,7 @@ import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.models.Entity;
+import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
 
@@ -25,9 +27,12 @@ public class Server extends GameController {
 	@Deprecated
 	private static final int DUMMY_ID = 1;
 
-	public Server() {
+	public Server(Grid grid) {
 		new SimulationTimer(this);
 		players = new HashMap<>();
+		this.grid = grid;
+		
+		// Start listening for connections
 		nwc.startListeningOnServerPort();
 		nwc.acceptNewPeers();
 	}
@@ -113,6 +118,8 @@ public class Server extends GameController {
     }
 
     public static void main(String[] args){
-		new Server();
+    	// FIXME: Default grid for now
+    	Grid grid = GridLoader.loadGrid("grid1.json");
+		new Server(grid);
 	}
 }
