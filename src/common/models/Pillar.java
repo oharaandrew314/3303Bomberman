@@ -1,4 +1,4 @@
-package server.model;
+package common.models;
 
 public class Pillar extends Box {
 

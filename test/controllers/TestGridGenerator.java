@@ -9,13 +9,14 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import common.models.Box;
+import common.models.Door;
+import common.models.Entity;
+import common.models.Grid;
+import common.models.Player;
+import common.models.Square;
+
 import server.controllers.GridGenerator;
-import server.model.Box;
-import server.model.Door;
-import server.model.Entity;
-import server.model.Grid;
-import server.model.Player;
-import server.model.Square;
 
 public class TestGridGenerator {
 	

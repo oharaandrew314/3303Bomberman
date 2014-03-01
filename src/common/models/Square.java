@@ -1,7 +1,7 @@
 /**
  * 
  */
-package server.model;
+package common.models;
 
 import java.util.ArrayList;
 import java.util.List;
