@@ -15,6 +15,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
@@ -93,6 +95,7 @@ public class GridLoader implements JsonDeserializer<Grid>{
 			case "pillar": return new Pillar();
 			case "wall": return new Wall();
 			case "player": return new Player("Joe");
+			case "door": return new Door();
 			default: throw new IllegalArgumentException(
 				name + " is an illegal entity"
 			);

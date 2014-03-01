@@ -10,6 +10,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
@@ -34,6 +35,7 @@ public class TestGridLoader {
 		
 		check(1, 1, Pillar.class);
 		check(1, 2, Wall.class);
+		check(1, 2, Door.class);
 		check(2, 2, Player.class);
 		check(3, 3, Pillar.class);
 		assertRemaining();
