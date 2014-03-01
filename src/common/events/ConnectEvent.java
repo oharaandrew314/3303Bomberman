@@ -1,5 +1,5 @@
 package common.events;
 
-public class ConnectEvent implements Event {
+public class ConnectEvent extends Event {
     
 }

@@ -6,7 +6,7 @@ import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
-import common.events.KeyEvent;
+import common.events.GameKeyEvent;
 import common.events.ViewUpdateEvent;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,14 +26,14 @@ public class TestNetworkController extends GameController {
     private NetworkController clientB;
     private NetworkController server;
     
-    private List<Event> receivedEvents;
+    private List<Event> receivedEvents = new LinkedList<Event>();
     
     @Before
     public void setUp() {
         clientA = new NetworkController(this);
         clientB = new NetworkController(this);
         server = new NetworkController(this);
-        receivedEvents = new LinkedList<>();
+        resetReceivedEvents();
     }
     
     @After
@@ -82,6 +82,10 @@ public class TestNetworkController extends GameController {
         assertEquals(expected, actual);
     }
     
+    private void resetReceivedEvents() {
+        receivedEvents.clear();
+    }
+    
     @Test
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
         server.startListeningOnServerPort();
@@ -99,9 +103,9 @@ public class TestNetworkController extends GameController {
     public void addServerPeerMethodShouldAddTheServerAddressAsAPeer() {
         server.startListeningOnServerPort();
         clientA.addServerPeer();
-        clientA.send(new KeyEvent(0));
+        clientA.send(new GameKeyEvent(0));
         waitToReceiveEvents(1);
-        assertTrue(receivedEvents.get(0) instanceof KeyEvent);
+        assertTrue(receivedEvents.get(0) instanceof GameKeyEvent);
     }
     
     @Test
@@ -150,5 +154,36 @@ public class TestNetworkController extends GameController {
         assertReceivedNumberOfEvents(ConnectAcceptedEvent.class, 1);
         assertReceivedNumberOfEvents(ConnectRejectedEvent.class, 1);
         assertReceivedNumberOfEvents(ViewUpdateEvent.class, 1);
+    }
+    
+    @Test
+    public void receivedEventsShouldIncludePlayerIDs() {
+        clientA.startListeningOn(1);
+        clientB.startListeningOn(2);
+        server.startListeningOnServerPort();
+        
+        server.acceptNewPeers();
+        clientA.addServerPeer();
+        clientB.addServerPeer();
+        
+        clientA.send(new ConnectEvent());
+        waitToReceiveEvents(2);
+        
+        assertEquals(0, receivedEvents.get(0).getPlayerID());
+        assertEquals(0, receivedEvents.get(1).getPlayerID());
+        resetReceivedEvents();
+        
+        clientB.send(new ConnectEvent());
+        waitToReceiveEvents(2);
+        
+        //bit hacky, but prevents interrmittant failures due to network unreliability
+        assertEquals(receivedEvents.get(0) instanceof ConnectEvent ? 1 : 0, receivedEvents.get(0).getPlayerID());
+        assertEquals(receivedEvents.get(1) instanceof ConnectEvent ? 1 : 0, receivedEvents.get(1).getPlayerID());
+        resetReceivedEvents();
+        
+        clientB.send(new GameKeyEvent(42));
+        waitToReceiveEvents(1);
+        
+        assertEquals(1, receivedEvents.get(0).getPlayerID());
     }
 }

@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +28,7 @@ public class NetworkController {
     private GameController gameController;
     private DatagramSocket socket;
     private ListenThread listener;
-    private Collection<InetSocketAddress> peers;
+    private List<InetSocketAddress> peers;
     private boolean acceptNewPeers = false;
     
     public NetworkController(GameController gameController) {
@@ -159,6 +159,8 @@ public class NetworkController {
         try {
             Event event = deserialize(data);
             
+            event.setPlayerID(getPlayerIdFor(data));
+            
             gameController.receive(event);
             
             if (event instanceof ConnectEvent) {
@@ -173,6 +175,20 @@ public class NetworkController {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     * @return the player ID from which the packet came. If this is a new peer,
+     * the next ID is given.
+     */
+    private int getPlayerIdFor(DatagramPacket packet) {
+        for(int id = 0; id < peers.size(); id++) {
+            InetSocketAddress peer = peers.get(id);
+            if (peer.getHostString().equals(packet.getAddress().getHostAddress()) &&
+                peer.getPort() == packet.getPort())
+                return id;
+        }
+        return peers.size();
     }
     
     /**
