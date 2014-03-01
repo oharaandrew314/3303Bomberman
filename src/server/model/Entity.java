@@ -4,7 +4,7 @@ public abstract class Entity {
 	private static int NEXT_ID = 1;
 	
 	final public int id;
-	private final String name;
+	public final String name;
 	
 	public Entity(String name){
 		this.id = NEXT_ID;
@@ -18,10 +18,6 @@ public abstract class Entity {
 	 * @return Whether an imPassable object can be placed on top of this entity
 	 */
 	public abstract boolean isHideable();
-	
-	public String getName(){
-		return name;
-	}
 	
 	@Override
 	public String toString(){
