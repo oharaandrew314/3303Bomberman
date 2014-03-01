@@ -17,7 +17,7 @@ public class GridGenerator {
 	private final Random r;
 	private final Grid grid;
 	
-	private static final float WALL_DENSITY = (float) 0.7;
+	private static final double WALL_DENSITY = 0.7;
 	
 	private GridGenerator(Dimension size, int numPlayers, Random r){
 		this.r = r;
@@ -43,8 +43,7 @@ public class GridGenerator {
 		boolean placed = false;
 		while (!placed){
 			Point p = points.get(r.nextInt(points.size()));
-			grid.set(new Door(), p);
-			placed = true;
+			placed = grid.set(new Door(), p);
 		}
 		
 		// Place Player
