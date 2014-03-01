@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 
 public class SerializableKeyEvent extends Event {
-
     private Component source;
     private int id;
     private long when;
@@ -18,6 +17,10 @@ public class SerializableKeyEvent extends Event {
         this.when = keyEvent.getWhen();
         this.modifiers = keyEvent.getModifiers();
         this.keyCode = keyEvent.getKeyCode();
+    }
+    
+    public SerializableKeyEvent(int keyCode) {
+        this.keyCode = keyCode;
     }
     
     public KeyEvent toKeyEvent() {

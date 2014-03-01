@@ -1,6 +1,8 @@
 package common.controllers;
 
+import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
+import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,18 +22,14 @@ import java.util.logging.Logger;
 
 public class NetworkController {
     public static final int DEFAULT_CLIENT_PORT = 27000;
-    
-    private static final String SERVER_IP = "127.0.0.1";
+    public static final String SERVER_IP = "127.0.0.1";
     public static final int SERVER_PORT = 27001;
     
-    private int port;
     private GameController gameController;
     private DatagramSocket socket;
     private ListenThread listener;
     private Collection<InetSocketAddress> peers;
-    
-    private ObjectOutputStream serializer;
-    private ByteArrayOutputStream serializerOutput;
+    private boolean acceptNewPeers = false;
     
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
@@ -43,18 +41,20 @@ public class NetworkController {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        try {
-            serializerOutput = new ByteArrayOutputStream();
-            serializer = new ObjectOutputStream(serializerOutput);
-        } catch (IOException ex) {
-            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
     
+    /**
+     * @return the socket currently in use.
+     */
     public DatagramSocket getSocket() {
         return socket;
     }
     
+    /**
+     * Start listening for messages on the given port.
+     * @param port The port to listen on.
+     */
     public void startListeningOn(int port) {
         try {
             socket = new DatagramSocket(port);
@@ -66,23 +66,41 @@ public class NetworkController {
         listener.start();
     }
     
+    /**
+     * Start listening for messages on the default server port.
+     */
     public void startListeningOnServerPort() {
         startListeningOn(SERVER_PORT);
     }
     
+    /**
+     * Start listening for messages on the default client port.
+     */
     public void startListeningOnDefaultClientPort() {
         startListeningOn(DEFAULT_CLIENT_PORT);
     }
     
+    /**
+     * Stop listening for messages and close the port.
+     */
     public void stopListening() {
         if (listener != null)
             listener.stopListening();
+        socket.close();
     }
     
+    /**
+     * Add a new peer, to which all messages will be sent.
+     * @param peer The peer to add.
+     */
     public void addPeer(InetSocketAddress peer) {
         peers.add(peer);
     }
     
+    /**
+     * Add the address & port combination where the server is expected to be
+     * running as a peer.
+     */
     public void addServerPeer() {
         try {
             addPeer(new InetSocketAddress(InetAddress.getByName(SERVER_IP), SERVER_PORT));
@@ -91,44 +109,91 @@ public class NetworkController {
         }
     }
     
+    /**
+     * Start automatically accepting new peers who send ConnectEvents.
+     */
+    public void acceptNewPeers() {
+        acceptNewPeers = true;
+    }
+    
+    /**
+     * Start automatically rejecting new peers who send ConnectEvents.
+     */
+    public void rejectNewPeers() {
+        acceptNewPeers = false;
+    }
+    
+    /**
+     * Send an event to all peers
+     * @param event The event to send.
+     */
     public void send(Event event) {
-        DatagramPacket packet = serialize(event);
-        for(InetSocketAddress peerSocket : peers) {
-            packet.setAddress(peerSocket.getAddress());
-            packet.setPort(peerSocket.getPort());
-            try {
-                socket.send(packet);
-            } catch (IOException ex) {
-                Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        for(InetSocketAddress peer : peers)
+            sendToOnePeer(event, peer);
     }
     
-    public void receive(DatagramPacket data) {
-        Event event = deserialize(data);
-        gameController.receive(event);
-    }
-    
-    private DatagramPacket serialize(Event event) {
+    /**
+     * Send an event to only a single peer.
+     * @param event The event to send.
+     * @param peer The peer to send the event to.
+     */
+    private void sendToOnePeer(Event event, InetSocketAddress peer) {
         try {
-            serializer.writeObject(event);
-            serializer.flush();
+            DatagramPacket packet = serialize(event);
+            packet.setAddress(peer.getAddress());
+            packet.setPort(peer.getPort());
+            socket.send(packet);
         } catch (IOException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        byte[] buffer = serializerOutput.toByteArray();
-        return new DatagramPacket(buffer, buffer.length);
     }
     
-    private Event deserialize(DatagramPacket packet) {
+    /**
+     * Called by the ListenerThread when a packet has been received.
+     * If the packet contains a ConnectEvent, a reply is send with either
+     * ConnectAcceptedEvent or ConnectRejectedEvent depending on the state of
+     * acceptNewPeers.
+     * @param data The incoming packet.
+     */
+    public void receive(DatagramPacket data) {
         try {
-            ByteArrayInputStream baos = new ByteArrayInputStream(packet.getData());
-            ObjectInputStream deserializer = new ObjectInputStream(baos);
-            return (Event)deserializer.readObject();
+            Event event = deserialize(data);
+            
+            if (event instanceof ConnectEvent) {
+                InetSocketAddress peer = new InetSocketAddress(data.getAddress(), data.getPort());
+                if (acceptNewPeers) {
+                    sendToOnePeer(new ConnectAcceptedEvent(), peer);
+                    peers.add(peer);
+                } else {
+                    sendToOnePeer(new ConnectRejectedEvent(), peer);
+                }
+            }
+
+            gameController.receive(event);
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+    }
+    
+    /**
+     * Serializes an event into a packet.
+     */
+    private DatagramPacket serialize(Event event) throws IOException {
+        ByteArrayOutputStream serializerOutput = new ByteArrayOutputStream();
+        ObjectOutputStream serializer = new ObjectOutputStream(serializerOutput);
+        serializer.writeObject(event);
+        serializer.flush();
+        byte[] buffer = serializerOutput.toByteArray();
+        
+        return new DatagramPacket(buffer, buffer.length);
+    }
+    
+    /**
+     * Deserializes a packet back into an event.
+     */
+    private Event deserialize(DatagramPacket packet) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream baos = new ByteArrayInputStream(packet.getData());
+        ObjectInputStream deserializer = new ObjectInputStream(baos);
+        return (Event)deserializer.readObject();
     }
 }

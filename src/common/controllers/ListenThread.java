@@ -4,8 +4,6 @@ package common.controllers;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ListenThread extends Thread {
     private static final int BUFFER_SIZE = 100000;
@@ -27,7 +25,7 @@ public class ListenThread extends Thread {
                 socket.receive(packet);
                 networkController.receive(packet);
             } catch (IOException ex) {
-                Logger.getLogger(ListenThread.class.getName()).log(Level.SEVERE, null, ex);
+                continueRunning = false;
             }
         }
     }
