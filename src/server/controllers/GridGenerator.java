@@ -2,6 +2,7 @@ package server.controllers;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,6 +19,7 @@ public class GridGenerator {
 	private final Grid grid;
 	
 	private static final float WALL_DENSITY = (float) 0.7;
+	private static final String GRID_PATH = "grids.";
 	
 	private GridGenerator(Dimension size, int numPlayers, Random r){
 		this.r = r;
@@ -77,5 +79,12 @@ public class GridGenerator {
 	
 	public static Grid createRandomGrid(Dimension size, int numPlayers, long seed){
 		return new GridGenerator(size, numPlayers, new Random(seed)).grid;
+	}
+	
+	public static Grid loadGrid(String gridFileName){
+		ClassLoader loader = GridGenerator.class.getClassLoader();
+		InputStream s = loader.getResourceAsStream(GRID_PATH + gridFileName);
+		
+		return null;
 	}
 }
