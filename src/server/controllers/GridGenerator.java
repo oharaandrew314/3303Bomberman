@@ -18,7 +18,7 @@ public class GridGenerator {
 	private final Grid grid;
 	
 	private static final double WALL_DENSITY = 0.7;
-	
+
 	private GridGenerator(Dimension size, int numPlayers, Random r){
 		this.r = r;
 		grid = new Grid(size);
