@@ -9,11 +9,11 @@ import common.controllers.NetworkController;
 public class TestDriver {
 	public static final String[] TEST_FILE_NAMES = {"test1", "test2"};
 	private Collection<TestCase> testcases;
-	private NetworkController networkController;
+	private NetworkController[] networkControllers;
 
 
-	public TestDriver(NetworkController networkController){
-		this.networkController = networkController;
+	public TestDriver(NetworkController[] networkControllers){
+		this.networkControllers = networkControllers;
 		this.testcases = new ArrayList<TestCase>();
 	}
 	
@@ -32,7 +32,7 @@ public class TestDriver {
 	public void readTestCases(){
 		for(String filename : TEST_FILE_NAMES){
 			try {
-				testcases.add(new TestCase(filename, networkController));
+				testcases.add(new TestCase(filename, networkControllers));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

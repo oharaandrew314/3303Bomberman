@@ -14,11 +14,11 @@ import static java.awt.event.KeyEvent.*;
 public class TestCase {
 	private Collection<ArrayList<Integer>> events;
 	private Collection<Point> playerLocations;
-	private NetworkController networkController;
+	private NetworkController[] networkControllers;
 	private String filename;
 	
-	public TestCase(String filename, NetworkController networkController) throws IOException{
-		this.networkController = networkController;
+	public TestCase(String filename, NetworkController[] networkControllers) throws IOException{
+		this.networkControllers = networkControllers;
 		playerLocations = new ArrayList<Point>();
 		events = readEvents(filename);
 		this.filename = filename;
@@ -36,7 +36,7 @@ public class TestCase {
 		for(int i = 0 ; i != events.size();i++){
 			//System.out.println("player: " + (i+1));
 			//for(Integer j : ((ArrayList<ArrayList<Integer>>) events).get(i)){
-				threads[i] = new TestRunner(networkController, ((ArrayList<ArrayList<Integer>>) events).get(i) , i+1);
+				threads[i] = new TestRunner(networkControllers[i], ((ArrayList<ArrayList<Integer>>) events).get(i) , i+1);
 				threads[i].start();
 				//System.out.println(j);
 			//}
