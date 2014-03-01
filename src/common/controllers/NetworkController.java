@@ -127,9 +127,13 @@ public class NetworkController {
      * Send an event to all peers
      * @param event The event to send.
      */
-    public synchronized void send(Event event) throws IOException {
-        for(InetSocketAddress peer : peers)
-            sendToOnePeer(event, peer);
+    public synchronized void send(Event event) {
+        try {
+            for(InetSocketAddress peer : peers)
+                sendToOnePeer(event, peer);
+        } catch (IOException ex) {
+            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
