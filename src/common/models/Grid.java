@@ -8,6 +8,7 @@ import java.util.*;
 
 public class Grid implements Serializable {
 
+	private static final long serialVersionUID = -2951160259913748859L;
 	private final Dimension size;
 	private final Square[][] squares;
 	

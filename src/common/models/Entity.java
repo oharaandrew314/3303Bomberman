@@ -3,6 +3,8 @@ package common.models;
 import java.io.Serializable;
 
 public abstract class Entity implements Serializable {
+
+	private static final long serialVersionUID = 5839465145181345621L;
 	private static int NEXT_ID = 1;
 	
 	final public int id;

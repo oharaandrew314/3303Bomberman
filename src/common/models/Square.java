@@ -7,10 +7,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 
- */
+
 public class Square implements Serializable {
+
+	private static final long serialVersionUID = 4935477501755008585L;
 	private Entity impassableEntity;
 	private List<Entity> passableEntities;
 	private static final String EMPTY_SQUARE_SYMBOL = " "; 

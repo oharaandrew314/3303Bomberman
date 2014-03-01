@@ -1,6 +1,8 @@
 package common.models;
 
 public class Player extends Unit {
+
+	private static final long serialVersionUID = 7322528472259511719L;
 	private final int START_NUM_BOMBS = 1;
 	
 	private int numBombs; // no bombs in milestone 1
