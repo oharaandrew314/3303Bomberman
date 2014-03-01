@@ -6,7 +6,7 @@ import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
-import common.events.SerializableKeyEvent;
+import common.events.KeyEvent;
 import common.events.ViewUpdateEvent;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -99,9 +99,9 @@ public class TestNetworkController extends GameController {
     public void addServerPeerMethodShouldAddTheServerAddressAsAPeer() {
         server.startListeningOnServerPort();
         clientA.addServerPeer();
-        clientA.send(new SerializableKeyEvent(0));
+        clientA.send(new KeyEvent(0));
         waitToReceiveEvents(1);
-        assertTrue(receivedEvents.get(0) instanceof SerializableKeyEvent);
+        assertTrue(receivedEvents.get(0) instanceof KeyEvent);
     }
     
     @Test

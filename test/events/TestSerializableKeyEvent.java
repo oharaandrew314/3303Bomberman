@@ -1,9 +1,7 @@
 package events;
 
-import common.events.Event;
-import common.events.SerializableKeyEvent;
+import common.events.KeyEvent;
 import java.awt.Component;
-import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,29 +18,22 @@ public class TestSerializableKeyEvent extends Component {
     @Test
     public void anAwtKeyEventCanBeRestoredAfterSerialization() {
         try {
-            //Create a serializableKeyEvent based off an Awt KeyEvent
-            KeyEvent originalKeyEvent = new KeyEvent(this, 1, 2, 3, 4);
-            SerializableKeyEvent serializableKeyEvent = new SerializableKeyEvent(originalKeyEvent);
+            KeyEvent keyEvent = new KeyEvent(42);
             
             //Serialize
             ByteArrayOutputStream serializerOutput = new ByteArrayOutputStream();
             ObjectOutputStream serializer = new ObjectOutputStream(serializerOutput);
-            serializer.writeObject(serializableKeyEvent);
+            serializer.writeObject(keyEvent);
             serializer.flush();
             byte[] buffer = serializerOutput.toByteArray();
             
             //De-serialize
             ByteArrayInputStream baos = new ByteArrayInputStream(buffer);
             ObjectInputStream deserializer = new ObjectInputStream(baos);
-            serializableKeyEvent = (SerializableKeyEvent)deserializer.readObject();
-            KeyEvent processedKeyEvent = serializableKeyEvent.toKeyEvent();
+            keyEvent = (KeyEvent)deserializer.readObject();
             
-            //Ensure the resulting Awt KeyEvent is the same as the original.
-            assertTrue(processedKeyEvent.getSource() instanceof TestSerializableKeyEvent);
-            assertEquals(originalKeyEvent.getID(), processedKeyEvent.getID());
-            assertEquals(originalKeyEvent.getWhen(), processedKeyEvent.getWhen());
-            assertEquals(originalKeyEvent.getModifiers(), processedKeyEvent.getModifiers());
-            assertEquals(originalKeyEvent.getKeyCode(), processedKeyEvent.getKeyCode());
+            //Ensure the resulting keycode has not changed.
+            assertEquals(42, keyEvent.getKeyCode());
         } catch (IOException ex) {
             Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
             assertTrue("Failed to serialize / deserialize key event", false);
