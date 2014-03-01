@@ -2,7 +2,6 @@ package server.controllers;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,9 +17,8 @@ public class GridGenerator {
 	private final Random r;
 	private final Grid grid;
 	
-	private static final float WALL_DENSITY = (float) 0.7;
-	private static final String GRID_PATH = "grids.";
-	
+	private static final double WALL_DENSITY = 0.7;
+
 	private GridGenerator(Dimension size, int numPlayers, Random r){
 		this.r = r;
 		grid = new Grid(size);
@@ -29,14 +27,14 @@ public class GridGenerator {
 		
 		// Create Pillars
 		for (Point point : points){
-			if (canPlaceNonHidable(point) && pillarLoc(point)){
+			if (grid.isPassable(point) && pillarLoc(point)){
 				grid.set(new Pillar(), point);
 			}
 		}
 		
 		// Create random walls
 		for (Point point : points){
-			if (chance(WALL_DENSITY) && canPlaceNonHidable(point)){
+			if (chance(WALL_DENSITY) && grid.isPassable(point)){
 				grid.set(new Wall(), point);
 			}
 		}
@@ -45,15 +43,14 @@ public class GridGenerator {
 		boolean placed = false;
 		while (!placed){
 			Point p = points.get(r.nextInt(points.size()));
-			grid.set(new Door(), p);
-			placed = true;
+			placed = grid.set(new Door(), p);
 		}
 		
 		// Place Player
 		int playersPlaced = 0;
 		while (playersPlaced < numPlayers){
 			Point p = points.get(r.nextInt(points.size()));
-			if (canPlaceNonHidable(p)){
+			if (grid.isPassable(p)){
 				grid.set(new Player("Player " + ++playersPlaced), p);
 			}
 		}
@@ -67,10 +64,6 @@ public class GridGenerator {
 		return point.x % 2 == 1 && point.y %2 == 1;
 	}
 	
-	private boolean canPlaceNonHidable(Point point){
-		return grid.get(point).isPassable();
-	}
-	
 	// Generator functions
 
 	public static Grid createRandomGrid(Dimension size, int numPlayers){		
@@ -79,12 +72,5 @@ public class GridGenerator {
 	
 	public static Grid createRandomGrid(Dimension size, int numPlayers, long seed){
 		return new GridGenerator(size, numPlayers, new Random(seed)).grid;
-	}
-	
-	public static Grid loadGrid(String gridFileName){
-		ClassLoader loader = GridGenerator.class.getClassLoader();
-		InputStream s = loader.getResourceAsStream(GRID_PATH + gridFileName);
-		
-		return null;
 	}
 }

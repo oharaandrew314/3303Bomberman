@@ -1,4 +1,4 @@
-package server.model;
+package models;
 
 import org.junit.*;
 
@@ -25,31 +25,31 @@ public class TestSquare {
 		assertTrue(s.contains(p));
 	}
 	
-	@Test(expected=RuntimeException.class)
+	@Test(expected=IllegalArgumentException.class)
 	public void testAddTwoImpassables(){
 		assertTrue(s.add(new Wall()));
 		s.add(new Pillar());
 	}
 	
-	@Test(expected=RuntimeException.class)
+	@Test(expected=IllegalArgumentException.class)
 	public void testAddPlayerToPillar(){
 		s.add(new Pillar());
 		s.add(new Player("Pete"));
 	}
 	
-	@Test(expected=RuntimeException.class)
+	@Test(expected=IllegalArgumentException.class)
 	public void testAddWallToPillar(){
 		s.add(new Pillar());
 		s.add(new Wall());
 	}
 	
-	@Test(expected=RuntimeException.class)
+	@Test(expected=IllegalArgumentException.class)
 	public void testAddWallToWall(){
 		s.add(new Wall());
 		s.add(new Wall());
 	}
 	
-	@Test(expected=RuntimeException.class)
+	@Test(expected=IllegalArgumentException.class)
 	public void testAddPillarToPillar(){
 		 s.add(new Pillar());
 		 s.add(new Pillar());

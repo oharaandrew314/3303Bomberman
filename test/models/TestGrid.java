@@ -1,19 +1,19 @@
-package server.model;
+package models;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.Set;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import common.models.Door;
 import common.models.Grid;
 import common.models.Pillar;
 import common.models.Player;
-import common.models.Square;
 import common.models.Wall;
-
-import static org.junit.Assert.*;
 
 public class TestGrid {
 	
@@ -54,9 +54,8 @@ public class TestGrid {
 	
 	@Test
 	public void testGetPossibleMoves(){
-		Set<Square> test = grid.getPossibleMoves(new Point(2, 1));
-		assertTrue(test.contains(grid.get(new Point(1, 1))));
-		assertTrue(test.contains(grid.get(new Point(2, 2))));
-		assertEquals(test.size(), 2);
+		Object[] actual = grid.getPossibleMoves(new Point(2, 1)).toArray();
+		Point[] expected = new Point[]{new Point(2, 2), new Point(1, 1)};
+		assertArrayEquals(actual, expected);
 	}
 }

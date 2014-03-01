@@ -1,6 +1,7 @@
 package controllers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -9,14 +10,13 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import common.models.Box;
+import server.controllers.GridGenerator;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
+import common.models.Pillar;
 import common.models.Player;
-import common.models.Square;
-
-import server.controllers.GridGenerator;
+import common.models.Wall;
 
 public class TestGridGenerator {
 	
@@ -71,7 +71,7 @@ public class TestGridGenerator {
 	private void testWalls(Grid grid) {
 		int numWalls = 0;
 		for (Entity entity : getEntities(grid)){
-			if (entity instanceof Box && ((Box)entity).isDestructible()){
+			if (entity instanceof Wall){
 				numWalls++;
 			}
 		}
@@ -119,13 +119,11 @@ public class TestGridGenerator {
 		}
 	}
 	
-	private void assertHasPillar(Grid grid, Point point, boolean needsPillar){
-		Square s = grid.get(point);
-		
+	private void assertHasPillar(Grid grid, Point point, boolean needsPillar){		
 		// Check if square has a pillar
 		boolean hasPillar = false;
-		for (Entity entity : s.getEntities()){
-			if (entity instanceof Box && !((Box)entity).isDestructible()){
+		for (Entity entity : grid.get(point)){
+			if (entity instanceof Pillar){
 				hasPillar = true;
 			}
 		}
@@ -135,11 +133,8 @@ public class TestGridGenerator {
 	
 	private Set<Entity> getEntities(Grid grid){
 		Set<Entity> entities = new HashSet<>();
-		
 		for (Point point : grid.keySet()){
-			for (Entity entity : grid.get(point).getEntities()){
-				entities.add(entity);
-			}
+			entities.addAll(grid.get(point));
 		}
 		return entities;
 	}

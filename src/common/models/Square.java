@@ -35,14 +35,14 @@ public class Square implements Serializable {
 		}
 		
 		if (!isPassable() && !entity.isHideable()){
-			throw new RuntimeException(
+			throw new IllegalArgumentException(
 				"Cannot place nonHidable object on impassable Square"
 			);
 		}
 		
 		if (!entity.isPassable()){
 			if (!isPassable()){
-				throw new RuntimeException("Tried to add second impassable entity");
+				throw new IllegalArgumentException("Tried to add second impassable entity");
 			}
 			impassableEntity = entity;
 			return true;
