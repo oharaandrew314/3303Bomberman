@@ -3,14 +3,19 @@ package server.controllers;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
+import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
+import common.models.Entity;
 import common.models.Player;
+import common.models.Unit;
 
 public class Server extends GameController {
 	
@@ -23,9 +28,31 @@ public class Server extends GameController {
 	public Server() {
 		new SimulationTimer(this);
 		players = new HashMap<>();
+		nwc.startListeningOnServerPort();
+		nwc.acceptNewPeers();
 	}
 	
 	public synchronized void simulationUpdate(){
+		//Calculate collisions
+		for (Point point : grid.keySet()){
+			Set<Unit> units = new HashSet<>();
+			for (Entity entity : grid.get(point)){
+				if (entity instanceof Unit){
+					units.add((Unit)entity);
+				}
+			}
+			
+			// If unit collision, process deaths
+			if (units.size() > 2){
+				for (Unit unit : units){
+					if (unit instanceof Player){
+						nwc.send(new PlayerDeadEvent((Player)unit));
+					}
+					grid.remove(unit); // Remove from grid
+				}
+			}
+		}
+		
 		//TODO: Bomb logic
 		//TODO: AI logic
 		

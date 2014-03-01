@@ -112,4 +112,9 @@ public class Grid implements Serializable {
 		}
 		return sb.toString();
 	}
+	
+	public boolean remove(Entity entity){
+		Point loc = find(entity);
+		return getSquare(loc).remove(entity);
+	} 
 }
