@@ -1,10 +1,11 @@
 package integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -12,10 +13,10 @@ import org.junit.Test;
 
 import server.content.GridLoader;
 import server.controllers.Server;
+
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
-import common.models.Entity;
 import common.models.Player;
 
 public class ServerTest extends Server{
@@ -33,7 +34,7 @@ public class ServerTest extends Server{
 		send(1, new ConnectEvent());
 		
 		// Ensure Player starts at (0, 0)
-		List<Player> players = findPlayers(1);
+		List<Player> players = IntegrationHelper.findPlayers(grid, 1);
 		Player p = players.get(0);
 		grid.remove(p);
 		grid.set(p, new Point(0, 0));
@@ -84,7 +85,7 @@ public class ServerTest extends Server{
 		send(1, new ConnectEvent());
 		send(2, new ConnectEvent());
 		
-		List<Player> players = findPlayers(2);
+		List<Player> players = IntegrationHelper.findPlayers(grid, 2);
 		Player p1 = players.get(0);
 		grid.remove(p1);
 		grid.set(p1, new Point(0, 0));
@@ -105,7 +106,7 @@ public class ServerTest extends Server{
 		
 		// Collide
 		goLeft(p2);
-		findPlayers(0);
+		IntegrationHelper.findPlayers(grid, 0);
 	}
 	
 	/**
@@ -117,25 +118,12 @@ public class ServerTest extends Server{
 		for (int i=0; i<Server.MAX_PLAYERS; i++){
 			send(i, new ConnectEvent());
 		}
-		findPlayers(Server.MAX_PLAYERS);
+		IntegrationHelper.findPlayers(grid, Server.MAX_PLAYERS);
 	}
 	
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);
 		receive(event);
-	}
-	
-	private List<Player> findPlayers(int numPlayers){
-		List<Player> players = new ArrayList<>();
-		for (Point point : grid.keySet()){
-			for (Entity entity: grid.get(point)){
-				if (entity instanceof Player){
-					players.add((Player) entity);
-				}
-			}
-		}
-		assertEquals(numPlayers, players.size());
-		return players;
 	}
 	
 	private void checkPos(Player player, int x, int y){

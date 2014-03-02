@@ -61,7 +61,7 @@ public class Server extends GameController {
 	}
 
     @Override
-    public synchronized void receive(Event event) {
+    public synchronized void receive(Event event) {    	
     	int playerId = event.getPlayerID();
     	
     	// Accept ConntectEvent and add player to game
