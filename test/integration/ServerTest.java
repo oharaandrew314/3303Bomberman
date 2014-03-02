@@ -39,6 +39,7 @@ public class ServerTest {
 		// Ensure Player starts at (0, 0)
 		List<Player> players = findPlayers(1);
 		Player p = players.get(0);
+		grid.remove(p);
 		grid.set(p, new Point(0, 0));
 		
 		goUp(p);  // Try going out of bounds
@@ -69,9 +70,51 @@ public class ServerTest {
 		checkPos(p, 0, 2);
 	}
 	
+	@Test
+	public void testTwoPlayers(){
+		// Connect one player
+		send(1, new ConnectEvent());
+		send(2, new ConnectEvent());
+		
+		List<Player> players = findPlayers(2);
+		Player p1 = players.get(0);
+		grid.remove(p1);
+		grid.set(p1, new Point(0, 0));
+		
+		Player p2 = players.get(1);
+		grid.remove(p2);
+		grid.set(p2, new Point(2, 1));
+		
+		//Move p1
+		goRight(p1);
+		checkPos(p1, 1, 0);
+		
+		// Move p2
+		goUp(p2);
+		checkPos(p2, 2, 0);
+		
+		// Collide
+		goLeft(p2);
+		findPlayers(0);
+		
+	}
+	
+	/**
+	 * This test creates one too many players, and then ensures that only
+	 * the maximum amount of players exist in the game.
+	 */
+	@Test
+	public void testTooManyPlayers(){
+		for (int i=0; i<Server.MAX_PLAYERS; i++){
+			send(i, new ConnectEvent());
+		}
+		findPlayers(Server.MAX_PLAYERS);
+	}
+	
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);
 		server.receive(event);
+		server.simulationUpdate();
 	}
 	
 	private List<Player> findPlayers(int numPlayers){
@@ -83,7 +126,7 @@ public class ServerTest {
 				}
 			}
 		}
-		assertEquals(players.size(), numPlayers);
+		assertEquals(numPlayers, players.size());
 		return players;
 	}
 	
