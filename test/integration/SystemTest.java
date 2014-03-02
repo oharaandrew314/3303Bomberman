@@ -1,8 +1,7 @@
 package integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.Dimension;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -11,9 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import server.content.GridLoader;
-import server.controllers.GridGenerator;
 import server.controllers.Server;
 import client.controllers.Client;
+
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
@@ -39,15 +38,9 @@ public class SystemTest {
 		
 		// start and connect client to local server
 		client = new TestClient();
-		
-		// Start game
-		testServer.newGame(
-			GridGenerator.createRandomGrid(new Dimension(4, 4), 2)
-		);
-		assertTrue(getServer().isGameRunning());
-		assertTrue(!getServer().isAcceptingPlayers());
 	}
 	
+	/** Stop game and check state */
 	@After
 	public void after(){
 		testServer.stopGame();
@@ -56,6 +49,8 @@ public class SystemTest {
 
 	@Test
 	public void test() {
+		//pressKey(Keyevent.)
+		
 		try {
 			Thread.sleep(TEST_TIME);
 		} catch (InterruptedException e) {
@@ -93,15 +88,11 @@ public class SystemTest {
 		
 		@Override
 		public void run(){
-			server.newGame(GridLoader.loadGrid("grid1.json"));
+			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
 		}
 		
 		public void stopGame(){
 			server.reset();
-		}
-		
-		public void newGame(Grid grid){
-			server.newGame(grid);
 		}
 	}
 	
