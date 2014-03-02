@@ -1,6 +1,7 @@
 package client.controllers;
 
 import common.controllers.GameController;
+import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
@@ -10,11 +11,11 @@ import common.events.ViewUpdateEvent;
 public abstract class Client extends GameController {
 
 	public Client() {
-		nwc.addServerPeer();
-		nwc.startListeningOnDefaultClientPort();
+		this(NetworkController.DEFAULT_CLIENT_PORT);
 	}
 	
 	public Client(int port){
+		nwc.addServerPeer();
 		nwc.startListeningOn(port);
 	}
 
