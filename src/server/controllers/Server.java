@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import server.content.GridLoader;
-
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
+import common.events.StartGameEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Door;
@@ -23,16 +23,17 @@ import common.models.Unit;
 public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
+	
 	private Map<Integer, Player> players;
-	private boolean running = true;
+	protected boolean running = false;
 
-	public Server(Grid grid) {
+	public Server() {
 		new SimulationTimer(this);
 		players = new HashMap<>();
-		this.grid = grid;
 	}
 	
-	public void startListening(){
+	public void startGame(Grid grid){
+		this.grid = grid;
 		nwc.startListeningOnServerPort();
 		nwc.acceptNewPeers();
 	}
@@ -40,6 +41,13 @@ public class Server extends GameController {
 	@Override
 	public boolean isGameRunning() {
 		return running;
+	}
+	
+	public void reset(){
+		grid = null;
+		running = false;
+		nwc.stopListening();
+		players.clear();
 	}
 	
 	public synchronized void simulationUpdate(){		
@@ -67,6 +75,11 @@ public class Server extends GameController {
     			}
     			throw new RuntimeException("Could not find place to add player");
     		}
+    	}
+    	
+    	else if (event instanceof StartGameEvent){
+    		nwc.rejectNewPeers();
+    		running = true;
     	}
     	
     	/*
@@ -133,7 +146,7 @@ public class Server extends GameController {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
     			nwc.send(new WinEvent(player));
-    			running = false;
+    			reset();
     		}
     	}
     }
@@ -143,9 +156,9 @@ public class Server extends GameController {
     }
 
     public static void main(String[] args){
-    	// FIXME: Default grid for now
-    	Grid grid = GridLoader.loadGrid("grid1.json");
-		Server server = new Server(grid);
-		server.startListening();
+		Server server = new Server();
+		
+		// FIXME: Default grid for now
+		server.startGame(GridLoader.loadGrid("grid1.json"));
     }
 }

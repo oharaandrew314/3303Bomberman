@@ -16,18 +16,15 @@ import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.models.Entity;
-import common.models.Grid;
 import common.models.Player;
 
-public class ServerTest {
-	
-	private Server server;
-	private Grid grid;
+public class ServerTest extends Server{
 
 	@Before
 	public void setUp() throws Exception {
+		reset();
 		grid = GridLoader.loadGrid("grid1.json");
-		server = new Server(grid);
+		running = true;
 	}
 
 	@Test
@@ -69,7 +66,7 @@ public class ServerTest {
 		checkPos(p, 0, 2);
 		
 		// Win game
-		assertTrue(server.isGameRunning());
+		assertTrue(isGameRunning());
 		goDown(p);
 		goRight(p);
 		goRight(p);
@@ -77,7 +74,7 @@ public class ServerTest {
 		goRight(p);
 		goUp(p);
 		checkPos(p, 3, 1);
-		assertFalse(server.isGameRunning());
+		assertFalse(isGameRunning());
 	}
 	
 	@Test
@@ -122,7 +119,7 @@ public class ServerTest {
 	
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);
-		server.receive(event);
+		receive(event);
 	}
 	
 	private List<Player> findPlayers(int numPlayers){
