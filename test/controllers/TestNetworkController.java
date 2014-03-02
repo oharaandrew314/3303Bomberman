@@ -185,4 +185,22 @@ public class TestNetworkController extends GameController {
         
         assertEquals(1, receivedEvents.get(0).getPlayerID());
     }
+    
+    @Test
+    public void clientsShouldBeAbleToListenOnAnyAvailablePort() {
+        clientA.startListeningOnAnyAvailablePort();
+        clientB.startListeningOnAnyAvailablePort();
+        clientA.addLocalServerPeer();
+        clientB.addLocalServerPeer();
+        
+        server.startListeningOnServerPort();
+        server.acceptNewPeers();
+        
+        clientA.send(new ConnectEvent());
+        clientB.send(new ConnectEvent());
+        waitToReceiveEvents(4);
+        
+        assertReceivedNumberOfEvents(ConnectEvent.class, 2);
+        assertReceivedNumberOfEvents(ConnectAcceptedEvent.class, 2);
+    }
 }

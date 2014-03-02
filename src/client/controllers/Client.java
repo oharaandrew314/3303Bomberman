@@ -13,23 +13,12 @@ import common.events.WinEvent;
 public abstract class Client extends GameController {
 
 	public Client() {
-		this(
-			NetworkController.LOCALHOST,
-			NetworkController.DEFAULT_CLIENT_PORT
-		);
+		this(NetworkController.LOCALHOST);
 	}
 	
 	public Client(String serverAddress){
-		this(serverAddress, NetworkController.DEFAULT_CLIENT_PORT);
-	}
-	
-	public Client(int port){
-		this(NetworkController.LOCALHOST, port);
-	}
-	
-	public Client(String serverAddress, int clientPort){
+                nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		nwc.startListeningOn(clientPort);
 		nwc.send(new ConnectEvent());
 	}
 
