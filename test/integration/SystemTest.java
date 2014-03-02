@@ -33,7 +33,17 @@ public class SystemTest {
 	public void setUp(){
 		sem = new Semaphore(1);
 		viewUpdateSem = new Semaphore(1);
-		
+	}
+	
+	/** Stop game and check state */
+	@After
+	public void after(){
+		testServer.stopGame();
+		assertTrue(!getServer().isGameRunning());
+	}
+
+	@Test
+	public void test() {	
 		// Create and Start server
 		testServer = new TestServer();
 		assertTrue(!getServer().isAcceptingPlayers());
@@ -48,17 +58,7 @@ public class SystemTest {
 		
 		// Wait for client to be accepted
 		waitForResponse();
-	}
-	
-	/** Stop game and check state */
-	@After
-	public void after(){
-		testServer.stopGame();
-		assertTrue(!getServer().isGameRunning());
-	}
-
-	@Test
-	public void test() {		
+		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
 		
