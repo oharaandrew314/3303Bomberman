@@ -27,11 +27,12 @@ public class SystemTest {
 	
 	private TestServer testServer;
 	private TestClient client;
-	private static Semaphore sem, viewUpdateSem;
+	private static Semaphore keySem, connectSem, viewUpdateSem;
 	
 	@Before
 	public void setUp(){
-		sem = new Semaphore(1);
+		keySem = new Semaphore(1);
+		connectSem = new Semaphore(1);
 		viewUpdateSem = new Semaphore(1);
 	}
 	
@@ -53,16 +54,16 @@ public class SystemTest {
 		assertTrue(!getServer().isGameRunning());		
 		
 		// start and connect client to local server
-		sem.acquireUninterruptibly();
+		keySem.acquireUninterruptibly();
 		client = new TestClient();
 		
 		// Wait for client to be accepted
-		waitForResponse();
+		waitForKeyResponse();
 		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
 		
-		waitForResponse();
+		waitForKeyResponse();
 		assertTrue(getServer().isGameRunning());
 		
 		// Set player starting position
@@ -71,18 +72,19 @@ public class SystemTest {
 	
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);
-		waitForResponse();
+		waitForKeyResponse();
 		assertEquals(new Point(1, 0), getGrid().find(p));
 		
+		// Wait for view update response
 		viewUpdateSem.acquireUninterruptibly();
 		viewUpdateSem.acquireUninterruptibly();
 		viewUpdateSem.release();
 		assertTrue(client.receivedUpdate);
 	}
 	
-	private void waitForResponse(){
-		sem.acquireUninterruptibly();
-		sem.release();
+	private void waitForKeyResponse(){
+		keySem.acquireUninterruptibly();
+		keySem.release();
 	}
 	
 	private Server getServer(){
@@ -129,7 +131,7 @@ public class SystemTest {
 			@Override
 			public void receive(Event event){
 				super.receive(event);
-				sem.release();
+				keySem.release();
 			}
 		}
 	}
@@ -151,7 +153,7 @@ public class SystemTest {
 		}
 		
 		public void pressKey(int keyCode){
-			sem.acquireUninterruptibly();
+			keySem.acquireUninterruptibly();
 			nwc.send(new GameKeyEvent(keyCode));
 		}
 		
