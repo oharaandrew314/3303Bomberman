@@ -45,7 +45,6 @@ public class Server extends GameController {
 	public synchronized void simulationUpdate(){		
 		//TODO: Bomb logic
 		//TODO: AI logic
-		
 		nwc.send(new ViewUpdateEvent(grid));
 	}
 
