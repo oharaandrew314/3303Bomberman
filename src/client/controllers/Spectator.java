@@ -37,11 +37,6 @@ public class Spectator extends Client {
 		view.displayConnectionRejected();
 	}
 	
-	@Override
-	protected void processWinEvent(WinEvent event) {
-		view.displayWin(event.player);
-	}
-	
 	public static void main(String[] args){
 		String networkAddress = NetworkController.LOCALHOST;
 		if (args.length > 0){

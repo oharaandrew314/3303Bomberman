@@ -8,5 +8,4 @@ public interface View {
 	void displayPlayerDead(Player player);
 	void displayConnectionAccepted();
 	void displayConnectionRejected();
-	void displayWin(Player player);
 }
