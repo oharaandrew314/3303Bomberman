@@ -14,11 +14,9 @@ import static java.awt.event.KeyEvent.*;
 public class TestCase {
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
-	//private NetworkController[] networkControllers;
 	private String filename;
 	
 	public TestCase(String filename){
-		//this.networkControllers = networkControllers;
 		events = readEvents(filename);
 		this.filename = filename;
 		
@@ -70,15 +68,13 @@ public class TestCase {
 					for(int i = 0 ; i != players ; i++){
 						events.add(new ArrayList<Integer>());
 					}
-						//setUp stuff here maybe
+						
 				}
 				
 		        while ((str = bufferedReader.readLine()) != null) { 
 		        	int player = Integer.parseInt(str.substring(0, 2).trim());
 		        	String newString = str.substring(2).trim();
-		        	//if(newString.contains("Coordinates"))
-		        	//	playerLocations.add(parseCoordinates(player, newString));
-		        	//else{
+		        	
 		        		switch(newString){
 			        		case "UP":  events.get(player-1).add(VK_UP);
 		                    	break;
@@ -102,17 +98,5 @@ public class TestCase {
 		return events;
 	}
 	
-	/**
-	 * 
-	 * @param player
-	 * @param str
-	 * @return
-	 */
-	//private Point parseCoordinates(int player, String str){
-	//	String coordinates = str.split("=")[1];
-	//	String[] temp = coordinates.split(",");
-	//	Point playerLocation = new Point(Integer.parseInt(temp[0].trim()), Integer.parseInt(temp[1].trim()));
-	//	return playerLocation;
-	//}
 }
 

@@ -12,13 +12,9 @@ import common.models.Grid;
 public class TestTestDriver{
 
 	
-	private TestDriver driver;// = new TestDriver(new NetworkController(this));
+	private TestDriver driver;
 
 
-	@Before
-    public void setUp() {
-    	
-    }
 	
 	@Test
 	public void testTestCases(){

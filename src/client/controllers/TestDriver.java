@@ -10,13 +10,10 @@ import common.models.Grid;
 
 
 public class TestDriver {
-	//public static final String[] TEST_FILE_NAMES = {"test1", "test2"};
 	private Collection<TestCase> testcases;
-	//private NetworkController[] networkControllers;
 
 
 	public TestDriver(){
-		//this.networkControllers = networkControllers;
 		this.testcases = new ArrayList<TestCase>();
 	}
 	
@@ -40,7 +37,7 @@ public class TestDriver {
 	
 	public static void main(String[] args){
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {"test1" };
+		String[] testfiles = {"test3" };
 		driver.readTestCases(testfiles);
 		driver.runAll();
 	}
