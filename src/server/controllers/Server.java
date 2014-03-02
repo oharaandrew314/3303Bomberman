@@ -182,7 +182,12 @@ public class Server extends GameController {
             switch (args[0]) {
                 case "load":
                     if (args.length == 2) {
+                        try {
                         server.newGame(GridLoader.loadGrid(args[1]));
+                        } catch(NullPointerException e) {
+                            System.out.println("Error: Failed to locate json file.");
+                            showHelp = true;
+                        }
                     } else {
                         showHelp = true;
                     }   break;
@@ -212,6 +217,9 @@ public class Server extends GameController {
             System.out.println("    random <width> <height> <# players> <seed>    Generate a random grid");
             System.out.println("    help                                          Show this help file");
             System.exit(0);
+        } else {
+            System.out.println("Server now running with initial grid of: ");
+            System.out.println(server.grid.toString());
         }
     }
 }
