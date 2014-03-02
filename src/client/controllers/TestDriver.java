@@ -47,6 +47,10 @@ public class TestDriver {
 		driver.runAll();
 	}
 	
+	public Collection<TestCase> getTestCases(){
+		return testcases;
+	}
+	
 
 	
 	
