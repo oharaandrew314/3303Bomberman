@@ -43,29 +43,7 @@ public class Server extends GameController {
 		return running;
 	}
 	
-	public synchronized void simulationUpdate(){
-		//Calculate collisions
-		for (Point point : grid.keySet()){
-			Set<Unit> units = new HashSet<>();
-			for (Entity entity : grid.get(point)){
-				if (entity instanceof Unit){
-					units.add((Unit)entity);
-				}
-			}
-			
-			// If unit collision, process deaths
-			if (units.size() > 1){
-				for (Unit unit : units){
-					if (unit instanceof Player){
-						Player player = (Player) unit;
-						nwc.send(new PlayerDeadEvent(player));
-						players.remove(player);
-					}
-					grid.remove(unit); // Remove from grid
-				}
-			}
-		}
-		
+	public synchronized void simulationUpdate(){		
 		//TODO: Bomb logic
 		//TODO: AI logic
 		
@@ -135,7 +113,23 @@ public class Server extends GameController {
     	// Move player
     	grid.set(player, dest);
     	
-    	// TODO Collisions
+    	// Check for collisions
+    	for (Entity entity : grid.get(dest)){
+    		if (entity instanceof Unit && !player.equals(entity)){
+    			// Kill own player
+    			players.remove(player);
+				nwc.send(new PlayerDeadEvent(player));
+				grid.remove(player);
+    			
+    			// If other unit was player, kill it
+    			if (entity instanceof Player){
+    				Player otherPlayer = (Player) entity;
+    				players.remove(otherPlayer);
+    				nwc.send(new PlayerDeadEvent(otherPlayer));
+    				grid.remove(otherPlayer);
+    			}
+    		}
+    	}
     	
     	// Check if player wins and notify views
     	for (Entity entity : grid.get(dest)){

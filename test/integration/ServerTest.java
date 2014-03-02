@@ -123,7 +123,6 @@ public class ServerTest {
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);
 		server.receive(event);
-		server.simulationUpdate(); // force update early
 	}
 	
 	private List<Player> findPlayers(int numPlayers){
