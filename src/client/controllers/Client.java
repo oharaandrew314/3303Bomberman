@@ -10,6 +10,7 @@ import common.events.ViewUpdateEvent;
 public abstract class Client extends GameController {
 
 	public Client() {
+		nwc.addServerPeer();
 		nwc.startListeningOnDefaultClientPort();
 	}
 	
