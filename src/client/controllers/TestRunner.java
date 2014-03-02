@@ -14,6 +14,8 @@ public class TestRunner extends Client implements Runnable{
 	private ArrayList<Integer> events;
 	private int playerNumber;
 	private boolean connected = false;
+	private boolean dead = false;
+	private boolean won = false;
 	
 	public TestRunner(ArrayList<Integer> events, int playerNumber){
 
@@ -56,12 +58,16 @@ public class TestRunner extends Client implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-			for(int i = 0; i != events.size(); i++){
+		
+			//for(int i = 0; i != events.size(); i++){
+			int i = 0;
+			while(i != events.size() && !dead && !won){
 				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
 				keyEvent.setPlayerID(i + 1);
 				nwc.send(keyEvent);
-				
+				i++;
 			}
 			
 			
@@ -82,6 +88,8 @@ public class TestRunner extends Client implements Runnable{
 	protected void processPlayerDead(PlayerDeadEvent event) {
 		// TODO Auto-generated method stub
 		System.out.println("PLAYER: " + playerNumber + ", YOU ARE DEAD");
+		dead = true;
+		nwc.stopListening();
 		
 	}
 
@@ -89,6 +97,8 @@ public class TestRunner extends Client implements Runnable{
 	protected void processWinEvent(WinEvent event) {
 		// TODO Auto-generated method stub
 		System.out.println("PLAYER: " + playerNumber + ", YOU WIN");
+		won = true;
+		nwc.stopListening();
 		
 	}
 
