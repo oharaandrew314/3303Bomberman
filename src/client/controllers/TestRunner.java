@@ -7,15 +7,11 @@ import java.awt.event.KeyEvent;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
 import common.models.Entity;
 import common.models.Grid;
-import common.models.Player;
 
 
 public class TestRunner extends Client implements Runnable{
@@ -24,7 +20,6 @@ public class TestRunner extends Client implements Runnable{
 	private int playerNumber;
 	private boolean connected = false;
 	private boolean dead = false;
-	private boolean won = false;
 	
 	public TestRunner(ArrayList<Integer> events, int playerNumber){
 		BasicConfigurator.configure();
@@ -34,10 +29,10 @@ public class TestRunner extends Client implements Runnable{
 	}
 
 	@Override
-	protected void processViewUpdate(ViewUpdateEvent event) {
+	protected void processViewUpdate(Grid grid2) {
 		//System.out.println("Player: " + playerNumber + " - UPDATE VIEW");
 		logger.debug("Player: " + playerNumber + " - UPDATE VIEW EVENT");
-		Grid updatedGrid = event.getGrid();
+		//Grid updatedGrid = grid;
 		if(grid != null){
 			Point p1 = new Point(0,0);
 			Point p2 = new Point(0,0);
@@ -48,7 +43,7 @@ public class TestRunner extends Client implements Runnable{
 					
 					Point p = new Point(i,j);
 					ArrayList<Entity> old = (ArrayList<Entity>) grid.get(p);
-					ArrayList<Entity> newSquare = (ArrayList<Entity>) updatedGrid.get(p);
+					ArrayList<Entity> newSquare = (ArrayList<Entity>) grid2.get(p);
 					
 					for(Entity e: old){
 						if(e.toString().equals("0")){
@@ -78,7 +73,8 @@ public class TestRunner extends Client implements Runnable{
 		else{
 			logger.info("Player " + playerNumber + " first view of the grid");
 		}
-		this.grid = updatedGrid;
+		this.grid = grid2;
+	
 		
 		
 	}
@@ -95,7 +91,6 @@ public class TestRunner extends Client implements Runnable{
 	@Override
 	protected void processConnectionRejected() {
 		// TODO Auto-generated method stub
-		//System.out.println("Player: " + playerNumber + " could not connect to server");
 		logger.debug("Player " + playerNumber + " Process Connection Rejected");
 	}
 	
@@ -109,23 +104,18 @@ public class TestRunner extends Client implements Runnable{
 		GameKeyEvent startEvent = new GameKeyEvent(KeyEvent.VK_ENTER);
 		nwc.send(startEvent);
 		waitForResponse(100);
-			//for(int i = 0; i != events.size(); i++){
 			int i = 0;
-			while(i != events.size() && !dead && !isGameRunning()){
+			while(!events.isEmpty() && i != events.size() && !dead && isGameRunning()){
 				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
 				nwc.send(keyEvent);
 				logger.debug("Player: " + playerNumber + " - SEND KEY EVENT");
 				logger.info("Player " + playerNumber + "   " + keyCodeToString(keyEvent));
-				//logger.debug("send GameKeyEvent");
-				//logger.info("Player " + playerNumber + " sent keyEvent to move: " + keyCodeToString(keyEvent));
 				i++;
 				waitForResponse(100);
-				//System.out.println("Player: " + playerNumber + " -> " + grid);
 			}
 			
 			
 				waitForResponse(500);
-				//System.out.println("Player: " + playerNumber + " -> " + grid);
 				nwc.stopListening();
 			
 		
@@ -142,20 +132,7 @@ public class TestRunner extends Client implements Runnable{
 		
 	}
 
-	//@Override
-	//protected void processWinEvent(WinEvent event) {
-		// TODO Auto-generated method stub
-	//	logger.debug("Player: " + playerNumber + " - WinEvent");
-	//	won = true;
-	//	nwc.stopListening();
-		
-	//}
 
-	@Override
-	public boolean isGameRunning() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 	private void waitForResponse(int millis){
 		try {
@@ -181,5 +158,12 @@ public class TestRunner extends Client implements Runnable{
 			return "undefined";
 		}
 	}
+
+	@Override
+	protected boolean isSpectator() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }

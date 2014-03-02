@@ -120,7 +120,6 @@ public class Server extends GameController {
     		   running = true;
     		   nwc.send(new GameStartEvent());
     	   }
-    	   System.out.print(grid);
        }
     }
     
