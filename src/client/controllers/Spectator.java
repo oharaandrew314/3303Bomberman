@@ -4,6 +4,7 @@ import client.views.TextView;
 import client.views.View;
 import common.controllers.NetworkController;
 import common.events.*;
+import common.models.Grid;
 
 public class Spectator extends Client {
 
@@ -15,11 +16,6 @@ public class Spectator extends Client {
 	public Spectator(String serverAddress, View view){
 		super(serverAddress);
 		this.view = view;
-	}
-	
-	@Override
-	protected void processViewUpdate(ViewUpdateEvent event) {
-		view.updateView(event.getGrid());
 	}
 
 	@Override
@@ -45,9 +41,14 @@ public class Spectator extends Client {
 		
 		new Spectator(networkAddress, new TextView());
 	}
+	
 	@Override
 	protected boolean isSpectator() {
 		return true;
+	}
+	@Override
+	protected void processViewUpdate(Grid grid) {
+		view.updateView(grid);
 	}
 
 }

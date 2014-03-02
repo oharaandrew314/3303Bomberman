@@ -209,6 +209,13 @@ public class NetworkController {
     }
     
     /**
+     * Reset the peers this controller notifies.
+     */
+    public synchronized void clear(){
+    	peers.clear();
+    }
+    
+    /**
      * Serializes an event into a packet.
      */
     private DatagramPacket serialize(Event event) throws IOException {

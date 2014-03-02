@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.content.GridLoader;
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
@@ -50,6 +49,7 @@ public class Server extends GameController {
 	public void reset(){
 		running = false;
 		nwc.stopListening();
+		nwc.clear();
 		players.clear();
 		grid = null;
 	}
@@ -160,7 +160,7 @@ public class Server extends GameController {
     	// Check if player wins and notify views
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
-    			nwc.send(new WinEvent(player));
+    			nwc.send(new WinEvent(player, grid));
     			reset();
     		}
     	}
@@ -176,9 +176,9 @@ public class Server extends GameController {
     }
 
     public static void main(String[] args){
-		Server server = new Server();
-		
-		// FIXME: Default grid for now
-		server.newGame(GridLoader.loadGrid("grid1.json"));
+        Server server = new Server();
+        server.newGame(CLAParser.parse(args));
+        System.out.println("Server now running with initial grid of: ");
+        System.out.println(server.grid.toString());
     }
 }

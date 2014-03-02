@@ -10,12 +10,12 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import server.controllers.GridGenerator;
+import server.content.GridGenerator;
+
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Wall;
 
 public class TestGridGenerator {
@@ -24,48 +24,41 @@ public class TestGridGenerator {
 	
 	@Test
 	public void testRandom1(){
-		int seed = 123456789, numPlayers = 1;
-		Grid grid = GridGenerator.createRandomGrid(
-			new Dimension(4, 4), numPlayers, seed
-		);
-		testGrid(grid, numPlayers);
+		int seed = 123456789;
+		Grid grid = GridGenerator.createRandomGrid(new Dimension(4, 4), seed);
+		testGrid(grid);
 	}
 	
 	@Test
 	public void testRandom2(){
-		int seed = 987654321, numPlayers = 1;
-		Grid grid = GridGenerator.createRandomGrid(
-			new Dimension(4, 6), numPlayers, seed
-		);
-		testGrid(grid, numPlayers);
+		int seed = 987654321;
+		Grid grid = GridGenerator.createRandomGrid(new Dimension(4, 6), seed);
+		testGrid(grid);
 	}
 	
 	@Test
 	public void testRandom3(){
-		int seed = 135792468, numPlayers = 2;
-		Grid grid = GridGenerator.createRandomGrid(
-			new Dimension(3, 5), numPlayers, seed
-		);
-		testGrid(grid, numPlayers);
+		int seed = 135792468;
+		Grid grid = GridGenerator.createRandomGrid(new Dimension(3, 5), seed);
+		testGrid(grid);
 	}
 	
 	@Test
 	public void testRandom4(){
-		int seed = 135792468, numPlayers = 4;
+		int seed = 135792468;
 		Grid grid = GridGenerator.createRandomGrid(
-			new Dimension(10, 10), numPlayers, seed
+			new Dimension(10, 10), seed
 		);
-		testGrid(grid, numPlayers);
+		testGrid(grid);
 	}
 
 	
 	// Helpers
 	
-	private void testGrid(Grid grid, int expectedNumPlayers){
+	private void testGrid(Grid grid){
 		testPillars(grid);
 		testWalls(grid);
 		testDoor(grid);
-		testPlayers(grid, expectedNumPlayers);
 	}
 	
 	private void testWalls(Grid grid) {
@@ -87,17 +80,6 @@ public class TestGridGenerator {
 			}
 		}
 		assertEquals(numDoors, MAX_DOORS);
-	}
-	
-	private void testPlayers(Grid grid, int expectedNumPlayers){
-		int numPlayers = 0;
-		for (Entity entity : getEntities(grid)){
-			if (entity instanceof Player){
-				numPlayers++;
-			}
-		}
-		
-		assertEquals(numPlayers, expectedNumPlayers);
 	}
 	
 	/**
