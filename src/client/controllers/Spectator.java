@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.views.TextView;
 import client.views.View;
 import common.events.ViewUpdateEvent;
 
@@ -28,14 +29,16 @@ public class Spectator extends Client {
 
 	@Override
 	protected void processConnectionAccepted() {
-		// TODO Auto-generated method stub
-
+		System.out.println("Connection Accepted");
 	}
 
 	@Override
 	protected void processConnectionRejected() {
-		// TODO Auto-generated method stub
-
+		System.out.println("Connection Rejected");
+	}
+	
+	public static void main(String[] args){
+		new Spectator(new TextView());
 	}
 
 }

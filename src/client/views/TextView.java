@@ -6,7 +6,7 @@ public class TextView extends View {
 	
 	@Override
 	public void updateView(ViewUpdateEvent event){
-		clearTerminal();
+		//clearTerminal();
 		System.out.println(event.getGrid()); // TODO make nicer text view
 	}
 	
