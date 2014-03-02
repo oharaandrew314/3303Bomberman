@@ -19,7 +19,6 @@ import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
 import common.models.Grid;
 import common.models.Player;
 
@@ -54,9 +53,13 @@ public class SystemTest {
 		// start and connect client to local server
 		TestClient client = TestClient.startTestClient();
 		
+		// Ensure client knows game hasn't started yet
+		assertTrue(!client.isGameRunning());
+		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
 		assertTrue(server.isGameRunning());
+		assertTrue(client.isGameRunning());
 		
 		// Set player starting position
 		Player p = IntegrationHelper.findPlayers(getGrid(), 1).get(0);
@@ -135,9 +138,6 @@ public class SystemTest {
 		// Overrides
 		
 		@Override
-		public boolean isGameRunning() { return true; }
-		
-		@Override
 		protected void processViewUpdate(ViewUpdateEvent event) {
 			viewUpdateSem.release();
 		}
@@ -152,8 +152,6 @@ public class SystemTest {
 		protected void processConnectionRejected() {
 			connectSem.release();
 		}
-		@Override
-		protected void processWinEvent(WinEvent event) {}
 	}
 
 }
