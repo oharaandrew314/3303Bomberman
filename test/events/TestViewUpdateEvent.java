@@ -60,10 +60,10 @@ public class TestViewUpdateEvent {
             assertEquals(originalGrid.toString(), processedGrid.toString());
             
         } catch (IOException ex) {
-            Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestGameKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
             assertTrue("Failed to serialize / deserialize viewUpdateEvent", false);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TestSerializableKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestGameKeyEvent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
