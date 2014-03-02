@@ -45,5 +45,9 @@ public class Spectator extends Client {
 		
 		new Spectator(networkAddress, new TextView());
 	}
+	@Override
+	protected boolean isSpectator() {
+		return true;
+	}
 
 }
