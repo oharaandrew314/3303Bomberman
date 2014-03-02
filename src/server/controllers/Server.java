@@ -19,6 +19,7 @@ import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
+import java.awt.Dimension;
 
 public class Server extends GameController {
 	
@@ -174,9 +175,43 @@ public class Server extends GameController {
     }
 
     public static void main(String[] args){
-		Server server = new Server();
-		
-		// FIXME: Default grid for now
-		server.newGame(GridLoader.loadGrid("grid1.json"));
+        Server server = new Server();
+        
+        boolean showHelp = false;
+        if (args.length > 0) {
+            switch (args[0]) {
+                case "load":
+                    if (args.length == 2) {
+                        server.newGame(GridLoader.loadGrid(args[1]));
+                    } else {
+                        showHelp = true;
+                    }   break;
+                case "random":
+                    if (args.length == 5) {
+                        try {
+                            Dimension dimension = new Dimension(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+                            server.newGame(GridGenerator.createRandomGrid(dimension, Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+                        } catch(NumberFormatException e) {
+                            showHelp = true;
+                        }
+                    } else {
+                        showHelp = true;
+                    }   break;
+                case "help":
+                    showHelp = true;
+                    break;
+            }
+        } else {
+            showHelp = true;
+        }
+        
+        if (showHelp) {
+            System.out.println("Usage: server <command>");
+            System.out.println("Available commands:");
+            System.out.println("    load <gridName>                               Load a predefined json grid");
+            System.out.println("    random <width> <height> <# players> <seed>    Generate a random grid");
+            System.out.println("    help                                          Show this help file");
+            System.exit(0);
+        }
     }
 }
