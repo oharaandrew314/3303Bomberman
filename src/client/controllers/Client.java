@@ -2,16 +2,8 @@ package client.controllers;
 
 import common.controllers.GameController;
 import common.controllers.NetworkController;
-<<<<<<< HEAD
+
 import common.events.*;
-=======
-import common.events.ConnectAcceptedEvent;
-import common.events.ConnectRejectedEvent;
-import common.events.Event;
-import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
->>>>>>> dev
 
 public abstract class Client extends GameController {
 
