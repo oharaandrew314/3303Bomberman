@@ -8,7 +8,7 @@ public class SimulationTimer extends TimerTask {
 	
 	public static final int
 		MS_IN_S = 1000, 
-		UPDATE_FREQ = 60,
+		UPDATE_FREQ = 10,
 		UPDATE_DELAY = MS_IN_S / UPDATE_FREQ;
 	
 	private final Server server;

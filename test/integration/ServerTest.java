@@ -1,6 +1,6 @@
 package integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import server.content.GridLoader;
 import server.controllers.Server;
-
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
@@ -68,6 +67,17 @@ public class ServerTest {
 		
 		goUp(p);
 		checkPos(p, 0, 2);
+		
+		// Win game
+		assertTrue(server.isGameRunning());
+		goDown(p);
+		goRight(p);
+		goRight(p);
+		goUp(p);
+		goRight(p);
+		goUp(p);
+		checkPos(p, 3, 1);
+		assertFalse(server.isGameRunning());
 	}
 	
 	@Test
@@ -96,7 +106,6 @@ public class ServerTest {
 		// Collide
 		goLeft(p2);
 		findPlayers(0);
-		
 	}
 	
 	/**
@@ -114,7 +123,6 @@ public class ServerTest {
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);
 		server.receive(event);
-		server.simulationUpdate();
 	}
 	
 	private List<Player> findPlayers(int numPlayers){
