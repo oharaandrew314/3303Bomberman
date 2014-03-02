@@ -23,7 +23,7 @@ public class Grid implements Serializable {
 			squares[point.y][point.x]= new Square(); 
 		}
 	}
-	
+
 	public List<Entity> get(Point point){
 		return getSquare(point).getEntities();
 	}
@@ -33,6 +33,11 @@ public class Grid implements Serializable {
 	}
 	
 	public boolean set(Entity entity, Point point){
+		 // Try to remove existing entity
+		if (contains(entity)){
+			remove(entity);
+		}
+		
 		return squares[point.y][point.x].add(entity);
 	}
 	
@@ -41,12 +46,24 @@ public class Grid implements Serializable {
 	}
 	
 	public Point find(Entity entity){
+		Point point = search(entity);
+		if (point == null){
+			throw new IllegalArgumentException("Square not found in grid");
+		}
+		return point;
+	}
+	
+	public boolean contains(Entity entity){
+		return search(entity) != null;
+	}
+	
+	private Point search(Entity entity){
 		for (Point point : keySet()){
 			if (get(point).contains(entity)){
 				return point;
 			}
 		}
-		throw new IllegalArgumentException("Square not found in grid");
+		return null;
 	}
 	
 	public Set<Point> keySet(){
@@ -112,4 +129,9 @@ public class Grid implements Serializable {
 		}
 		return sb.toString();
 	}
+	
+	public boolean remove(Entity entity){
+		Point loc = find(entity);
+		return getSquare(loc).remove(entity);
+	} 
 }

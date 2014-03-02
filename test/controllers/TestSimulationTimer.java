@@ -9,6 +9,10 @@ import server.controllers.SimulationTimer;
 
 public class TestSimulationTimer extends Server {
 
+	public TestSimulationTimer() {
+		super(null);
+	}
+
 	private static final int
 		TEST_DURATION = 1 * SimulationTimer.MS_IN_S,
 		EXPECTED_UPDATES = TEST_DURATION / SimulationTimer.UPDATE_DELAY;

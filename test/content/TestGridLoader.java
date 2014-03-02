@@ -30,7 +30,7 @@ public class TestGridLoader {
 
 	@Test
 	public void test() {
-		grid = GridLoader.loadGrid("grid1.json");
+		grid = GridLoader.loadGrid("test/testGrid1.json");
 		assertEquals(grid.getSize(), new Dimension(4, 4));
 		
 		assertEntity(1, 1, Pillar.class);
