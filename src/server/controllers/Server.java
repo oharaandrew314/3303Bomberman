@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import server.content.GridGenerator;
 import server.content.GridLoader;
-
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
@@ -19,6 +19,7 @@ import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
+
 import java.awt.Dimension;
 
 public class Server extends GameController {
@@ -192,10 +193,10 @@ public class Server extends GameController {
                         showHelp = true;
                     }   break;
                 case "random":
-                    if (args.length == 5) {
+                    if (args.length == 4) {
                         try {
                             Dimension dimension = new Dimension(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
-                            server.newGame(GridGenerator.createRandomGrid(dimension, Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+                            server.newGame(GridGenerator.createRandomGrid(dimension, Integer.parseInt(args[3])));
                         } catch(NumberFormatException e) {
                             showHelp = true;
                         }
@@ -213,9 +214,9 @@ public class Server extends GameController {
         if (showHelp) {
             System.out.println("Usage: server <command>");
             System.out.println("Available commands:");
-            System.out.println("    load <gridName>                               Load a predefined json grid");
-            System.out.println("    random <width> <height> <# players> <seed>    Generate a random grid");
-            System.out.println("    help                                          Show this help file");
+            System.out.println("    load <gridName>                   Load a predefined json grid");
+            System.out.println("    random <width> <height> <seed>    Generate a random grid");
+            System.out.println("    help                              Show this help file");
             System.exit(0);
         } else {
             System.out.println("Server now running with initial grid of: ");

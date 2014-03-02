@@ -1,4 +1,4 @@
-package server.controllers;
+package server.content;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -9,7 +9,6 @@ import java.util.Random;
 import common.models.Door;
 import common.models.Grid;
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Wall;
 
 public class GridGenerator {
@@ -19,7 +18,7 @@ public class GridGenerator {
 	
 	private static final double WALL_DENSITY = 0.7;
 
-	private GridGenerator(Dimension size, int numPlayers, Random r){
+	private GridGenerator(Dimension size, Random r){
 		this.r = r;
 		grid = new Grid(size);
 		
@@ -45,15 +44,6 @@ public class GridGenerator {
 			Point p = points.get(r.nextInt(points.size()));
 			placed = grid.set(new Door(), p);
 		}
-		
-		// Place Player
-		int playersPlaced = 0;
-		while (playersPlaced < numPlayers){
-			Point p = points.get(r.nextInt(points.size()));
-			if (grid.isPassable(p)){
-				grid.set(new Player(++playersPlaced), p);
-			}
-		}
 	}
 	
 	private boolean chance(double chance){
@@ -66,11 +56,13 @@ public class GridGenerator {
 	
 	// Generator functions
 
-	public static Grid createRandomGrid(Dimension size, int numPlayers){		
-		return new GridGenerator(size, numPlayers, new Random()).grid;
+	public static Grid createRandomGrid(Dimension size){
+		System.err.println("create " + size);
+		return new GridGenerator(size, new Random()).grid;
 	}
 	
-	public static Grid createRandomGrid(Dimension size, int numPlayers, long seed){
-		return new GridGenerator(size, numPlayers, new Random(seed)).grid;
+	public static Grid createRandomGrid(Dimension size, long seed){
+		System.err.println("Create " + size + " " + seed);
+		return new GridGenerator(size, new Random(seed)).grid;
 	}
 }
