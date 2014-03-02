@@ -51,7 +51,7 @@ public class GridGenerator {
 		while (playersPlaced < numPlayers){
 			Point p = points.get(r.nextInt(points.size()));
 			if (grid.isPassable(p)){
-				grid.set(new Player("Player " + ++playersPlaced), p);
+				grid.set(new Player(++playersPlaced), p);
 			}
 		}
 	}
