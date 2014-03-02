@@ -31,7 +31,7 @@ public class ServerTest extends Server{
 	@Test
 	public void testOnePlayer() {
 		// Connect one player
-		send(1, new ConnectEvent());
+		send(1, new ConnectEvent(false));
 		
 		// Ensure Player starts at (0, 0)
 		List<Player> players = IntegrationHelper.findPlayers(grid, 1);
@@ -82,8 +82,8 @@ public class ServerTest extends Server{
 	@Test
 	public void testTwoPlayers(){
 		// Connect one player
-		send(1, new ConnectEvent());
-		send(2, new ConnectEvent());
+		send(1, new ConnectEvent(false));
+		send(2, new ConnectEvent(false));
 		
 		List<Player> players = IntegrationHelper.findPlayers(grid, 2);
 		Player p1 = players.get(0);
@@ -116,9 +116,17 @@ public class ServerTest extends Server{
 	@Test
 	public void testTooManyPlayers(){
 		for (int i=0; i<Server.MAX_PLAYERS; i++){
-			send(i, new ConnectEvent());
+			send(i, new ConnectEvent(false));
 		}
 		IntegrationHelper.findPlayers(grid, Server.MAX_PLAYERS);
+	}
+	
+	@Test
+	public void testSpectators(){
+		send(1, new ConnectEvent(false));
+		send(2, new ConnectEvent(false));
+		send(3, new ConnectEvent(true));
+		IntegrationHelper.findPlayers(grid, 2);
 	}
 	
 	private void send(int playerId, Event event){

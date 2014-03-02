@@ -10,6 +10,7 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
+import common.models.Grid;
 
 public abstract class Client extends GameController {
 	
@@ -22,13 +23,13 @@ public abstract class Client extends GameController {
 	public Client(String serverAddress){
                 nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		nwc.send(new ConnectEvent());
+		nwc.send(new ConnectEvent(isSpectator()));
 	}
 
 	@Override
 	public void receive(Event event) {
 		if (event instanceof ViewUpdateEvent){
-			processViewUpdate((ViewUpdateEvent) event);
+			processViewUpdate(((ViewUpdateEvent)event).getGrid());
 		} else if (event instanceof PlayerDeadEvent){
 			processPlayerDead((PlayerDeadEvent) event);
 		} else if (event instanceof ConnectAcceptedEvent){
@@ -42,7 +43,8 @@ public abstract class Client extends GameController {
 		}
 	}
 	
-	protected abstract void processViewUpdate(ViewUpdateEvent event);
+	protected abstract boolean isSpectator();
+	protected abstract void processViewUpdate(Grid grid);
 	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
@@ -52,6 +54,7 @@ public abstract class Client extends GameController {
 	}
 	
 	protected void endGame(WinEvent winEvent){
+		processViewUpdate(winEvent.grid);
 		running = false;
 	}
 	

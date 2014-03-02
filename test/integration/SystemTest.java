@@ -18,7 +18,6 @@ import client.controllers.Client;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
 import common.models.Grid;
 import common.models.Player;
 
@@ -59,7 +58,7 @@ public class SystemTest {
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
 		assertTrue(server.isGameRunning());
-		assertTrue(client.isGameRunning());
+		
 		
 		// Set player starting position
 		Player p = IntegrationHelper.findPlayers(getGrid(), 1).get(0);
@@ -68,6 +67,8 @@ public class SystemTest {
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);
 		assertEquals(new Point(1, 0), getGrid().find(p));
+		
+		assertTrue(client.isGameRunning());
 		
 		// Wait for view update response
 		client.waitForViewUpdate();
@@ -138,7 +139,7 @@ public class SystemTest {
 		// Overrides
 		
 		@Override
-		protected void processViewUpdate(ViewUpdateEvent event) {
+		protected void processViewUpdate(Grid grid) {
 			viewUpdateSem.release();
 		}
 		
@@ -151,6 +152,11 @@ public class SystemTest {
 		@Override
 		protected void processConnectionRejected() {
 			connectSem.release();
+		}
+
+		@Override
+		protected boolean isSpectator() {
+			return false;
 		}
 	}
 
