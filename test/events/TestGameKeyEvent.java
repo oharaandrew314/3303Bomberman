@@ -1,6 +1,7 @@
 package events;
 
 import common.events.GameKeyEvent;
+
 import java.awt.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,11 +10,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+@SuppressWarnings("serial")
 public class TestGameKeyEvent extends Component {
     @Test
     public void anAwtKeyEventCanBeRestoredAfterSerialization() {
