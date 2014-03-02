@@ -58,13 +58,8 @@ public class SystemTest {
 		connectSem.acquireUninterruptibly();
 		connectSem.release();
 		
-		// Wait for client to be accepted
-		waitForKeyResponse();
-		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
-		
-		waitForKeyResponse();
 		assertTrue(getServer().isGameRunning());
 		
 		// Set player starting position
@@ -73,7 +68,6 @@ public class SystemTest {
 	
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);
-		waitForKeyResponse();
 		assertEquals(new Point(1, 0), getGrid().find(p));
 		
 		// Wait for view update response
@@ -81,11 +75,6 @@ public class SystemTest {
 		viewUpdateSem.acquireUninterruptibly();
 		viewUpdateSem.release();
 		assertTrue(client.receivedUpdate);
-	}
-	
-	private void waitForKeyResponse(){
-		keySem.acquireUninterruptibly();
-		keySem.release();
 	}
 	
 	private Server getServer(){
@@ -158,6 +147,8 @@ public class SystemTest {
 		public void pressKey(int keyCode){
 			keySem.acquireUninterruptibly();
 			nwc.send(new GameKeyEvent(keyCode));
+			keySem.acquireUninterruptibly();
+			keySem.release();
 		}
 		
 		@Override
