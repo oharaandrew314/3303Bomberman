@@ -113,13 +113,14 @@ public class Server extends GameController {
     }
     
     private void move(Player player, int dx, int dy){
-    	// Get destination point
-    	Point point = grid.find(player);
-    	point.translate(dx, dy);
+    	Point origin = grid.find(player);
     	
-    	// Move player if destination is passable.  Do nothing otherwise.
-    	if (grid.isValidPoint(point) && grid.isPassable(point)){
-    		grid.set(player, point);
+    	// Get destination point
+    	Point dest = new Point(origin);
+    	dest.translate(dx, dy);
+    	
+    	if (grid.getPossibleMoves(origin).contains(dest)){
+    		grid.set(player, dest);
     	}
     }
     

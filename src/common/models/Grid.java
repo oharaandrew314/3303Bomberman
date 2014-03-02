@@ -23,11 +23,7 @@ public class Grid implements Serializable {
 			squares[point.y][point.x]= new Square(); 
 		}
 	}
-	
-	public boolean isValidPoint(Point point){
-		return new Rectangle(0, 0, size.width, size.height).contains(point);
-	}
-	
+
 	public List<Entity> get(Point point){
 		return getSquare(point).getEntities();
 	}
