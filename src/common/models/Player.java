@@ -22,4 +22,9 @@ public class Player extends Unit {
 	public boolean isHideable() {
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		return String.valueOf(playerId);
+	}
 }
