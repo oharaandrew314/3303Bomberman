@@ -43,11 +43,15 @@ public class Server extends GameController {
 		return running;
 	}
 	
+	public boolean isAcceptingPlayers(){
+		return nwc.isAcceptingNewPeers();
+	}
+	
 	public void reset(){
-		grid = null;
 		running = false;
 		nwc.stopListening();
 		players.clear();
+		grid = null;
 	}
 	
 	public synchronized void simulationUpdate(){		
