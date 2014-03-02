@@ -12,14 +12,13 @@ import static java.awt.event.KeyEvent.*;
 
 
 public class TestCase {
-	private Collection<ArrayList<Integer>> events;
-	private Collection<Point> playerLocations;
-	private NetworkController[] networkControllers;
+	private static final String TEST_PATH = "testFiles/";
+	private ArrayList<ArrayList<Integer>> events;
+	//private NetworkController[] networkControllers;
 	private String filename;
 	
-	public TestCase(String filename, NetworkController[] networkControllers) throws IOException{
-		this.networkControllers = networkControllers;
-		playerLocations = new ArrayList<Point>();
+	public TestCase(String filename){
+		//this.networkControllers = networkControllers;
 		events = readEvents(filename);
 		this.filename = filename;
 		
@@ -32,9 +31,10 @@ public class TestCase {
 	 */
 	public void run(){
 		System.out.println(filename + ":");
+		
 		Thread[] threads = new Thread[events.size()];
 		for(int i = 0 ; i != events.size();i++){
-				threads[i] = new TestRunner(networkControllers[i], ((ArrayList<ArrayList<Integer>>) events).get(i) , i+1);
+				threads[i] = new Thread(new TestRunner(events.get(i) , i+1));
 				threads[i].start();
 		}
 		for(Thread t: threads){
@@ -59,7 +59,7 @@ public class TestCase {
 		String str = "";
 		
 		try{
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream("testFiles/" + filename + ".txt");
+			InputStream in = this.getClass().getClassLoader().getResourceAsStream(TEST_PATH + filename + ".txt");
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 		    if (in!=null) {                         

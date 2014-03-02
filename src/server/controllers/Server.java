@@ -93,6 +93,7 @@ public class Server extends GameController {
     	   		case KeyEvent.VK_F:
     	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
     	   }
+    	   System.out.print(grid);
        }
     }
     

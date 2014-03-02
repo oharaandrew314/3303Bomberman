@@ -1,40 +1,101 @@
 package client.controllers;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 import common.controllers.NetworkController;
-import common.events.KeyEvent;
+import common.events.GameKeyEvent;
+import common.events.PlayerDeadEvent;
+import common.events.ViewUpdateEvent;
+import common.events.WinEvent;
 
 
-public class TestRunner extends Thread{
+public class TestRunner extends Client implements Runnable{
 	
-	private NetworkController netController;
-	private Collection<Integer> events;
+	private ArrayList<Integer> events;
 	private int playerNumber;
+	private boolean connected = false;
 	
-	public TestRunner(NetworkController netController, Collection<Integer> events, int playerNumber){
-		this.netController = netController;
+	public TestRunner(ArrayList<Integer> events, int playerNumber){
+
+		super(NetworkController.DEFAULT_CLIENT_PORT + 5 + playerNumber);
+		System.out.println("playerNumber: " + playerNumber);
+		System.out.println("Port: " + (NetworkController.DEFAULT_CLIENT_PORT + 5 + playerNumber));
 		this.events = events;
 		this.playerNumber = playerNumber;
-		this.netController.addServerPeer();
+		
+	}
+
+	@Override
+	protected void processViewUpdate(ViewUpdateEvent event) {
+		this.grid = event.getGrid();
+		
+	}
+
+	@Override
+	protected void processConnectionAccepted() {
+		// TODO Auto-generated method stub
+		System.out.println("Player: " + playerNumber + " connected to the server");
+		connected = true;
+		
+	}
+
+	@Override
+	protected void processConnectionRejected() {
+		// TODO Auto-generated method stub
+		System.out.println("Player: " + playerNumber + " could not connect to server");
+		
 	}
 	
-	/**
-	 * Generates KeyEvents based on the keycodes attained from the testCase
-	 * and sends the events
-	 */
-	@Override
 	public void run(){
-		for(Integer i: events){
-			KeyEvent keyEvent = new KeyEvent(i);
-			netController.send(keyEvent);
-			System.out.println("Player: " + playerNumber + " - " + keyEvent.getKeyCode());
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		//ConnectEvent requestConnect = new ConnectEvent();
+		//nwc.send(requestConnect);
+		
+		while(!connected){
+			//wait
+			System.out.print("");
 		}
+			for(int i = 0; i != events.size(); i++){
+				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
+				keyEvent.setPlayerID(i + 1);
+				nwc.send(keyEvent);
+				//System.out.println("Player: " + playerNumber + " - " + keyEvent.getKeyCode());
+				//try {
+				//	Thread.sleep(50);
+				//} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+				//	e.printStackTrace();
+				//}
+			}
+			//nwc.stopListening();
+			synchronized(this){
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
+		
+			
 	}
+
+	@Override
+	protected void processPlayerDead(PlayerDeadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void processWinEvent(WinEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isGameRunning() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

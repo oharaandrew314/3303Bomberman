@@ -3,6 +3,7 @@ package client.controllers;
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
+import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.PlayerDeadEvent;
@@ -29,6 +30,7 @@ public abstract class Client extends GameController {
 	public Client(String serverAddress, int clientPort){
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.startListeningOn(clientPort);
+		nwc.send(new ConnectEvent());
 	}
 
 	@Override
