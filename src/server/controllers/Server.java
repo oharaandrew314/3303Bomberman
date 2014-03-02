@@ -3,11 +3,10 @@ package server.controllers;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import server.content.GridLoader;
+
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
