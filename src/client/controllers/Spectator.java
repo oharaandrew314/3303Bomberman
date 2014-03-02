@@ -14,8 +14,8 @@ public class Spectator extends Client {
 		super();
 		this.view = view;
 	}
-	public Spectator(int port, View view){
-		super(port);
+	public Spectator(String serverAddress, View view){
+		super(serverAddress);
 		this.view = view;
 	}
 	

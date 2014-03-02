@@ -14,12 +14,8 @@ public abstract class Client extends GameController {
 	}
 	
 	public Client(String serverAddress){
-                nwc.startListeningOnAnyAvailablePort();
+        nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-<<<<<<< HEAD
-		nwc.startListeningOn(clientPort);
-=======
->>>>>>> dev
 		nwc.send(new ConnectEvent());
 	}
 
