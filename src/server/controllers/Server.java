@@ -23,9 +23,6 @@ public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	private Map<Integer, Player> players;
-	
-	@Deprecated
-	private static final int DUMMY_ID = 1;
 
 	public Server(Grid grid) {
 		new SimulationTimer(this);
@@ -69,11 +66,13 @@ public class Server extends GameController {
 
     @Override
     public synchronized void receive(Event event) {
+    	int playerId = event.getPlayerID();
+    	
     	// Accept ConntectEvent and add player to game
     	if (event instanceof ConnectEvent){
     		if (players.size() < MAX_PLAYERS){
-    			Player player = new Player("Player " + DUMMY_ID);
-    			players.put(DUMMY_ID, player);
+    			Player player = new Player("Player " + playerId);
+    			players.put(playerId, player);
     			
     			// Find place on grid to add player
     			for (Point point : grid.keySet()){
@@ -91,7 +90,7 @@ public class Server extends GameController {
     	 * 3 different key profiles: n00b, Righty, Southpaw
     	 */
     	else if (event instanceof GameKeyEvent){
-    	   Player player = players.get(DUMMY_ID);
+    	   Player player = players.get(playerId);
     	   
     	   switch(((GameKeyEvent)event).getKeyCode()){
     	   		case KeyEvent.VK_UP:
