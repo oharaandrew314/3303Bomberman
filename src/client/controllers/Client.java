@@ -46,7 +46,6 @@ public abstract class Client extends GameController {
 		} else if (event instanceof WinEvent){
 			processWinEvent((WinEvent) event);
 		}
-
 	}
 	
 	protected abstract void processViewUpdate(ViewUpdateEvent event);

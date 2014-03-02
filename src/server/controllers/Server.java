@@ -23,16 +23,17 @@ import common.models.Unit;
 public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
+	
 	private Map<Integer, Player> players;
-	private boolean running = true;
+	protected boolean running = false;
 
-	public Server(Grid grid) {
+	public Server() {
 		new SimulationTimer(this);
 		players = new HashMap<>();
-		this.grid = grid;
 	}
 	
-	public void startListening(){
+	public void newGame(Grid grid){
+		this.grid = grid;
 		nwc.startListeningOnServerPort();
 		nwc.acceptNewPeers();
 	}
@@ -40,6 +41,13 @@ public class Server extends GameController {
 	@Override
 	public boolean isGameRunning() {
 		return running;
+	}
+	
+	public void reset(){
+		grid = null;
+		running = false;
+		nwc.stopListening();
+		players.clear();
 	}
 	
 	public synchronized void simulationUpdate(){		
@@ -55,6 +63,7 @@ public class Server extends GameController {
     	// Accept ConntectEvent and add player to game
     	if (event instanceof ConnectEvent){
     		if (players.size() < MAX_PLAYERS){
+                        nwc.acceptNewPeers();
     			Player player = new Player(playerId);
     			players.put(playerId, player);
     			
@@ -66,7 +75,9 @@ public class Server extends GameController {
     				}
     			}
     			throw new RuntimeException("Could not find place to add player");
-    		}
+    		} else {
+                        nwc.rejectNewPeers();
+                }
     	}
     	
     	/*
@@ -75,29 +86,40 @@ public class Server extends GameController {
     	 */
     	else if (event instanceof GameKeyEvent){
     	   Player player = players.get(playerId);
+    	   int keyCode = ((GameKeyEvent)event).getKeyCode();
     	   
-    	   switch(((GameKeyEvent)event).getKeyCode()){
-    	   		case KeyEvent.VK_UP:
-    	   		case KeyEvent.VK_W:
-    	   		case KeyEvent.VK_I: move(player, 0, -1); break;
-    	   		case KeyEvent.VK_LEFT:
-    	   		case KeyEvent.VK_A:
-    	   		case KeyEvent.VK_J: move(player, -1, 0); break;
-    	   		case KeyEvent.VK_DOWN:
-    	   		case KeyEvent.VK_S:
-    	   		case KeyEvent.VK_K: move(player, 0, 1); break;
-    	   		case KeyEvent.VK_RIGHT:
-    	   		case KeyEvent.VK_D:
-    	   		case KeyEvent.VK_L: move(player, 1, 0); break;
-    	   		case KeyEvent.VK_SPACE:
-    	   		case KeyEvent.VK_F:
-    	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+    	   if (isGameRunning()){
+    		   switch(keyCode){
+		   	   		case KeyEvent.VK_UP:
+		   	   		case KeyEvent.VK_W:
+		   	   		case KeyEvent.VK_I: move(player, 0, -1); break;
+		   	   		case KeyEvent.VK_LEFT:
+		   	   		case KeyEvent.VK_A:
+		   	   		case KeyEvent.VK_J: move(player, -1, 0); break;
+		   	   		case KeyEvent.VK_DOWN:
+		   	   		case KeyEvent.VK_S:
+		   	   		case KeyEvent.VK_K: move(player, 0, 1); break;
+		   	   		case KeyEvent.VK_RIGHT:
+		   	   		case KeyEvent.VK_D:
+		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
+		   	   		case KeyEvent.VK_SPACE:
+		   	   		case KeyEvent.VK_F:
+		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+		   	   }
+    	   } else if (keyCode == KeyEvent.VK_ENTER){
+    		   nwc.rejectNewPeers();
+    		   running = true;
     	   }
     	   System.out.print(grid);
        }
     }
     
     private void move(Player player, int dx, int dy){
+    	// Do nothing if game is not running
+    	if (!isGameRunning()){
+    		return;
+    	}
+    	
     	Point origin = grid.find(player);
     	
     	// Get destination point
@@ -134,19 +156,24 @@ public class Server extends GameController {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
     			nwc.send(new WinEvent(player));
-    			running = false;
+    			reset();
     		}
     	}
     }
     
     private void bomb(Player player){
+    	// Do nothing if game is not running
+    	if (!isGameRunning()){
+    		return;
+    	}
+    	
     	// TODO: implement
     }
 
     public static void main(String[] args){
-    	// FIXME: Default grid for now
-    	Grid grid = GridLoader.loadGrid("grid1.json");
-		Server server = new Server(grid);
-		server.startListening();
+		Server server = new Server();
+		
+		// FIXME: Default grid for now
+		server.newGame(GridLoader.loadGrid("grid1.json"));
     }
 }
