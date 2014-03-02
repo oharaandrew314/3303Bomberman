@@ -31,16 +31,10 @@ public class SystemTest {
 	public void setUp(){
 		// Create and Start server
 		testServer = new TestServer();
-		
-		// Server has not been started and is not accepting clients
 		assertTrue(!getServer().isAcceptingPlayers());
 		
 		testServer.start();
-		
-		// Server is started and accepting clients
 		assertTrue(getServer().isAcceptingPlayers());
-		
-		// While the server is accepting clients, the game is not yet running
 		assertTrue(!getServer().isGameRunning());		
 		
 		// start and connect client to local server
@@ -50,18 +44,13 @@ public class SystemTest {
 		testServer.newGame(
 			GridGenerator.createRandomGrid(new Dimension(4, 4), 2)
 		);
-		// Game started and game is running
 		assertTrue(getServer().isGameRunning());
-		
-		// Game started so no more players accepted
 		assertTrue(!getServer().isAcceptingPlayers());
 	}
 	
 	@After
 	public void after(){
 		testServer.stopGame();
-		
-		// game is stopped
 		assertTrue(!getServer().isGameRunning());
 	}
 
