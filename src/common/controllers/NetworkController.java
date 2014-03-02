@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 public class NetworkController {
     public static final int DEFAULT_CLIENT_PORT = 27000;
-    public static final String SERVER_IP = "127.0.0.1";
+    public static final String LOCALHOST = "127.0.0.1";
     public static final int SERVER_PORT = 27001;
     
     private GameController gameController;
@@ -90,23 +90,33 @@ public class NetworkController {
     }
     
     /**
+     * Attempt to translate the given address and port into an InetAddress
+     * and add it as a peer.
+     * @param address address of the peer to add
+     * @param port port of the peer ot add
+     */
+    public void addPeer(String address, int port){
+    	try {
+            addPeer(new InetSocketAddress(InetAddress.getByName(address), port));
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
      * Add a new peer, to which all messages will be sent.
      * @param peer The peer to add.
      */
-    public void addPeer(InetSocketAddress peer) {
+    private void addPeer(InetSocketAddress peer) {
         peers.add(peer);
     }
     
     /**
-     * Add the address & port combination where the server is expected to be
-     * running as a peer.
+     * Add the local address & port combination where the server is expected to
+     * be running as a local peer.
      */
-    public void addServerPeer() {
-        try {
-            addPeer(new InetSocketAddress(InetAddress.getByName(SERVER_IP), SERVER_PORT));
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void addLocalServerPeer() {
+    	addPeer(LOCALHOST, SERVER_PORT);
     }
     
     /**
