@@ -46,7 +46,7 @@ public class Server extends GameController {
 			}
 			
 			// If unit collision, process deaths
-			if (units.size() > 2){
+			if (units.size() > 1){
 				for (Unit unit : units){
 					if (unit instanceof Player){
 						Player player = (Player) unit;
@@ -71,12 +71,12 @@ public class Server extends GameController {
     	// Accept ConntectEvent and add player to game
     	if (event instanceof ConnectEvent){
     		if (players.size() < MAX_PLAYERS){
-    			Player player = new Player("Player " + playerId);
+    			Player player = new Player(playerId);
     			players.put(playerId, player);
     			
     			// Find place on grid to add player
     			for (Point point : grid.keySet()){
-    				if (grid.isPassable(point)){
+    				if (grid.isPassable(point) && !grid.hasPlayer(point)){
     					grid.set(player, point);
     					return;
     				}

@@ -11,12 +11,23 @@ import common.events.ViewUpdateEvent;
 public abstract class Client extends GameController {
 
 	public Client() {
-		this(NetworkController.DEFAULT_CLIENT_PORT);
+		this(
+			NetworkController.LOCALHOST,
+			NetworkController.DEFAULT_CLIENT_PORT
+		);
+	}
+	
+	public Client(String serverAddress){
+		this(serverAddress, NetworkController.DEFAULT_CLIENT_PORT);
 	}
 	
 	public Client(int port){
-		nwc.addServerPeer();
-		nwc.startListeningOn(port);
+		this(NetworkController.LOCALHOST, port);
+	}
+	
+	public Client(String serverAddress, int clientPort){
+		nwc.addPeer(serverAddress, clientPort);
+		nwc.startListeningOn(clientPort);
 	}
 
 	@Override
