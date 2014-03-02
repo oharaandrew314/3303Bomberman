@@ -24,7 +24,7 @@ public class TestGrid {
 	 * 
 	 *    -----
 	 *    |  .|
-	 *    |XP |
+	 *    |X1 |
 	 *    |  D|
 	 *    -----
 	 */
@@ -41,7 +41,7 @@ public class TestGrid {
 	//sanity test to make sure other tests are meaningful
 	@Test 
 	public void testToString(){
-		assertEquals(grid.toString(), "-----\n|  .|\n|XP |\n|  D|\n-----");
+		assertEquals(grid.toString(), "-----\n|  .|\n|X1 |\n|  D|\n-----");
 	}
 	
 	@Test
