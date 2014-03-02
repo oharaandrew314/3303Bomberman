@@ -46,6 +46,7 @@ public class SystemTest {
 		server = new TestServer();
 		assertTrue(!server.isAcceptingPlayers());
 		
+		// Open new game
 		server.newGame();
 		assertTrue(server.isAcceptingPlayers());
 		assertTrue(!server.isGameRunning());		
