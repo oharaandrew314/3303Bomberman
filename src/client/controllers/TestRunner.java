@@ -110,7 +110,7 @@ public class TestRunner extends Client implements Runnable{
 		waitForResponse(100);
 			//for(int i = 0; i != events.size(); i++){
 			int i = 0;
-			while(i != events.size() && !dead && !won){
+			while(i != events.size() && !dead && !isGameRunning()){
 				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
 				nwc.send(keyEvent);
 				TestDriver.logger.debug("Player: " + playerNumber + " - SEND KEY EVENT");
@@ -141,14 +141,14 @@ public class TestRunner extends Client implements Runnable{
 		
 	}
 
-	@Override
-	protected void processWinEvent(WinEvent event) {
+	//@Override
+	//protected void processWinEvent(WinEvent event) {
 		// TODO Auto-generated method stub
-		TestDriver.logger.debug("Player: " + playerNumber + " - WinEvent");
-		won = true;
-		nwc.stopListening();
+	//	TestDriver.logger.debug("Player: " + playerNumber + " - WinEvent");
+	//	won = true;
+	//	nwc.stopListening();
 		
-	}
+	//}
 
 	@Override
 	public boolean isGameRunning() {
