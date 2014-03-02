@@ -19,8 +19,8 @@ public class TestTestDriver{
 	@Test
 	public void testTestCases(){
 		Grid grid = GridLoader.loadGrid("grid1.json");
-		Server server = new Server(grid);
-		server.startListening();
+		Server server = new Server();
+		server.newGame(grid);
         driver = new TestDriver();
 		String[] testfiles = {"test2" };
 		driver.readTestCases(testfiles);
