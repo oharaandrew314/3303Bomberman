@@ -2,14 +2,7 @@ package client.controllers;
 
 import common.controllers.GameController;
 import common.controllers.NetworkController;
-import common.events.ConnectAcceptedEvent;
-import common.events.ConnectEvent;
-import common.events.ConnectRejectedEvent;
-import common.events.Event;
-import common.events.GameStartEvent;
-import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
+import common.events.*;
 import common.models.Grid;
 
 public abstract class Client extends GameController {
@@ -21,7 +14,7 @@ public abstract class Client extends GameController {
 	}
 	
 	public Client(String serverAddress){
-                nwc.startListeningOnAnyAvailablePort();
+        nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.send(new ConnectEvent(isSpectator()));
 	}
@@ -62,5 +55,4 @@ public abstract class Client extends GameController {
 	public boolean isGameRunning(){
 		return running;
 	}
-
 }
