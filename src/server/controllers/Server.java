@@ -193,10 +193,14 @@ public class Server extends GameController {
                         showHelp = true;
                     }   break;
                 case "random":
-                    if (args.length == 4) {
+                    if (args.length == 3 || args.length == 4) {
                         try {
                             Dimension dimension = new Dimension(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
-                            server.newGame(GridGenerator.createRandomGrid(dimension, Integer.parseInt(args[3])));
+                            if (args.length == 3) {
+                                server.newGame(GridGenerator.createRandomGrid(dimension));
+                            } else {
+                                server.newGame(GridGenerator.createRandomGrid(dimension, Integer.parseInt(args[3])));
+                            }
                         } catch(NumberFormatException e) {
                             showHelp = true;
                         }
@@ -215,7 +219,7 @@ public class Server extends GameController {
             System.out.println("Usage: server <command>");
             System.out.println("Available commands:");
             System.out.println("    load <gridName>                   Load a predefined json grid");
-            System.out.println("    random <width> <height> <seed>    Generate a random grid");
+            System.out.println("    random <width> <height> [<seed>]  Generate a random grid");
             System.out.println("    help                              Show this help file");
             System.exit(0);
         } else {
