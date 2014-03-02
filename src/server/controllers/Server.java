@@ -50,6 +50,7 @@ public class Server extends GameController {
 	public void reset(){
 		running = false;
 		nwc.stopListening();
+		nwc.clear();
 		players.clear();
 		grid = null;
 	}
@@ -160,7 +161,7 @@ public class Server extends GameController {
     	// Check if player wins and notify views
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
-    			nwc.send(new WinEvent(player));
+    			nwc.send(new WinEvent(player, grid));
     			reset();
     		}
     	}
