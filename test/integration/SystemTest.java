@@ -18,7 +18,6 @@ import client.controllers.Client;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
 import common.models.Grid;
 import common.models.Player;
 
@@ -140,7 +139,7 @@ public class SystemTest {
 		// Overrides
 		
 		@Override
-		protected void processViewUpdate(ViewUpdateEvent event) {
+		protected void processViewUpdate(Grid grid) {
 			viewUpdateSem.release();
 		}
 		
