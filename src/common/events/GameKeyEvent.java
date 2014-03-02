@@ -1,7 +1,9 @@
 package common.events;
 
 public class GameKeyEvent extends Event {
-    private int keyCode;
+
+	private static final long serialVersionUID = 615019145696546159L;
+	private int keyCode;
     
     
     public GameKeyEvent(java.awt.event.KeyEvent keyEvent) {
