@@ -93,7 +93,7 @@ public class TestNetworkController extends GameController {
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
         server.startListeningOnServerPort();
         clientA.addLocalServerPeer();
-        clientA.send(new ConnectEvent());
+        clientA.send(new ConnectEvent(false));
         waitToReceiveEvents(1);
         assertTrue(receivedEvents.get(0) instanceof ConnectEvent);
     }
@@ -117,8 +117,8 @@ public class TestNetworkController extends GameController {
         server.startListeningOnServerPort();
         server.acceptNewPeers();
         
-        clientA.send(new ConnectEvent());
-        clientB.send(new ConnectEvent());
+        clientA.send(new ConnectEvent(false));
+        clientB.send(new ConnectEvent(false));
         waitToReceiveEvents(4);
                 
         server.send(new ViewUpdateEvent(null));
@@ -139,11 +139,11 @@ public class TestNetworkController extends GameController {
         server.startListeningOnServerPort();
         
         server.acceptNewPeers();
-        clientA.send(new ConnectEvent());
+        clientA.send(new ConnectEvent(false));
         waitToReceiveEvents(2);
         
         server.rejectNewPeers();
-        clientB.send(new ConnectEvent());
+        clientB.send(new ConnectEvent(false));
         waitToReceiveEvents(4);
                 
         server.send(new ViewUpdateEvent(null));
@@ -165,14 +165,14 @@ public class TestNetworkController extends GameController {
         clientA.addLocalServerPeer();
         clientB.addLocalServerPeer();
         
-        clientA.send(new ConnectEvent());
+        clientA.send(new ConnectEvent(false));
         waitToReceiveEvents(2);
         
         assertEquals(0, receivedEvents.get(0).getPlayerID());
         assertEquals(0, receivedEvents.get(1).getPlayerID());
         resetReceivedEvents();
         
-        clientB.send(new ConnectEvent());
+        clientB.send(new ConnectEvent(false));
         waitToReceiveEvents(2);
         
         //bit hacky, but prevents interrmittant failures due to network unreliability
@@ -196,8 +196,8 @@ public class TestNetworkController extends GameController {
         server.startListeningOnServerPort();
         server.acceptNewPeers();
         
-        clientA.send(new ConnectEvent());
-        clientB.send(new ConnectEvent());
+        clientA.send(new ConnectEvent(false));
+        clientB.send(new ConnectEvent(false));
         waitToReceiveEvents(4);
         
         assertReceivedNumberOfEvents(ConnectEvent.class, 2);

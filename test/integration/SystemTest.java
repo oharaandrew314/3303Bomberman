@@ -152,6 +152,11 @@ public class SystemTest {
 		protected void processConnectionRejected() {
 			connectSem.release();
 		}
+
+		@Override
+		protected boolean isSpectator() {
+			return false;
+		}
 	}
 
 }
