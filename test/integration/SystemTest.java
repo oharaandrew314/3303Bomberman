@@ -26,13 +26,12 @@ import common.models.Player;
 public class SystemTest {
 	
 	private TestServer testServer;
-	private static Semaphore keySem, connectSem, viewUpdateSem;
+	private static Semaphore keySem, connectSem;
 	
 	@Before
 	public void setUp(){
 		keySem = new Semaphore(1);
 		connectSem = new Semaphore(1);
-		viewUpdateSem = new Semaphore(1);
 	}
 	
 	/** Stop game and check state */
@@ -71,10 +70,7 @@ public class SystemTest {
 		assertEquals(new Point(1, 0), getGrid().find(p));
 		
 		// Wait for view update response
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.release();
-		assertTrue(client.receivedUpdate);
+		client.waitForViewUpdate();
 	}
 	
 	private Server getServer(){
@@ -138,11 +134,13 @@ public class SystemTest {
 	 */
 	private static class TestClient extends Client {
 		
-		private boolean receivedUpdate;
+		private final Semaphore viewUpdateSem;
 		
 		public TestClient(){
-			receivedUpdate = false;
+			viewUpdateSem = new Semaphore(1);
 		}
+		
+		// Helpers
 		
 		public void pressKey(int keyCode){
 			keySem.acquireUninterruptibly();
@@ -151,12 +149,19 @@ public class SystemTest {
 			keySem.release();
 		}
 		
+		public void waitForViewUpdate(){
+			viewUpdateSem.acquireUninterruptibly();
+			viewUpdateSem.acquireUninterruptibly();
+			viewUpdateSem.release();
+		}
+		
+		// Overrides
+		
 		@Override
 		public boolean isGameRunning() { return true; }
 		
 		@Override
 		protected void processViewUpdate(ViewUpdateEvent event) {
-			receivedUpdate = true;
 			viewUpdateSem.release();
 		}
 		
@@ -172,8 +177,6 @@ public class SystemTest {
 		}
 		@Override
 		protected void processWinEvent(WinEvent event) {}
-
-		
 	}
 
 }
