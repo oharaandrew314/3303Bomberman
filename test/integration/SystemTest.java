@@ -25,7 +25,7 @@ import common.models.Player;
 
 public class SystemTest {
 	
-	private TestServer testServer;
+	private TestServer server;
 	private static Semaphore keySem;
 	
 	@Before
@@ -36,26 +36,26 @@ public class SystemTest {
 	/** Stop game and check state */
 	@After
 	public void after(){
-		testServer.stopGame();
-		assertTrue(!getServer().isGameRunning());
+		server.reset();
+		assertTrue(!server.isGameRunning());
 	}
 
 	@Test
 	public void test() {	
 		// Create and Start server
-		testServer = new TestServer();
-		assertTrue(!getServer().isAcceptingPlayers());
+		server = new TestServer();
+		assertTrue(!server.isAcceptingPlayers());
 		
-		testServer.start();
-		assertTrue(getServer().isAcceptingPlayers());
-		assertTrue(!getServer().isGameRunning());		
+		server.newGame();
+		assertTrue(server.isAcceptingPlayers());
+		assertTrue(!server.isGameRunning());		
 		
 		// start and connect client to local server
 		TestClient client = TestClient.startTestClient();
 		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
-		assertTrue(getServer().isGameRunning());
+		assertTrue(server.isGameRunning());
 		
 		// Set player starting position
 		Player p = IntegrationHelper.findPlayers(getGrid(), 1).get(0);
@@ -69,54 +69,22 @@ public class SystemTest {
 		client.waitForViewUpdate();
 	}
 	
-	private Server getServer(){
-		return testServer.server;
-	}
-	
 	private Grid getGrid(){
-		return getServer().getGrid();
+		return server.getGrid();
 	}
 	
-	// TODO try to remove from thread
-	/**
-	 * Test Server
-	 * @author Andrew O'Hara
-	 *
-	 */
-	private static class TestServer extends Thread {
-		
-		private Server server;
-		
-		public TestServer(){
-			server = new MockServer();
-		}
+	private class TestServer extends Server {
 		
 		@Override
-		public void start(){
-			super.start();
-			
-			// Wait until server is ready before ending
-			while(server == null || !server.isAcceptingPlayers());	
-		}
-		
-		@Override
-		public void run(){
-			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
-		}
-		
-		public void stopGame(){
-			server.reset();
-		}
-		
-		private class MockServer extends Server {
-			
-			@Override
-			public void receive(Event event){
-				super.receive(event);
-				if (event instanceof GameKeyEvent){
-					keySem.release();
-				}
+		public void receive(Event event){
+			super.receive(event);
+			if (event instanceof GameKeyEvent){
+				keySem.release();
 			}
+		}
+		
+		public void newGame(){
+			newGame(GridLoader.loadGrid("test/testGrid2.json"));
 		}
 	}
 	
