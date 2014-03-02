@@ -1,7 +1,12 @@
 package client.views;
 
-import common.events.ViewUpdateEvent;
+import common.models.Grid;
+import common.models.Player;
 
-public abstract class View {
-	public abstract void updateView(ViewUpdateEvent event);
+public interface View {
+	void updateView(Grid grid);
+	void displayPlayerDead(Player player);
+	void displayConnectionAccepted();
+	void displayConnectionRejected();
+	void displayWin(Player player);
 }

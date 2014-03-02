@@ -40,4 +40,8 @@ public abstract class Client extends GameController {
 	protected abstract void processConnectionRejected();
 	protected abstract void processWinEvent(WinEvent event);
 
+	@Override
+	public boolean isGameRunning() {
+		return false; // TODO - implementation
+	}
 }

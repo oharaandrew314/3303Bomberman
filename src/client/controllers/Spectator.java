@@ -2,17 +2,15 @@ package client.controllers;
 
 import client.views.TextView;
 import client.views.View;
-import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
+import common.controllers.NetworkController;
+import common.events.*;
 
 public class Spectator extends Client {
 
 	private View view;
 	
 	public Spectator(View view){
-		super();
-		this.view = view;
+		this(NetworkController.LOCALHOST, view);
 	}
 	public Spectator(String serverAddress, View view){
 		super(serverAddress);
@@ -21,36 +19,36 @@ public class Spectator extends Client {
 	
 	@Override
 	protected void processViewUpdate(ViewUpdateEvent event) {
-		view.updateView(event);
+		view.updateView(event.getGrid());
 	}
 
 	@Override
 	protected void processPlayerDead(PlayerDeadEvent event) {
-		// Spectator doesn't own a player, doesn't care
+		view.displayPlayerDead(event.player);
 	}
 
 	@Override
 	protected void processConnectionAccepted() {
-		System.out.println("Connection Accepted");
+		view.displayConnectionAccepted();
 	}
 
 	@Override
 	protected void processConnectionRejected() {
-		System.out.println("Connection Rejected");
+		view.displayConnectionRejected();
+	}
+	
+	@Override
+	protected void processWinEvent(WinEvent event) {
+		view.displayWin(event.player);
 	}
 	
 	public static void main(String[] args){
-		new Spectator(new TextView());
-	}
-	@Override
-	protected void processWinEvent(WinEvent event) {
-		// TODO Auto-generated method stub
+		String networkAddress = NetworkController.LOCALHOST;
+		if (args.length > 0){
+			networkAddress = args[0];
+		}
 		
-	}
-	@Override
-	public boolean isGameRunning() {
-		// TODO Auto-generated method stub
-		return false;
+		new Spectator(networkAddress, new TextView());
 	}
 
 }
