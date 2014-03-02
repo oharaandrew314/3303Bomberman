@@ -118,7 +118,7 @@ public class Server extends GameController {
     	point.translate(dx, dy);
     	
     	// Move player if destination is passable.  Do nothing otherwise.
-    	if (grid.isPassable(point)){
+    	if (grid.isValidPoint(point) && grid.isPassable(point)){
     		grid.set(player, point);
     	}
     }

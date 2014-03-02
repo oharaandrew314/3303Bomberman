@@ -24,6 +24,13 @@ public class Grid implements Serializable {
 		}
 	}
 	
+	public boolean isValidPoint(Point point){
+		return (
+			point.x >= 0 && point.x < size.width &&
+			point.y >= 0 && point.y < size.height
+		);
+	}
+	
 	public List<Entity> get(Point point){
 		return getSquare(point).getEntities();
 	}
