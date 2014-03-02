@@ -25,47 +25,38 @@ import common.models.Player;
 
 public class SystemTest {
 	
-	private TestServer testServer;
-	private static Semaphore keySem, connectSem, viewUpdateSem;
+	private TestServer server;
+	private static Semaphore keySem;
 	
 	@Before
 	public void setUp(){
 		keySem = new Semaphore(1);
-		connectSem = new Semaphore(1);
-		viewUpdateSem = new Semaphore(1);
 	}
 	
 	/** Stop game and check state */
 	@After
 	public void after(){
-		testServer.stopGame();
-		assertTrue(!getServer().isGameRunning());
+		server.reset();
+		assertTrue(!server.isGameRunning());
 	}
 
 	@Test
 	public void test() {	
 		// Create and Start server
-		testServer = new TestServer();
-		assertTrue(!getServer().isAcceptingPlayers());
+		server = new TestServer();
+		assertTrue(!server.isAcceptingPlayers());
 		
-		testServer.start();
-		assertTrue(getServer().isAcceptingPlayers());
-		assertTrue(!getServer().isGameRunning());		
+		// Open new game
+		server.newGame();
+		assertTrue(server.isAcceptingPlayers());
+		assertTrue(!server.isGameRunning());		
 		
 		// start and connect client to local server
-		connectSem.acquireUninterruptibly();
-		TestClient client = new TestClient();
-		connectSem.acquireUninterruptibly();
-		connectSem.release();
-		
-		// Wait for client to be accepted
-		waitForKeyResponse();
+		TestClient client = TestClient.startTestClient();
 		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
-		
-		waitForKeyResponse();
-		assertTrue(getServer().isGameRunning());
+		assertTrue(server.isGameRunning());
 		
 		// Set player starting position
 		Player p = IntegrationHelper.findPlayers(getGrid(), 1).get(0);
@@ -73,69 +64,28 @@ public class SystemTest {
 	
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);
-		waitForKeyResponse();
 		assertEquals(new Point(1, 0), getGrid().find(p));
 		
 		// Wait for view update response
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.release();
-		assertTrue(client.receivedUpdate);
-	}
-	
-	private void waitForKeyResponse(){
-		keySem.acquireUninterruptibly();
-		keySem.release();
-	}
-	
-	private Server getServer(){
-		return testServer.server;
+		client.waitForViewUpdate();
 	}
 	
 	private Grid getGrid(){
-		return getServer().getGrid();
+		return server.getGrid();
 	}
 	
-	// TODO try to remove from thread
-	/**
-	 * Test Server
-	 * @author Andrew O'Hara
-	 *
-	 */
-	private static class TestServer extends Thread {
-		
-		private Server server;
-		
-		public TestServer(){
-			server = new MockServer();
-		}
+	private class TestServer extends Server {
 		
 		@Override
-		public void start(){
-			super.start();
-			
-			// Wait until server is ready before ending
-			while(server == null || !server.isAcceptingPlayers());	
-		}
-		
-		@Override
-		public void run(){
-			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
-		}
-		
-		public void stopGame(){
-			server.reset();
-		}
-		
-		private class MockServer extends Server {
-			
-			@Override
-			public void receive(Event event){
-				super.receive(event);
-				if (event instanceof GameKeyEvent){
-					keySem.release();
-				}
+		public void receive(Event event){
+			super.receive(event);
+			if (event instanceof GameKeyEvent){
+				keySem.release();
 			}
+		}
+		
+		public void newGame(){
+			newGame(GridLoader.loadGrid("test/testGrid2.json"));
 		}
 	}
 	
@@ -149,23 +99,46 @@ public class SystemTest {
 	 */
 	private static class TestClient extends Client {
 		
-		private boolean receivedUpdate;
+		private final Semaphore viewUpdateSem;
+		private static Semaphore connectSem;
 		
-		public TestClient(){
-			receivedUpdate = false;
+		private TestClient(){
+			viewUpdateSem = new Semaphore(1);
 		}
+		
+		// Factory
+		
+		public static TestClient startTestClient(){
+			connectSem = new Semaphore(1);
+			connectSem.acquireUninterruptibly();
+			TestClient client = new TestClient();
+			connectSem.acquireUninterruptibly();
+			connectSem.release();
+			return client;
+		}
+		
+		// Helpers
 		
 		public void pressKey(int keyCode){
 			keySem.acquireUninterruptibly();
 			nwc.send(new GameKeyEvent(keyCode));
+			keySem.acquireUninterruptibly();
+			keySem.release();
 		}
+		
+		public void waitForViewUpdate(){
+			viewUpdateSem.acquireUninterruptibly();
+			viewUpdateSem.acquireUninterruptibly();
+			viewUpdateSem.release();
+		}
+		
+		// Overrides
 		
 		@Override
 		public boolean isGameRunning() { return true; }
 		
 		@Override
 		protected void processViewUpdate(ViewUpdateEvent event) {
-			receivedUpdate = true;
 			viewUpdateSem.release();
 		}
 		
@@ -181,8 +154,6 @@ public class SystemTest {
 		}
 		@Override
 		protected void processWinEvent(WinEvent event) {}
-
-		
 	}
 
 }
