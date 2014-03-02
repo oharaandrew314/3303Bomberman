@@ -1,9 +1,9 @@
 package integration.helpers;
 
+import java.awt.event.KeyEvent;
 import java.util.concurrent.Semaphore;
 
 import client.controllers.Client;
-
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
 import common.models.Grid;
@@ -48,6 +48,10 @@ public class MockClient extends Client {
 		viewUpdateSem.acquireUninterruptibly();
 		viewUpdateSem.acquireUninterruptibly();
 		viewUpdateSem.release();
+	}
+	
+	public void startGame(){
+		pressKey(KeyEvent.VK_ENTER);
 	}
 	
 	// Overrides

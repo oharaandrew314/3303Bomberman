@@ -43,7 +43,7 @@ public class SystemTest {
 		assertTrue(!client.isGameRunning());
 		
 		// start game
-		client.pressKey(KeyEvent.VK_ENTER);
+		client.startGame();
 		assertTrue(server.isGameRunning());
 		
 		
