@@ -2,7 +2,16 @@ package client.controllers;
 
 import common.controllers.GameController;
 import common.controllers.NetworkController;
+<<<<<<< HEAD
 import common.events.*;
+=======
+import common.events.ConnectAcceptedEvent;
+import common.events.ConnectRejectedEvent;
+import common.events.Event;
+import common.events.PlayerDeadEvent;
+import common.events.ViewUpdateEvent;
+import common.events.WinEvent;
+>>>>>>> dev
 
 public abstract class Client extends GameController {
 
@@ -32,18 +41,20 @@ public abstract class Client extends GameController {
 		if (event instanceof ViewUpdateEvent){
 			processViewUpdate((ViewUpdateEvent) event);
 		} else if (event instanceof PlayerDeadEvent){
-			processPlayerDead();
+			processPlayerDead((PlayerDeadEvent) event);
 		} else if (event instanceof ConnectAcceptedEvent){
 			processConnectionAccepted();
 		} else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
+		} else if (event instanceof WinEvent){
+			processWinEvent((WinEvent) event);
 		}
-
 	}
 	
 	protected abstract void processViewUpdate(ViewUpdateEvent event);
-	protected abstract void processPlayerDead();
+	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
+	protected abstract void processWinEvent(WinEvent event);
 
 }
