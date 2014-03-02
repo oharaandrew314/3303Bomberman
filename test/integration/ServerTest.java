@@ -24,7 +24,7 @@ public class ServerTest extends Server{
 	public void setUp() throws Exception {
 		reset();
 		grid = GridLoader.loadGrid("grid1.json");
-		running = true;
+		assertFalse(isGameRunning());
 	}
 
 	@Test
@@ -37,6 +37,9 @@ public class ServerTest extends Server{
 		Player p = players.get(0);
 		grid.remove(p);
 		grid.set(p, new Point(0, 0));
+		
+		start(p);
+		assertTrue(isGameRunning());
 		
 		goUp(p);  // Try going out of bounds
 		checkPos(p, 0, 0);
@@ -66,14 +69,12 @@ public class ServerTest extends Server{
 		checkPos(p, 0, 2);
 		
 		// Win game
-		assertTrue(isGameRunning());
 		goDown(p);
 		goRight(p);
 		goRight(p);
 		goUp(p);
 		goRight(p);
 		goUp(p);
-		checkPos(p, 3, 1);
 		assertFalse(isGameRunning());
 	}
 	
@@ -91,6 +92,8 @@ public class ServerTest extends Server{
 		Player p2 = players.get(1);
 		grid.remove(p2);
 		grid.set(p2, new Point(2, 1));
+		
+		start(p1);
 		
 		//Move p1
 		goRight(p1);
@@ -139,6 +142,7 @@ public class ServerTest extends Server{
 		assertEquals(new Point(x, y), grid.find(player));
 	}
 	
+	private void start(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_ENTER)); }
 	private void goUp(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_UP)); }
 	private void goLeft(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_LEFT)); }
 	private void goDown(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_DOWN)); }

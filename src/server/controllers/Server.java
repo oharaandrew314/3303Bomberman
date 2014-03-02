@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import server.content.GridLoader;
+
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
-import common.events.StartGameEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Door;
@@ -32,7 +32,7 @@ public class Server extends GameController {
 		players = new HashMap<>();
 	}
 	
-	public void startGame(Grid grid){
+	public void newGame(Grid grid){
 		this.grid = grid;
 		nwc.startListeningOnServerPort();
 		nwc.acceptNewPeers();
@@ -77,39 +77,45 @@ public class Server extends GameController {
     		}
     	}
     	
-    	else if (event instanceof StartGameEvent){
-    		nwc.rejectNewPeers();
-    		running = true;
-    	}
-    	
     	/*
     	 * Interpret GameKeyEvent.
     	 * 3 different key profiles: n00b, Righty, Southpaw
     	 */
     	else if (event instanceof GameKeyEvent){
     	   Player player = players.get(playerId);
+    	   int keyCode = ((GameKeyEvent)event).getKeyCode();
     	   
-    	   switch(((GameKeyEvent)event).getKeyCode()){
-    	   		case KeyEvent.VK_UP:
-    	   		case KeyEvent.VK_W:
-    	   		case KeyEvent.VK_I: move(player, 0, -1); break;
-    	   		case KeyEvent.VK_LEFT:
-    	   		case KeyEvent.VK_A:
-    	   		case KeyEvent.VK_J: move(player, -1, 0); break;
-    	   		case KeyEvent.VK_DOWN:
-    	   		case KeyEvent.VK_S:
-    	   		case KeyEvent.VK_K: move(player, 0, 1); break;
-    	   		case KeyEvent.VK_RIGHT:
-    	   		case KeyEvent.VK_D:
-    	   		case KeyEvent.VK_L: move(player, 1, 0); break;
-    	   		case KeyEvent.VK_SPACE:
-    	   		case KeyEvent.VK_F:
-    	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+    	   if (isGameRunning()){
+    		   switch(keyCode){
+		   	   		case KeyEvent.VK_UP:
+		   	   		case KeyEvent.VK_W:
+		   	   		case KeyEvent.VK_I: move(player, 0, -1); break;
+		   	   		case KeyEvent.VK_LEFT:
+		   	   		case KeyEvent.VK_A:
+		   	   		case KeyEvent.VK_J: move(player, -1, 0); break;
+		   	   		case KeyEvent.VK_DOWN:
+		   	   		case KeyEvent.VK_S:
+		   	   		case KeyEvent.VK_K: move(player, 0, 1); break;
+		   	   		case KeyEvent.VK_RIGHT:
+		   	   		case KeyEvent.VK_D:
+		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
+		   	   		case KeyEvent.VK_SPACE:
+		   	   		case KeyEvent.VK_F:
+		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+		   	   }
+    	   } else if (keyCode == KeyEvent.VK_ENTER){
+    		   nwc.rejectNewPeers();
+    		   running = true;
     	   }
        }
     }
     
     private void move(Player player, int dx, int dy){
+    	// Do nothing if game is not running
+    	if (!isGameRunning()){
+    		return;
+    	}
+    	
     	Point origin = grid.find(player);
     	
     	// Get destination point
@@ -152,6 +158,11 @@ public class Server extends GameController {
     }
     
     private void bomb(Player player){
+    	// Do nothing if game is not running
+    	if (!isGameRunning()){
+    		return;
+    	}
+    	
     	// TODO: implement
     }
 
@@ -159,6 +170,6 @@ public class Server extends GameController {
 		Server server = new Server();
 		
 		// FIXME: Default grid for now
-		server.startGame(GridLoader.loadGrid("grid1.json"));
+		server.newGame(GridLoader.loadGrid("grid1.json"));
     }
 }
