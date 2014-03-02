@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import server.content.GridLoader;
-
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
+import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
@@ -111,8 +111,10 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
+    		   // Start game
     		   nwc.rejectNewPeers();
     		   running = true;
+    		   nwc.send(new GameStartEvent());
     	   }
     	   System.out.print(grid);
        }

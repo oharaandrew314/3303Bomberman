@@ -3,7 +3,8 @@ package common.events;
 import java.io.Serializable;
 
 public abstract class Event implements Serializable {
-    private int playerID;
+	private static final long serialVersionUID = 6289295918217598226L;
+	private int playerID;
     
     public void setPlayerID(int playerID) {
         this.playerID = playerID;

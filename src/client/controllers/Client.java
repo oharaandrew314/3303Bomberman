@@ -6,11 +6,14 @@ import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
+import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 
 public abstract class Client extends GameController {
+	
+	private boolean running = false;
 
 	public Client() {
 		this(NetworkController.LOCALHOST);
@@ -33,7 +36,9 @@ public abstract class Client extends GameController {
 		} else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
 		} else if (event instanceof WinEvent){
-			processWinEvent((WinEvent) event);
+			endGame((WinEvent) event);
+		} else if (event instanceof GameStartEvent){
+			startGame();
 		}
 	}
 	
@@ -41,6 +46,18 @@ public abstract class Client extends GameController {
 	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
-	protected abstract void processWinEvent(WinEvent event);
+	
+	protected void startGame(){
+		running = true;
+	}
+	
+	protected void endGame(WinEvent winEvent){
+		running = false;
+	}
+	
+	@Override
+	public boolean isGameRunning(){
+		return running;
+	}
 
 }
