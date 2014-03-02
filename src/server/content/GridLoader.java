@@ -103,7 +103,7 @@ public class GridLoader {
 			switch(name.toLowerCase()){
 				case "pillar": return new Pillar();
 				case "wall": return new Wall();
-				case "player": return new Player("Player " + playerIndex++);
+				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"

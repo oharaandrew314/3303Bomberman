@@ -71,7 +71,7 @@ public class Server extends GameController {
     	// Accept ConntectEvent and add player to game
     	if (event instanceof ConnectEvent){
     		if (players.size() < MAX_PLAYERS){
-    			Player player = new Player("Player " + playerId);
+    			Player player = new Player(playerId);
     			players.put(playerId, player);
     			
     			// Find place on grid to add player

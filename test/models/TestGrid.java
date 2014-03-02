@@ -34,7 +34,7 @@ public class TestGrid {
 		
 		grid.set(new Wall(), new Point(2, 0));
 		grid.set(new Pillar(), new Point(0, 1));
-		grid.set(new Player("Peter"), new Point(1, 1));
+		grid.set(new Player(1), new Point(1, 1));
 		grid.set(new Door(), new Point(2, 2));
 	}
 	
