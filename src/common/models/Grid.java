@@ -25,10 +25,7 @@ public class Grid implements Serializable {
 	}
 	
 	public boolean isValidPoint(Point point){
-		return (
-			point.x >= 0 && point.x < size.width &&
-			point.y >= 0 && point.y < size.height
-		);
+		return new Rectangle(0, 0, size.width, size.height).contains(point);
 	}
 	
 	public List<Entity> get(Point point){
