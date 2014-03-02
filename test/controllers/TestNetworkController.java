@@ -46,6 +46,11 @@ public class TestNetworkController extends GameController {
         receivedEvents.add(event);
     }
     
+    @Override
+	public boolean isGameRunning() {
+		return true;
+	}
+    
     /**
      * Enter a busy waiting state until the receivedEvents list reaches the 
      * given size. If we have waited for more than 5 seconds, we assume the

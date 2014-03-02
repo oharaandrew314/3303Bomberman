@@ -7,6 +7,7 @@ import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
+import common.events.WinEvent;
 
 public abstract class Client extends GameController {
 
@@ -26,7 +27,7 @@ public abstract class Client extends GameController {
 	}
 	
 	public Client(String serverAddress, int clientPort){
-		nwc.addPeer(serverAddress, clientPort);
+		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.startListeningOn(clientPort);
 	}
 
@@ -35,18 +36,21 @@ public abstract class Client extends GameController {
 		if (event instanceof ViewUpdateEvent){
 			processViewUpdate((ViewUpdateEvent) event);
 		} else if (event instanceof PlayerDeadEvent){
-			processPlayerDead();
+			processPlayerDead((PlayerDeadEvent) event);
 		} else if (event instanceof ConnectAcceptedEvent){
 			processConnectionAccepted();
 		} else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
+		} else if (event instanceof WinEvent){
+			processWinEvent((WinEvent) event);
 		}
 
 	}
 	
 	protected abstract void processViewUpdate(ViewUpdateEvent event);
-	protected abstract void processPlayerDead();
+	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
+	protected abstract void processWinEvent(WinEvent event);
 
 }

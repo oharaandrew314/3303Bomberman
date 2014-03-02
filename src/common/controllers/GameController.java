@@ -12,5 +12,6 @@ public abstract class GameController {
 		nwc = new NetworkController(this);
 	}
 
+	public abstract boolean isGameRunning();
     public abstract void receive(Event event);
 }

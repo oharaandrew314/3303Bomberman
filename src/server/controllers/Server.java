@@ -14,6 +14,8 @@ import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
+import common.events.WinEvent;
+import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
@@ -23,6 +25,7 @@ public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	private Map<Integer, Player> players;
+	private boolean running = true;
 
 	public Server(Grid grid) {
 		new SimulationTimer(this);
@@ -33,6 +36,11 @@ public class Server extends GameController {
 	public void startListening(){
 		nwc.startListeningOnServerPort();
 		nwc.acceptNewPeers();
+	}
+	
+	@Override
+	public boolean isGameRunning() {
+		return running;
 	}
 	
 	public synchronized void simulationUpdate(){
@@ -119,8 +127,22 @@ public class Server extends GameController {
     	Point dest = new Point(origin);
     	dest.translate(dx, dy);
     	
-    	if (grid.getPossibleMoves(origin).contains(dest)){
-    		grid.set(player, dest);
+    	// Do not continue if player cannot move here
+    	if (!grid.getPossibleMoves(origin).contains(dest)){
+    		return;
+    	}
+    	
+    	// Move player
+    	grid.set(player, dest);
+    	
+    	// TODO Collisions
+    	
+    	// Check if player wins and notify views
+    	for (Entity entity : grid.get(dest)){
+    		if (entity instanceof Door){
+    			nwc.send(new WinEvent(player));
+    			running = false;
+    		}
     	}
     }
     
@@ -133,5 +155,5 @@ public class Server extends GameController {
     	Grid grid = GridLoader.loadGrid("grid1.json");
 		Server server = new Server(grid);
 		server.startListening();
-	}
+    }
 }
