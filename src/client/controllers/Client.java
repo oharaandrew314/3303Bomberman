@@ -17,7 +17,7 @@ public abstract class Client extends GameController {
 	public Client(String serverAddress){
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		nwc.send(new ConnectEvent());
+		nwc.send(new ConnectEvent(isSpectator()));
 	}
 
 	@Override
@@ -37,6 +37,7 @@ public abstract class Client extends GameController {
 		}
 	}
 	
+	protected abstract boolean isSpectator();
 	protected abstract void processViewUpdate(ViewUpdateEvent event);
 	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
