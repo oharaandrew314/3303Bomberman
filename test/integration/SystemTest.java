@@ -26,7 +26,6 @@ import common.models.Player;
 public class SystemTest {
 	
 	private TestServer testServer;
-	private TestClient client;
 	private static Semaphore keySem, connectSem, viewUpdateSem;
 	
 	@Before
@@ -54,8 +53,10 @@ public class SystemTest {
 		assertTrue(!getServer().isGameRunning());		
 		
 		// start and connect client to local server
-		keySem.acquireUninterruptibly();
-		client = new TestClient();
+		connectSem.acquireUninterruptibly();
+		TestClient client = new TestClient();
+		connectSem.acquireUninterruptibly();
+		connectSem.release();
 		
 		// Wait for client to be accepted
 		waitForKeyResponse();
@@ -131,7 +132,9 @@ public class SystemTest {
 			@Override
 			public void receive(Event event){
 				super.receive(event);
-				keySem.release();
+				if (event instanceof GameKeyEvent){
+					keySem.release();
+				}
 			}
 		}
 	}
@@ -170,13 +173,11 @@ public class SystemTest {
 		protected void processPlayerDead(PlayerDeadEvent event) {}
 		@Override
 		protected void processConnectionAccepted() {
-			//sem.release();
-			//System.err.println("release on accepted");
+			connectSem.release();
 		}
 		@Override
 		protected void processConnectionRejected() {
-			//sem.release();
-			//System.err.println("release on rejected");
+			connectSem.release();
 		}
 		@Override
 		protected void processWinEvent(WinEvent event) {}
