@@ -1,15 +1,16 @@
 package client.controllers;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import server.content.GridLoader;
-import server.controllers.Server;
-import common.controllers.NetworkController;
-import common.models.Grid;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
+
 
 
 public class TestDriver {
+	public static final Logger logger = Logger.getLogger(TestDriver.class);
+	
 	private Collection<TestCase> testcases;
 
 
@@ -36,8 +37,9 @@ public class TestDriver {
 	}
 	
 	public static void main(String[] args){
+		BasicConfigurator.configure();
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {"test3" };
+		String[] testfiles = {"test2" };
 		driver.readTestCases(testfiles);
 		driver.runAll();
 	}
