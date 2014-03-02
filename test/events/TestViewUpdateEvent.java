@@ -31,7 +31,7 @@ public class TestViewUpdateEvent {
         Grid grid = new Grid(new Dimension(3, 3));
         grid.set(new Wall(), new Point(2, 0));	
         grid.set(new Pillar(), new Point(0, 1));
-        grid.set(new Player("Peter"), new Point(1, 1));
+        grid.set(new Player(1), new Point(1, 1));
         grid.set(new Door(), new Point(2, 2));
         
         viewUpdateEvent = new ViewUpdateEvent(grid);

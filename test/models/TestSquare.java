@@ -20,7 +20,7 @@ public class TestSquare {
 	
 	@Test
 	public void testAdd(){
-		Player p = new Player("Clark");
+		Player p = new Player(1);
 		assertTrue(s.add(p));
 		assertTrue(s.contains(p));
 	}
@@ -34,7 +34,7 @@ public class TestSquare {
 	@Test(expected=IllegalArgumentException.class)
 	public void testAddPlayerToPillar(){
 		s.add(new Pillar());
-		s.add(new Player("Pete"));
+		s.add(new Player(2));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -57,7 +57,7 @@ public class TestSquare {
 	
 	@Test
 	public void testRemove(){
-		Player p = new Player("Lois");
+		Player p = new Player(3);
 		s.add(p);
 		
 		assertTrue(s.remove(p));

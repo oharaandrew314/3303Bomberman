@@ -1,5 +1,15 @@
 package controllers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
@@ -8,18 +18,6 @@ import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.ViewUpdateEvent;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-
-import org.junit.Test;
 
 public class TestNetworkController extends GameController {
     private NetworkController clientA;
@@ -89,11 +87,7 @@ public class TestNetworkController extends GameController {
     @Test
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
         server.startListeningOnServerPort();
-        try {
-            clientA.addPeer(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), NetworkController.SERVER_PORT));
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(TestNetworkController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        clientA.addLocalServerPeer();
         clientA.send(new ConnectEvent());
         waitToReceiveEvents(1);
         assertTrue(receivedEvents.get(0) instanceof ConnectEvent);
@@ -102,7 +96,7 @@ public class TestNetworkController extends GameController {
     @Test
     public void addServerPeerMethodShouldAddTheServerAddressAsAPeer() {
         server.startListeningOnServerPort();
-        clientA.addServerPeer();
+        clientA.addLocalServerPeer();
         clientA.send(new GameKeyEvent(0));
         waitToReceiveEvents(1);
         assertTrue(receivedEvents.get(0) instanceof GameKeyEvent);
@@ -112,8 +106,8 @@ public class TestNetworkController extends GameController {
     public void newPeersShouldBeSavedWhenAcceptNewPeersIsSet() {
         clientA.startListeningOn(1);
         clientB.startListeningOn(2);
-        clientA.addServerPeer();
-        clientB.addServerPeer();
+        clientA.addLocalServerPeer();
+        clientB.addLocalServerPeer();
         
         server.startListeningOnServerPort();
         server.acceptNewPeers();
@@ -135,8 +129,8 @@ public class TestNetworkController extends GameController {
     public void newPeersShouldNotBeSavedWhenRejectNewPeersIsSet() {
         clientA.startListeningOn(1);
         clientB.startListeningOn(2);
-        clientA.addServerPeer();
-        clientB.addServerPeer();
+        clientA.addLocalServerPeer();
+        clientB.addLocalServerPeer();
         server.startListeningOnServerPort();
         
         server.acceptNewPeers();
@@ -163,8 +157,8 @@ public class TestNetworkController extends GameController {
         server.startListeningOnServerPort();
         
         server.acceptNewPeers();
-        clientA.addServerPeer();
-        clientB.addServerPeer();
+        clientA.addLocalServerPeer();
+        clientB.addLocalServerPeer();
         
         clientA.send(new ConnectEvent());
         waitToReceiveEvents(2);

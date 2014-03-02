@@ -1,12 +1,17 @@
 package integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import server.content.GridLoader;
+import server.controllers.Server;
 
 import common.events.ConnectEvent;
 import common.events.Event;
@@ -14,16 +19,11 @@ import common.events.GameKeyEvent;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
-import server.content.GridLoader;
-import server.controllers.Server;
 
 public class ServerTest {
 	
-	private static final int PLAYER_ID = 1;
-	
 	private Server server;
 	private Grid grid;
-	private Player player;
 
 	@Before
 	public void setUp() throws Exception {
@@ -33,64 +33,110 @@ public class ServerTest {
 
 	@Test
 	public void testOnePlayer() {
-		send(new ConnectEvent());
+		// Connect one player
+		send(1, new ConnectEvent());
 		
 		// Ensure Player starts at (0, 0)
-		findPlayer();
-		grid.set(player, new Point(0, 0));
+		List<Player> players = findPlayers(1);
+		Player p = players.get(0);
+		grid.remove(p);
+		grid.set(p, new Point(0, 0));
 		
-		goUp();  // Try going out of bounds
-		checkPos(0, 0);
+		goUp(p);  // Try going out of bounds
+		checkPos(p, 0, 0);
 		
-		goDown();  // Try going to empty space
-		checkPos(0, 1);
+		goDown(p);  // Try going to empty space
+		checkPos(p, 0, 1);
 		
-		goRight();  // Try going into pillar
-		checkPos(0, 1);
+		goRight(p);  // Try going into pillar
+		checkPos(p, 0, 1);
 		
-		goDown();
-		checkPos(0, 2);
+		goDown(p);
+		checkPos(p, 0, 2);
 		
-		goRight(); // Try going into wall
-		checkPos(0, 2);
+		goRight(p); // Try going into wall
+		checkPos(p, 0, 2);
 		
-		goDown();
-		checkPos(0, 3);
+		goDown(p);
+		checkPos(p, 0, 3);
 		
-		goRight();
-		checkPos(1, 3);
+		goRight(p);
+		checkPos(p, 1, 3);
 		
-		goLeft();
-		checkPos(0, 3);
+		goLeft(p);
+		checkPos(p, 0, 3);
 		
-		goUp();
-		checkPos(0, 2);
+		goUp(p);
+		checkPos(p, 0, 2);
+	}
+	
+	@Test
+	public void testTwoPlayers(){
+		// Connect one player
+		send(1, new ConnectEvent());
+		send(2, new ConnectEvent());
+		
+		List<Player> players = findPlayers(2);
+		Player p1 = players.get(0);
+		grid.remove(p1);
+		grid.set(p1, new Point(0, 0));
+		
+		Player p2 = players.get(1);
+		grid.remove(p2);
+		grid.set(p2, new Point(2, 1));
+		
+		//Move p1
+		goRight(p1);
+		checkPos(p1, 1, 0);
+		
+		// Move p2
+		goUp(p2);
+		checkPos(p2, 2, 0);
+		
+		// Collide
+		goLeft(p2);
+		findPlayers(0);
 		
 	}
 	
-	private void send(Event event){
-		event.setPlayerID(PLAYER_ID);
+	/**
+	 * This test creates one too many players, and then ensures that only
+	 * the maximum amount of players exist in the game.
+	 */
+	@Test
+	public void testTooManyPlayers(){
+		for (int i=0; i<Server.MAX_PLAYERS; i++){
+			send(i, new ConnectEvent());
+		}
+		findPlayers(Server.MAX_PLAYERS);
+	}
+	
+	private void send(int playerId, Event event){
+		event.setPlayerID(playerId);
 		server.receive(event);
+		server.simulationUpdate();
 	}
 	
-	private void findPlayer(){
+	private List<Player> findPlayers(int numPlayers){
+		List<Player> players = new ArrayList<>();
 		for (Point point : grid.keySet()){
 			for (Entity entity: grid.get(point)){
 				if (entity instanceof Player){
-					player = (Player) entity;
+					players.add((Player) entity);
 				}
 			}
 		}
-		assertNotNull(player);
+		assertEquals(numPlayers, players.size());
+		return players;
 	}
 	
-	private void checkPos(int x, int y){
+	private void checkPos(Player player, int x, int y){
 		assertEquals(new Point(x, y), grid.find(player));
 	}
 	
-	private void goUp() { send(new GameKeyEvent(KeyEvent.VK_UP)); }
-	private void goLeft() { send(new GameKeyEvent(KeyEvent.VK_LEFT)); }
-	private void goDown() { send(new GameKeyEvent(KeyEvent.VK_DOWN)); }
-	private void goRight() { send(new GameKeyEvent(KeyEvent.VK_RIGHT)); }
+	private void goUp(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_UP)); }
+	private void goLeft(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_LEFT)); }
+	private void goDown(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_DOWN)); }
+	private void goRight(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_RIGHT)); }
 
 }
