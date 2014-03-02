@@ -11,6 +11,10 @@ public abstract class GameController {
 	public GameController() {
 		nwc = new NetworkController(this);
 	}
+	
+	public Grid getGrid(){
+		return grid;
+	}
 
 	public abstract boolean isGameRunning();
     public abstract void receive(Event event);

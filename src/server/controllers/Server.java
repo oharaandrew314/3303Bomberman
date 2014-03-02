@@ -43,11 +43,15 @@ public class Server extends GameController {
 		return running;
 	}
 	
+	public boolean isAcceptingPlayers(){
+		return nwc.isAcceptingNewPeers();
+	}
+	
 	public void reset(){
-		grid = null;
 		running = false;
 		nwc.stopListening();
 		players.clear();
+		grid = null;
 	}
 	
 	public synchronized void simulationUpdate(){		
@@ -57,7 +61,7 @@ public class Server extends GameController {
 	}
 
     @Override
-    public synchronized void receive(Event event) {
+    public synchronized void receive(Event event) {    	
     	int playerId = event.getPlayerID();
     	
     	// Accept ConntectEvent and add player to game

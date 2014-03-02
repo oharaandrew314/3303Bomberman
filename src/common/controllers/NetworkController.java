@@ -90,6 +90,13 @@ public class NetworkController {
     }
     
     /**
+     * @return true if the network controller will accept new ConnectEvents
+     */
+    public boolean isAcceptingNewPeers(){
+    	return acceptNewPeers;
+    }
+    
+    /**
      * Attempt to translate the given address and port into an InetAddress
      * and add it as a peer.
      * @param address address of the peer to add
@@ -139,8 +146,9 @@ public class NetworkController {
      */
     public synchronized void send(Event event) {
         try {
-            for(InetSocketAddress peer : peers)
+            for(InetSocketAddress peer : peers) {
                 sendToOnePeer(event, peer);
+            }
         } catch (IOException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
