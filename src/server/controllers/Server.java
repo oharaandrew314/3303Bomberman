@@ -72,7 +72,17 @@ public class Server extends GameController {
     	// Accept ConntectEvent and add player to game
     	if (event instanceof ConnectEvent){
     		if (players.size() < MAX_PLAYERS){
-    			players.put(DUMMY_ID, new Player("Player " + DUMMY_ID));
+    			Player player = new Player("Player " + DUMMY_ID);
+    			players.put(DUMMY_ID, player);
+    			
+    			// Find place on grid to add player
+    			for (Point point : grid.keySet()){
+    				if (grid.isPassable(point)){
+    					grid.set(player, point);
+    					return;
+    				}
+    			}
+    			throw new RuntimeException("Could not find place to add player");
     		}
     	}
     	
