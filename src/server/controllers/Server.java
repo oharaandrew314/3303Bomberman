@@ -63,6 +63,7 @@ public class Server extends GameController {
     	// Accept ConntectEvent and add player to game
     	if (event instanceof ConnectEvent){
     		if (players.size() < MAX_PLAYERS){
+                        nwc.acceptNewPeers();
     			Player player = new Player(playerId);
     			players.put(playerId, player);
     			
@@ -74,7 +75,9 @@ public class Server extends GameController {
     				}
     			}
     			throw new RuntimeException("Could not find place to add player");
-    		}
+    		} else {
+                        nwc.rejectNewPeers();
+                }
     	}
     	
     	/*
