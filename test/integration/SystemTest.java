@@ -1,11 +1,10 @@
 package integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 import org.junit.After;
@@ -15,6 +14,7 @@ import org.junit.Test;
 import server.content.GridLoader;
 import server.controllers.Server;
 import client.controllers.Client;
+
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
