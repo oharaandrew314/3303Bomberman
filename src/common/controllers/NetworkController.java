@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class NetworkController {
-    public static final int DEFAULT_CLIENT_PORT = 27000;
     public static final String LOCALHOST = "127.0.0.1";
     public static final int SERVER_PORT = 27001;
     
@@ -74,10 +73,10 @@ public class NetworkController {
     }
     
     /**
-     * Start listening for messages on the default client port.
+     * Find an available port and listen on it.
      */
-    public void startListeningOnDefaultClientPort() {
-        startListeningOn(DEFAULT_CLIENT_PORT);
+    public void startListeningOnAnyAvailablePort() {
+        startListeningOn(0);
     }
     
     /**
@@ -87,6 +86,13 @@ public class NetworkController {
         if (listener != null)
             listener.stopListening();
         socket.close();
+    }
+    
+    /**
+     * @return true if the network controller will accept new ConnectEvents
+     */
+    public boolean isAcceptingNewPeers(){
+    	return acceptNewPeers;
     }
     
     /**
@@ -139,8 +145,9 @@ public class NetworkController {
      */
     public synchronized void send(Event event) {
         try {
-            for(InetSocketAddress peer : peers)
+            for(InetSocketAddress peer : peers) {
                 sendToOnePeer(event, peer);
+            }
         } catch (IOException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }

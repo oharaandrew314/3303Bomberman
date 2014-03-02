@@ -1,4 +1,5 @@
 import integration.ServerTest;
+import integration.SystemTest;
 import models.TestGrid;
 import models.TestSquare;
 
@@ -26,6 +27,7 @@ import events.TestViewUpdateEvent;
    
    //Integration Tests
    ServerTest.class,
+   SystemTest.class,
 })
 
 public class UnitTestSuite {}
