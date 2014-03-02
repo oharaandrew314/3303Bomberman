@@ -26,12 +26,11 @@ import common.models.Player;
 public class SystemTest {
 	
 	private TestServer testServer;
-	private static Semaphore keySem, connectSem;
+	private static Semaphore keySem;
 	
 	@Before
 	public void setUp(){
 		keySem = new Semaphore(1);
-		connectSem = new Semaphore(1);
 	}
 	
 	/** Stop game and check state */
@@ -52,10 +51,7 @@ public class SystemTest {
 		assertTrue(!getServer().isGameRunning());		
 		
 		// start and connect client to local server
-		connectSem.acquireUninterruptibly();
-		TestClient client = new TestClient();
-		connectSem.acquireUninterruptibly();
-		connectSem.release();
+		TestClient client = TestClient.startTestClient();
 		
 		// start game
 		client.pressKey(KeyEvent.VK_ENTER);
@@ -135,9 +131,21 @@ public class SystemTest {
 	private static class TestClient extends Client {
 		
 		private final Semaphore viewUpdateSem;
+		private static Semaphore connectSem;
 		
-		public TestClient(){
+		private TestClient(){
 			viewUpdateSem = new Semaphore(1);
+		}
+		
+		// Factory
+		
+		public static TestClient startTestClient(){
+			connectSem = new Semaphore(1);
+			connectSem.acquireUninterruptibly();
+			TestClient client = new TestClient();
+			connectSem.acquireUninterruptibly();
+			connectSem.release();
+			return client;
 		}
 		
 		// Helpers
