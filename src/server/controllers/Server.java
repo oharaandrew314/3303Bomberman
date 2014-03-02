@@ -5,8 +5,6 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.content.GridGenerator;
-import server.content.GridLoader;
 import common.controllers.GameController;
 import common.events.ConnectEvent;
 import common.events.Event;
@@ -20,8 +18,6 @@ import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
-
-import java.awt.Dimension;
 
 public class Server extends GameController {
 	
