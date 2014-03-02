@@ -6,6 +6,7 @@ public class Player extends Unit {
 	private final int START_NUM_BOMBS = 1;
 	public final int playerId;
 	
+	@SuppressWarnings("unused")
 	private int numBombs; // no bombs in milestone 1
 	
 	public Player(int playerId){

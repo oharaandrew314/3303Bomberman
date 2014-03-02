@@ -15,10 +15,10 @@ Bomberman game for the SYSC 3303 Project
 - Milestone 3: March 31
 
 ###Contributors
-- Andrew O'Hara - 100815259
-- Caleb Simpson - 100819001
-- Dennis Dionne - 100822373
-- Darrell Penner - 100817231
+- Andrew O'Hara - 100815259  - Controllers, Grid Generation, Integration tests
+- Caleb Simpson - 100819001  - Networking, Events
+- Dennis Dionne - 100822373  - Test Client and loader
+- Darrell Penner - 100817231 - Client, Grid Models
 
 ###Contribution Rules
 

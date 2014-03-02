@@ -4,7 +4,8 @@ import common.models.Grid;
 
 
 public class ViewUpdateEvent extends Event {
-    private Grid grid;
+	private static final long serialVersionUID = 3205454428606455663L;
+	private Grid grid;
     
     public ViewUpdateEvent(Grid grid) {
         this.grid = grid;
