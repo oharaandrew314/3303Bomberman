@@ -40,4 +40,15 @@ public class TextView implements View {
 	public void displayConnectionRejected() {
 		System.out.println("Connection Rejected");
 	}
+
+	@Override
+	public void displayStartGame() {
+		System.out.println("Game Started");
+	}
+
+	@Override
+	public void displayEndGame(Grid grid, Player player) {
+		System.out.println(grid);
+		System.out.println(player.name + "has ended the game");
+	}
 }

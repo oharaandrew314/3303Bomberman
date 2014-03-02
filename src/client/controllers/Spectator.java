@@ -33,22 +33,39 @@ public class Spectator extends Client {
 		view.displayConnectionRejected();
 	}
 	
-	public static void main(String[] args){
-		String networkAddress = NetworkController.LOCALHOST;
-		if (args.length > 0){
-			networkAddress = args[0];
-		}
-		
-		new Spectator(networkAddress, new TextView());
-	}
-	
 	@Override
 	protected boolean isSpectator() {
 		return true;
 	}
+	
 	@Override
 	protected void processViewUpdate(Grid grid) {
 		view.updateView(grid);
 	}
 
+	@Override
+	protected void startGame(){
+		super.startGame();
+		view.displayStartGame();
+	}
+	
+	@Override
+	protected void endGame(WinEvent event){
+		super.endGame(event);
+		view.displayEndGame(event.grid, event.player);
+	}
+	
+	public static void main(String[] args){
+		String networkAddress = NetworkController.LOCALHOST;
+		
+		if (args.length == 1){
+			networkAddress = args[0];
+		}
+		else {
+			System.out.println("Usage: [<server-ip-address>]");
+			return;
+		}
+		
+		new Spectator(networkAddress, new TextView());
+	}
 }
