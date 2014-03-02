@@ -64,9 +64,4 @@ public class SystemTest {
 	private Grid getGrid(){
 		return server.getGrid();
 	}
-	
-	// Test Client
-	
-	
-
 }
