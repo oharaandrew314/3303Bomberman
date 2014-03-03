@@ -62,8 +62,6 @@ public class MockClient extends Client {
 	}
 	
 	@Override
-	protected void processPlayerDead(PlayerDeadEvent event) {}
-	@Override
 	protected void processConnectionAccepted() {
 		connectSem.release();
 	}

@@ -19,7 +19,8 @@ public class Spectator extends Client {
 	}
 
 	@Override
-	protected void processPlayerDead(PlayerDeadEvent event) {
+	protected void playerDead(PlayerDeadEvent event) {
+		super.playerDead(event);
 		view.displayPlayerDead(event.player);
 	}
 

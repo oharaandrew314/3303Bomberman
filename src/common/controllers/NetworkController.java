@@ -39,8 +39,6 @@ public class NetworkController {
         } catch (SocketException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
     
     /**
@@ -208,6 +206,35 @@ public class NetworkController {
                 return id;
         }
         return peers.size();
+    }
+    
+    /**
+     * 
+     * @param original
+     * @param response
+     */
+    public void replyTo(Event original, Event response){
+    	// Get player id from original message and verify
+    	int playerId = original.getPlayerID();
+    	if (playerId == -1){
+    		Logger.getLogger(
+    			NetworkController.class.getName()).log(Level.SEVERE, null,
+    			"cannt reply to event which does not have ID"
+    		);
+    		return;
+    	}
+    	
+    	// Silently fail if player is not a peer (probably a test.  sssssh.
+    	if (peers.size() <= playerId){
+    		return;
+    	}
+    	
+    	// Reply to client
+    	try {
+			sendToOnePeer(response, peers.get(playerId));
+		} catch (IOException e) {
+			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
+		}
     }
     
     /**

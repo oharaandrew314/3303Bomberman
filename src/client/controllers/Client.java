@@ -24,7 +24,7 @@ public abstract class Client extends GameController {
 		if (event instanceof ViewUpdateEvent){
 			processViewUpdate(((ViewUpdateEvent)event).getGrid());
 		} else if (event instanceof PlayerDeadEvent){
-			processPlayerDead((PlayerDeadEvent) event);
+			playerDead((PlayerDeadEvent) event);
 		} else if (event instanceof ConnectAcceptedEvent){
 			processConnectionAccepted();
 		} else if (event instanceof ConnectRejectedEvent){
@@ -33,14 +33,21 @@ public abstract class Client extends GameController {
 			endGame((WinEvent) event);
 		} else if (event instanceof GameStartEvent){
 			startGame();
+		} else if (event instanceof AcknowledgeKeyEvent){
+			keyEventAcknowledged();
 		}
 	}
 	
 	protected abstract boolean isSpectator();
 	protected abstract void processViewUpdate(Grid grid);
-	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
+	
+	protected void keyEventAcknowledged(){}
+	
+	protected void playerDead(PlayerDeadEvent event){
+		running = false;
+	}
 	
 	protected void startGame(){
 		running = true;
