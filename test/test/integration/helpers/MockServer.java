@@ -1,4 +1,4 @@
-package integration.helpers;
+package test.integration.helpers;
 
 import java.util.concurrent.Semaphore;
 

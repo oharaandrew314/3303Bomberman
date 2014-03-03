@@ -1,9 +1,8 @@
-package integration;
+package test.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import integration.helpers.IntegrationHelper;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -14,6 +13,7 @@ import org.junit.Test;
 
 import server.content.GridLoader;
 import server.controllers.Server;
+import test.integration.helpers.IntegrationHelper;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;

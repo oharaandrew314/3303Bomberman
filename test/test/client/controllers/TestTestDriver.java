@@ -1,9 +1,10 @@
-package client.controllers;
+package test.client.controllers;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import client.controllers.TestDriver;
 import server.controllers.Server;
 
 public class TestTestDriver{

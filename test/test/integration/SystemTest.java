@@ -1,10 +1,7 @@
-package integration;
+package test.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import integration.helpers.IntegrationHelper;
-import integration.helpers.MockClient;
-import integration.helpers.MockServer;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -12,6 +9,9 @@ import java.awt.event.KeyEvent;
 import org.junit.After;
 import org.junit.Test;
 
+import test.integration.helpers.IntegrationHelper;
+import test.integration.helpers.MockClient;
+import test.integration.helpers.MockServer;
 import common.models.Grid;
 import common.models.Player;
 
@@ -55,8 +55,6 @@ public class SystemTest {
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);
 		assertEquals(new Point(1, 0), getGrid().find(p));
-		
-		assertTrue(client.isGameRunning());
 		
 		// Wait for view update response
 		client.waitForViewUpdate();

@@ -1,18 +1,18 @@
-import integration.ServerTest;
-import integration.SystemTest;
-import models.TestGrid;
-import models.TestSquare;
-
+package test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import client.controllers.TestTestDriver;
-import content.TestGridLoader;
-import controllers.TestGridGenerator;
-import controllers.TestNetworkController;
-import controllers.TestSimulationTimer;
-import events.TestGameKeyEvent;
-import events.TestViewUpdateEvent;
+import test.client.controllers.TestTestDriver;
+import test.content.TestGridLoader;
+import test.controllers.TestGridGenerator;
+import test.controllers.TestNetworkController;
+import test.controllers.TestSimulationTimer;
+import test.events.TestGameKeyEvent;
+import test.events.TestViewUpdateEvent;
+import test.integration.ServerTest;
+import test.integration.SystemTest;
+import test.models.TestGrid;
+import test.models.TestSquare;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

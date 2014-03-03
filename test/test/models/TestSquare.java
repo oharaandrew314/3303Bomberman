@@ -1,4 +1,4 @@
-package models;
+package test.models;
 
 import org.junit.*;
 

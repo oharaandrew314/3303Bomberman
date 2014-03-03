@@ -1,4 +1,4 @@
-package integration.helpers;
+package test.integration.helpers;
 
 import static org.junit.Assert.assertEquals;
 

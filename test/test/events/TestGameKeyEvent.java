@@ -1,4 +1,4 @@
-package events;
+package test.events;
 
 import common.events.GameKeyEvent;
 

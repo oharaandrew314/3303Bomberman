@@ -1,4 +1,4 @@
-package controllers;
+package test.controllers;
 
 import static org.junit.Assert.*;
 
