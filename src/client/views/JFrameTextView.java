@@ -38,7 +38,7 @@ public class JFrameTextView implements View {
 	}
 	
 	private void console(String string){
-		console.setText(console.getText() + string);
+		console.append(string);
 	}
 
 	@Override
