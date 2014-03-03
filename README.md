@@ -3,6 +3,10 @@
 
 Bomberman game for the SYSC 3303 Project
 
+###TA Notes
+
+- The instructions say that the Door must be hidden.  Since the door cannot be revealed by destroying walls, the player will not see the Door until the step on it, ending the game.
+
 ###Usage Instructions
 
 By JAR:
