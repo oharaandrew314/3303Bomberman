@@ -1,9 +1,11 @@
 package common.controllers;
 
+import java.util.Observable;
+
 import common.events.Event;
 import common.models.Grid;
 
-public abstract class GameController {
+public abstract class GameController extends Observable{
 	
 	protected final NetworkController nwc;
 	protected Grid grid;

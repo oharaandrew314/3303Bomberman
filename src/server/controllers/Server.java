@@ -29,6 +29,7 @@ public class Server extends GameController {
 	public Server() {
 		new SimulationTimer(this);
 		players = new HashMap<>();
+		addObserver(new TestLogger());
 	}
 	
 	public void newGame(Grid grid){
@@ -57,11 +58,19 @@ public class Server extends GameController {
 	public synchronized void simulationUpdate(){		
 		//TODO: Bomb logic
 		//TODO: AI logic
-		nwc.send(new ViewUpdateEvent(grid));
+		
+		Event event = new ViewUpdateEvent(grid);
+		nwc.send(event);
+		
+		setChanged();
+		notifyObservers(event);
 	}
 
     @Override
-    public synchronized void receive(Event event) {    	
+    public synchronized void receive(Event event) {
+    	setChanged();
+    	notifyObservers(event);
+    	
     	int playerId = event.getPlayerID();
     	
     	// Accept ConntectEvent and add player to game

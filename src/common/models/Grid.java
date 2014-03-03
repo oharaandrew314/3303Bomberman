@@ -119,18 +119,19 @@ public class Grid implements Serializable {
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
 		final int EXTRA_WIDTH = 2; //compensates for the '|' taking up two extra rows
+		String lineSep = System.getProperty("line.separator");
 		
 		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
 			sb.append("-");
 		}
-		sb.append("\n");
+		sb.append(lineSep);
 		
 		for (int j = 0; j < size.height; j++){
 			sb.append("|");
 			for (int i = 0; i < size.width; i++){
 				sb.append(squares[j][i].toString());
 			}
-			sb.append("|\n");
+			sb.append("|" + lineSep);
 		}
 		
 		for (int i = 0; i < size.width + EXTRA_WIDTH; i++){
