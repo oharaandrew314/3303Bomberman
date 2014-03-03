@@ -10,6 +10,10 @@ import static java.awt.event.KeyEvent.*;
 
 
 public class TestCase {
+	public static final String UP = "UP";
+	public static final String DOWN = "DOWN";
+	public static final String RIGHT = "RIGHT";
+	public static final String LEFT = "LEFT";
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
 	private String filename;
@@ -37,7 +41,6 @@ public class TestCase {
 			try {
 				t.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -74,13 +77,13 @@ public class TestCase {
 		        	String newString = str.substring(2).trim();
 		        	
 		        		switch(newString){
-			        		case "UP":  events.get(player-1).add(VK_UP);
+			        		case UP:  events.get(player-1).add(VK_UP);
 		                    	break;
-			        		case "DOWN":  events.get(player-1).add(VK_DOWN);
+			        		case DOWN:  events.get(player-1).add(VK_DOWN);
 		                		break;
-			        		case "LEFT":  events.get(player-1).add(VK_LEFT);
+			        		case LEFT:  events.get(player-1).add(VK_LEFT);
 			        			break;
-			        		case "RIGHT":  events.get(player-1).add(VK_RIGHT);
+			        		case RIGHT:  events.get(player-1).add(VK_RIGHT);
 		                		break;
 		                	default:
 		                		break;
@@ -90,7 +93,6 @@ public class TestCase {
 		    }
 		}
 		catch (NumberFormatException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return events;

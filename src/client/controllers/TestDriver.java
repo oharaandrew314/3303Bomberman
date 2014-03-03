@@ -1,13 +1,10 @@
 package client.controllers;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import server.content.GridLoader;
 import server.controllers.Server;
-
-
-
-
 
 public class TestDriver {
 	
@@ -25,7 +22,7 @@ public class TestDriver {
 	 */
 	public void runAll(){
 		for(TestCase test: testcases){
-			server.newGame(GridLoader.loadGrid("grid1.json"));
+			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
 			test.run();
 		}
 	}
@@ -39,8 +36,7 @@ public class TestDriver {
 		}
 	}
 	
-	public static void main(String[] args){
-		
+	public static void main(String[] args){		
 		TestDriver driver = new TestDriver();
 		String[] testfiles = {"test1", "test2", "test3" };
 		driver.readTestCases(testfiles);
@@ -50,10 +46,6 @@ public class TestDriver {
 	public Collection<TestCase> getTestCases(){
 		return testcases;
 	}
-	
-
-	
-	
 }
 
 

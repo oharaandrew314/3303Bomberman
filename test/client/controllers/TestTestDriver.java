@@ -1,29 +1,17 @@
 package client.controllers;
 
-
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-
-
 public class TestTestDriver{
-
 	
 	private TestDriver driver;
-
-
 	
 	@Test
 	public void testTestCases(){
-		//Grid grid = GridLoader.loadGrid("grid1.json");
-		//Server server = new Server();
-		//server.newGame(grid);
         driver = new TestDriver();
-		String[] testfiles = {"test2" };
+		String[] testfiles = {"test1", "test3", "test2" };
 		driver.readTestCases(testfiles);
-		
-		//driver.runAll();
-		
+		assertEquals(3, driver.getTestCases().size());
 	}
-	
-
 }
