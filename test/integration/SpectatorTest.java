@@ -1,31 +1,16 @@
 package integration;
 
-import static org.junit.Assert.*;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.TextArea;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.text.Element;
-
 import integration.helpers.MockClient;
 import integration.helpers.MockServer;
+
+import java.awt.event.KeyEvent;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import common.models.Grid;
-import common.models.Player;
 import client.controllers.Spectator;
 import client.views.JFrameTextView;
-import client.views.TextView;
-import client.views.View;
 
 public class SpectatorTest {
 	
@@ -41,8 +26,6 @@ public class SpectatorTest {
 		
 		client = MockClient.startMockClient(server);
 		spectator = new Spectator(new JFrameTextView());
-		
-		//server.
 	}
 	
 	@After
