@@ -24,12 +24,13 @@ public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	
+	private final SimulationTimer timer;
 	private Map<Integer, Player> players;
 	protected boolean running = false;
 	private boolean requestReset = false;
 
 	public Server() {
-		new SimulationTimer(this);
+		timer = new SimulationTimer(this);
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 	}
@@ -56,6 +57,11 @@ public class Server extends GameController {
 		players.clear();
 		grid = null;
 		requestReset = false;
+	}
+	
+	public void stop(){
+		reset();
+		timer.stop();
 	}
 	
 	public synchronized void simulationUpdate(){		
