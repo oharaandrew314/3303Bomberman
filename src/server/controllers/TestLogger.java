@@ -9,11 +9,13 @@ import java.util.Observer;
 
 import common.events.Event;
 import common.events.GameKeyEvent;
+import common.events.GameStartEvent;
 import common.events.ViewUpdateEvent;
 import common.models.Grid;
 
 public class TestLogger implements Observer{
 	
+	private static final String LINE_SEP = System.getProperty("line.separator");
 	private FileWriter writer;
 
 	public TestLogger() {
@@ -36,12 +38,19 @@ public class TestLogger implements Observer{
 			GameKeyEvent event = (GameKeyEvent) arg;
 			output = getPlayerText(event) + KeyEvent.getKeyText(event.getKeyCode());
 		}
+		
 		else if (arg instanceof ViewUpdateEvent){
 			Grid grid = ((ViewUpdateEvent)arg).getGrid();
 			if (grid != null){
 				output = grid.toString();
 			}
 		}
+		
+		else if (arg instanceof GameStartEvent){
+			String bar =  LINE_SEP + "====================" + LINE_SEP;
+			output = LINE_SEP + LINE_SEP + bar + "Game Start!" + bar;
+		}
+		
 		else if (arg instanceof Event){
 			Event event = (Event) arg;
 			output = getPlayerText(event) + event.getClass().getSimpleName();
@@ -49,7 +58,7 @@ public class TestLogger implements Observer{
 		
 		if (output != null){
 			try {
-				writer.write(output + System.getProperty("line.separator"));
+				writer.write(output + LINE_SEP);
 				writer.flush();
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -59,7 +59,10 @@ public class Server extends GameController {
 		//TODO: Bomb logic
 		//TODO: AI logic
 		
-		Event event = new ViewUpdateEvent(grid);
+		send(new ViewUpdateEvent(grid));
+	}
+	
+	private void send(Event event){
 		nwc.send(event);
 		
 		setChanged();
@@ -123,7 +126,8 @@ public class Server extends GameController {
     		   // Start game
     		   nwc.rejectNewPeers();
     		   running = true;
-    		   nwc.send(new GameStartEvent());
+    		   
+    		   send(new GameStartEvent());
     	   }
        }
     }
@@ -153,14 +157,14 @@ public class Server extends GameController {
     		if (entity instanceof Unit && !player.equals(entity)){
     			// Kill own player
     			players.remove(player);
-				nwc.send(new PlayerDeadEvent(player));
+				send(new PlayerDeadEvent(player));
 				grid.remove(player);
     			
     			// If other unit was player, kill it
     			if (entity instanceof Player){
     				Player otherPlayer = (Player) entity;
     				players.remove(otherPlayer);
-    				nwc.send(new PlayerDeadEvent(otherPlayer));
+    				send(new PlayerDeadEvent(otherPlayer));
     				grid.remove(otherPlayer);
     			}
     		}
@@ -169,7 +173,7 @@ public class Server extends GameController {
     	// Check if player wins and notify views
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
-    			nwc.send(new WinEvent(player, grid));
+    			send(new WinEvent(player, grid));
     			reset();
     		}
     	}
