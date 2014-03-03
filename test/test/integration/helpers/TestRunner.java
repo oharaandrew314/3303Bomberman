@@ -12,8 +12,8 @@ import common.models.Grid;
 
 public class TestRunner extends Client implements Runnable{
 	private ArrayList<Integer> events;
-	private Condition connected = new Condition(this), startCond = new Condition(this),
-		keyCond = new Condition(this), gameOverCond = new Condition(this);
+	private Condition connected = new Condition(), startCond = new Condition(),
+		keyCond = new Condition(), gameOverCond = new Condition();
 	private boolean dead = false;
 	
 	public TestRunner(ArrayList<Integer> events, int playerNumber){
