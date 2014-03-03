@@ -2,6 +2,7 @@ package integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import integration.helpers.IntegrationHelper;
 import integration.helpers.MockClient;
 import integration.helpers.MockServer;
 

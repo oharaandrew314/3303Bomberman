@@ -1,4 +1,4 @@
-package integration;
+package integration.helpers;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,7 @@ import common.models.Player;
 
 public class IntegrationHelper {
 
-	static List<Player> findPlayers(Grid grid, int numPlayers){
+	public static List<Player> findPlayers(Grid grid, int numPlayers){
 		List<Player> players = new ArrayList<>();
 		for (Point point : grid.keySet()){
 			for (Entity entity: grid.get(point)){
