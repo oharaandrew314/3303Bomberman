@@ -12,8 +12,8 @@ import common.models.Grid;
 
 public class TestRunner extends Client implements Runnable{
 	private ArrayList<Integer> events;
-	private Condition connected = new Condition(), startCond = new Condition(),
-		keyCond = new Condition(), gameOverCond = new Condition();
+	private Condition connected = new Condition(this), startCond = new Condition(this),
+		keyCond = new Condition(this), gameOverCond = new Condition(this);
 	private boolean dead = false;
 	
 	public TestRunner(ArrayList<Integer> events, int playerNumber){
@@ -25,7 +25,7 @@ public class TestRunner extends Client implements Runnable{
 
 	@Override
 	protected synchronized void processConnectionAccepted() {
-		notify(connected);
+		connected.notifyCond();
 	}
 
 	@Override
@@ -33,15 +33,15 @@ public class TestRunner extends Client implements Runnable{
 	
 	@Override
 	public void run(){
-		wait(connected);
+		connected.waitCond();
 		GameKeyEvent startEvent = new GameKeyEvent(KeyEvent.VK_ENTER);
 		
 		nwc.send(startEvent);
-		wait(startCond);
+		startCond.waitCond();
 		
 		for(int i=0; !events.isEmpty() && i != events.size() && !dead&& isGameRunning(); i++) {
 			nwc.send(new GameKeyEvent(events.get(i)));
-			wait(keyCond);
+			keyCond.waitCond();
 		}
 		
 		// Having trouble synchronizing end of test.  Last resort
@@ -63,7 +63,7 @@ public class TestRunner extends Client implements Runnable{
 	@Override
 	public void startGame(){
 		super.startGame();
-		notify(startCond);
+		startCond.notifyCond();
 	}
 
 	@Override
@@ -73,38 +73,12 @@ public class TestRunner extends Client implements Runnable{
 	
 	@Override
 	protected synchronized void keyEventAcknowledged(){
-		notify(keyCond);
+		keyCond.notifyCond();
 	}
 	
 	@Override
 	public void endGame(WinEvent event){
 		super.endGame(event);
-		notify(gameOverCond);
-	}
-	
-	// Synchronization Helpers
-	
-	/**
-	 * Wait/Notify Synchronization helper.
-	 * Essentially a mutable boolean that can be passed-by-reference
-	 * @author Andrew O'Hara
-	 */
-	private class Condition {
-		public boolean cond = false;
-	}
-	
-	private synchronized void wait(Condition condition){
-		while(!condition.cond){
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private synchronized void notify(Condition condition){
-		condition.cond = true;
-		notify();
-	}
+		gameOverCond.notifyCond();
+	}	
 }
