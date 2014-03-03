@@ -99,7 +99,7 @@ public class NetworkController {
      * Attempt to translate the given address and port into an InetAddress
      * and add it as a peer.
      * @param address address of the peer to add
-     * @param port port of the peer ot add
+     * @param port port of the peer to add
      */
     public void addPeer(String address, int port){
     	try {
@@ -172,7 +172,7 @@ public class NetworkController {
      * acceptNewPeers.
      * @param data The incoming packet.
      */
-    public synchronized void receive(DatagramPacket data) throws IOException {
+    public void receive(DatagramPacket data) throws IOException {
         try {
             Event event = deserialize(data);
             
@@ -184,7 +184,9 @@ public class NetworkController {
                 InetSocketAddress peer = new InetSocketAddress(data.getAddress(), data.getPort());
                 if (acceptNewPeers) {
                     sendToOnePeer(new ConnectAcceptedEvent(), peer);
-                    peers.add(peer);
+                    synchronized(this) {
+                        peers.add(peer);
+                    }
                 } else {
                     sendToOnePeer(new ConnectRejectedEvent(), peer);
                 }

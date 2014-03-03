@@ -2,34 +2,22 @@ package integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import integration.helpers.IntegrationHelper;
+import integration.helpers.MockClient;
+import integration.helpers.MockServer;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.Semaphore;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import server.content.GridLoader;
-import server.controllers.Server;
-import client.controllers.Client;
-
-import common.events.Event;
-import common.events.GameKeyEvent;
-import common.events.PlayerDeadEvent;
 import common.models.Grid;
 import common.models.Player;
 
 public class SystemTest {
 	
-	private TestServer server;
-	private static Semaphore keySem;
-	
-	@Before
-	public void setUp(){
-		keySem = new Semaphore(1);
-	}
+	private MockServer server;
 	
 	/** Stop game and check state */
 	@After
@@ -39,9 +27,9 @@ public class SystemTest {
 	}
 
 	@Test
-	public void test() {	
+	public void test() {
 		// Create and Start server
-		server = new TestServer();
+		server = new MockServer();
 		assertTrue(!server.isAcceptingPlayers());
 		
 		// Open new game
@@ -50,13 +38,13 @@ public class SystemTest {
 		assertTrue(!server.isGameRunning());		
 		
 		// start and connect client to local server
-		TestClient client = TestClient.startTestClient();
+		MockClient client = MockClient.startMockClient(server);
 		
 		// Ensure client knows game hasn't started yet
 		assertTrue(!client.isGameRunning());
 		
 		// start game
-		client.pressKey(KeyEvent.VK_ENTER);
+		client.startGame();
 		assertTrue(server.isGameRunning());
 		
 		
@@ -77,87 +65,4 @@ public class SystemTest {
 	private Grid getGrid(){
 		return server.getGrid();
 	}
-	
-	private class TestServer extends Server {
-		
-		@Override
-		public void receive(Event event){
-			super.receive(event);
-			if (event instanceof GameKeyEvent){
-				keySem.release();
-			}
-		}
-		
-		public void newGame(){
-			newGame(GridLoader.loadGrid("test/testGrid2.json"));
-		}
-	}
-	
-	// Test Client
-	
-	/**
-	 * Test Client
-	 * Logs events as they are received for testing
-	 * @author Andrew O'Hara
-	 *
-	 */
-	private static class TestClient extends Client {
-		
-		private final Semaphore viewUpdateSem;
-		private static Semaphore connectSem;
-		
-		private TestClient(){
-			viewUpdateSem = new Semaphore(1);
-		}
-		
-		// Factory
-		
-		public static TestClient startTestClient(){
-			connectSem = new Semaphore(1);
-			connectSem.acquireUninterruptibly();
-			TestClient client = new TestClient();
-			connectSem.acquireUninterruptibly();
-			connectSem.release();
-			return client;
-		}
-		
-		// Helpers
-		
-		public void pressKey(int keyCode){
-			keySem.acquireUninterruptibly();
-			nwc.send(new GameKeyEvent(keyCode));
-			keySem.acquireUninterruptibly();
-			keySem.release();
-		}
-		
-		public void waitForViewUpdate(){
-			viewUpdateSem.acquireUninterruptibly();
-			viewUpdateSem.acquireUninterruptibly();
-			viewUpdateSem.release();
-		}
-		
-		// Overrides
-		
-		@Override
-		protected void processViewUpdate(Grid grid) {
-			viewUpdateSem.release();
-		}
-		
-		@Override
-		protected void processPlayerDead(PlayerDeadEvent event) {}
-		@Override
-		protected void processConnectionAccepted() {
-			connectSem.release();
-		}
-		@Override
-		protected void processConnectionRejected() {
-			connectSem.release();
-		}
-
-		@Override
-		protected boolean isSpectator() {
-			return false;
-		}
-	}
-
 }

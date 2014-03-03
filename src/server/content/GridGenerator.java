@@ -57,7 +57,6 @@ public class GridGenerator {
 	// Generator functions
 
 	public static Grid createRandomGrid(Dimension size){
-		System.err.println("create " + size);
 		return new GridGenerator(size, new Random()).grid;
 	}
 	
