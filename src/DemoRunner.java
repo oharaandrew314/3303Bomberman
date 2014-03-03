@@ -94,14 +94,10 @@ public class DemoRunner {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (hasServer()){
-				TestDriver driver = new TestDriver(server);
-				String[] testfiles = {"test1", "test2", "test3" };
-				driver.readTestCases(testfiles);
-				driver.runAll();
+				TestDriver.run(server);
 			} else {
 				message("Cannot start test driver without a server");
 			}
-						
 		}
 	}
 	

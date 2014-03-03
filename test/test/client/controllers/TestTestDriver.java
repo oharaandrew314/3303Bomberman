@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import server.controllers.Server;
 import test.integration.TestDriver;
 
 public class TestTestDriver{
@@ -13,7 +12,8 @@ public class TestTestDriver{
 	
 	@Test
 	public void testTestCases(){
-        driver = new TestDriver(new Server());
+        driver = new TestDriver();
+        driver.init();
 		String[] testfiles = {"test1", "test3", "test2" };
 		driver.readTestCases(testfiles);
 		assertEquals(3, driver.getTestCases().size());
