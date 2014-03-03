@@ -5,9 +5,17 @@ Bomberman game for the SYSC 3303 Project
 
 ###Usage Instructions
 
-- TODO
-- Instructions here
-- shall we configure game through command-line arguments, or json config files?
+By JAR:
+Running Jar will open a DemoRunner
+
+1. Click Server
+2. Optionally click Spectator
+3. Click TestDriver to run tests
+4. Check output log file next to JAR
+
+With Eclipse:
+
+Run client.controllers.TestDriver with no arguments
 
 ###Deadlines
 - Milestone 1: March 3rd
