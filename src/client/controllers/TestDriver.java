@@ -12,9 +12,9 @@ public class TestDriver {
 	private Server server;;
 
 
-	public TestDriver(){
+	public TestDriver(Server server){
 		this.testcases = new ArrayList<TestCase>();
-		server = new Server();
+		this.server = server;
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class TestDriver {
 	}
 	
 	public static void main(String[] args){		
-		TestDriver driver = new TestDriver();
+		TestDriver driver = new TestDriver(new Server());
 		String[] testfiles = {"test1", "test2", "test3" };
 		driver.readTestCases(testfiles);
 		driver.runAll();

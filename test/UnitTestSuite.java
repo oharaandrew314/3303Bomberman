@@ -6,6 +6,7 @@ import models.TestSquare;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import client.controllers.TestTestDriver;
 import content.TestGridLoader;
 import controllers.TestGridGenerator;
 import controllers.TestNetworkController;
@@ -24,6 +25,7 @@ import events.TestViewUpdateEvent;
    TestGameKeyEvent.class,
    TestViewUpdateEvent.class,
    TestGridLoader.class,
+   TestTestDriver.class,
    
    //Integration Tests
    ServerTest.class,
