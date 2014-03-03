@@ -14,7 +14,6 @@ public class TestRunner extends Client implements Runnable{
 	private ArrayList<Integer> events;
 	private Condition connected = new Condition(), startCond = new Condition(),
 		keyCond = new Condition(), gameOverCond = new Condition();
-	private boolean dead = false;
 	
 	public TestRunner(ArrayList<Integer> events, int playerNumber){
 		this.events = events;
@@ -34,12 +33,11 @@ public class TestRunner extends Client implements Runnable{
 	@Override
 	public void run(){
 		connected.waitCond();
-		GameKeyEvent startEvent = new GameKeyEvent(KeyEvent.VK_ENTER);
 		
-		nwc.send(startEvent);
+		nwc.send( new GameKeyEvent(KeyEvent.VK_ENTER));
 		startCond.waitCond();
 		
-		for(int i=0; !events.isEmpty() && i != events.size() && !dead&& isGameRunning(); i++) {
+		for(int i=0; !events.isEmpty() && i != events.size() && isGameRunning(); i++) {
 			nwc.send(new GameKeyEvent(events.get(i)));
 			keyCond.waitCond();
 		}
@@ -56,7 +54,6 @@ public class TestRunner extends Client implements Runnable{
 
 	@Override
 	protected void processPlayerDead(PlayerDeadEvent event) {
-		dead = true;
 		nwc.stopListening();
 	}
 	
