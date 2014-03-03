@@ -4,8 +4,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import client.controllers.Client;
+
 import common.events.GameKeyEvent;
-import common.events.PlayerDeadEvent;
 import common.events.WinEvent;
 import common.models.Grid;
 
@@ -13,14 +13,17 @@ import common.models.Grid;
 public class TestRunner extends Client implements Runnable{
 	private ArrayList<Integer> events;
 	private Condition connected = new Condition(), startCond = new Condition(),
-		keyCond = new Condition(), gameOverCond = new Condition();
+		keyCond = new Condition(), gameOverCond = new Condition(),
+		updateCond = new Condition();
 	
 	public TestRunner(ArrayList<Integer> events, int playerNumber){
 		this.events = events;
 	}
 
 	@Override
-	protected void processViewUpdate(Grid grid2) {}
+	protected void processViewUpdate(Grid grid2) {
+		updateCond.notifyCond();
+	}
 
 	@Override
 	protected synchronized void processConnectionAccepted() {
@@ -40,6 +43,7 @@ public class TestRunner extends Client implements Runnable{
 		for(int i=0; !events.isEmpty() && i != events.size() && isGameRunning(); i++) {
 			nwc.send(new GameKeyEvent(events.get(i)));
 			keyCond.waitCond();
+			updateCond.waitCond(); // wait for an update to occur
 		}
 		
 		// Having trouble synchronizing end of test.  Last resort
@@ -49,11 +53,6 @@ public class TestRunner extends Client implements Runnable{
 			e.printStackTrace();
 		}
 		
-		nwc.stopListening();
-	}
-
-	@Override
-	protected void processPlayerDead(PlayerDeadEvent event) {
 		nwc.stopListening();
 	}
 	

@@ -17,6 +17,7 @@ public class Condition {
 				e.printStackTrace();
 			}
 		}
+		cond = false;
 	}
 	
 	public synchronized void notifyCond(){
