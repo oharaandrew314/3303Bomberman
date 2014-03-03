@@ -80,6 +80,12 @@ public class Square implements Serializable {
 		if (!isPassable()) return impassableEntity.toString();
 		
 		// Otherwise, pick a passable object if one exists
-		return passableEntities.isEmpty() ? EMPTY_SQUARE_SYMBOL : passableEntities.iterator().next().toString();
+		for (Entity entity : passableEntities){
+			if (entity.isVisible()){
+				return entity.toString();
+			}
+		}
+		
+		return EMPTY_SQUARE_SYMBOL;
 	}
 }

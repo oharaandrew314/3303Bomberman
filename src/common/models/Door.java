@@ -6,6 +6,7 @@ public class Door extends Entity {
 
 	public Door() {
 		super("Door");
+		setVisible(false);
 	}
 
 	@Override
@@ -16,5 +17,10 @@ public class Door extends Entity {
 	@Override
 	public boolean isHideable() {
 		return true;
+	}
+	
+	@Override
+	public boolean isVisible(){
+		return false;
 	}
 }

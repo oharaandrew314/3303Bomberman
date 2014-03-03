@@ -25,7 +25,7 @@ public class TestGrid {
 	 *    -----
 	 *    |  .|
 	 *    |X1 |
-	 *    |  D|
+	 *    |   |
 	 *    -----
 	 */
 	@Before
@@ -45,7 +45,7 @@ public class TestGrid {
 		assertEquals(
 			grid.toString(),
 			"-----" + lineSep + "|  .|" + lineSep +"|X1 |"
-			+ lineSep + "|  D|" + lineSep + "-----"
+			+ lineSep + "|   |" + lineSep + "-----"
 		);
 	}
 	
