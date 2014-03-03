@@ -41,7 +41,12 @@ public class TestGrid {
 	//sanity test to make sure other tests are meaningful
 	@Test 
 	public void testToString(){
-		assertEquals(grid.toString(), "-----\n|  .|\n|X1 |\n|  D|\n-----");
+		String lineSep = System.getProperty("line.separator");
+		assertEquals(
+			grid.toString(),
+			"-----" + lineSep + "|  .|" + lineSep +"|X1 |"
+			+ lineSep + "|  D|" + lineSep + "-----"
+		);
 	}
 	
 	@Test

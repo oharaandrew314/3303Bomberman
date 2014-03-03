@@ -25,6 +25,8 @@ public class TestDriver {
 			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
 			test.run();
 		}
+		server.reset();
+		System.exit(0);
 	}
 	
 	/**
@@ -47,5 +49,3 @@ public class TestDriver {
 		return testcases;
 	}
 }
-
-

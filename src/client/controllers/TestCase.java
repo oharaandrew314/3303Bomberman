@@ -30,7 +30,7 @@ public class TestCase {
 	 * Each thread is a player with all the events that player performs
 	 */
 	public void run(){
-		System.out.println(filename + ":");
+		System.out.print("testing " + filename + "...");
 		
 		Thread[] threads = new Thread[events.size()];
 		for(int i = 0 ; i != events.size();i++){
@@ -44,6 +44,7 @@ public class TestCase {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Done");
 	}
 	
 	
