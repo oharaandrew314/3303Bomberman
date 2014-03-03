@@ -39,8 +39,6 @@ public class NetworkController {
         } catch (SocketException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
     
     /**
@@ -223,6 +221,11 @@ public class NetworkController {
     			NetworkController.class.getName()).log(Level.SEVERE, null,
     			"cannt reply to event which does not have ID"
     		);
+    		return;
+    	}
+    	
+    	// Silently fail if player is not a peer (probably a test.  sssssh.
+    	if (peers.size() <= playerId){
     		return;
     	}
     	
