@@ -211,6 +211,30 @@ public class NetworkController {
     }
     
     /**
+     * 
+     * @param original
+     * @param response
+     */
+    public void replyTo(Event original, Event response){
+    	// Get player id from original message and verify
+    	int playerId = original.getPlayerID();
+    	if (playerId == -1){
+    		Logger.getLogger(
+    			NetworkController.class.getName()).log(Level.SEVERE, null,
+    			"cannt reply to event which does not have ID"
+    		);
+    		return;
+    	}
+    	
+    	// Reply to client
+    	try {
+			sendToOnePeer(response, peers.get(playerId));
+		} catch (IOException e) {
+			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
+		}
+    }
+    
+    /**
      * Reset the peers this controller notifies.
      */
     public synchronized void clear(){

@@ -1,10 +1,11 @@
-package client.controllers;
+package test.integration;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import server.content.GridLoader;
 import server.controllers.Server;
+import test.integration.helpers.TestCase;
 
 public class TestDriver {
 	
@@ -26,7 +27,6 @@ public class TestDriver {
 			test.run();
 		}
 		server.reset();
-		System.exit(0);
 	}
 	
 	/**

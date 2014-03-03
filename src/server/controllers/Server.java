@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.controllers.GameController;
+import common.events.AcknowledgeKeyEvent;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
@@ -25,6 +26,7 @@ public class Server extends GameController {
 	
 	private Map<Integer, Player> players;
 	protected boolean running = false;
+	private boolean requestReset = false;
 
 	public Server() {
 		new SimulationTimer(this);
@@ -53,6 +55,7 @@ public class Server extends GameController {
 		nwc.clear();
 		players.clear();
 		grid = null;
+		requestReset = false;
 	}
 	
 	public synchronized void simulationUpdate(){		
@@ -71,8 +74,7 @@ public class Server extends GameController {
 
     @Override
     public synchronized void receive(Event event) {
-    	setChanged();
-    	notifyObservers(event);
+    	send(event);
     	
     	int playerId = event.getPlayerID();
     	
@@ -122,6 +124,7 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_F:
 		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
 		   	   }
+    		   nwc.replyTo(event, new AcknowledgeKeyEvent());
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   // Start game
     		   nwc.rejectNewPeers();
@@ -130,6 +133,10 @@ public class Server extends GameController {
     		   send(new GameStartEvent());
     	   }
        }
+    	
+    	if (requestReset){
+    		reset();
+    	}
     }
     
     private void move(Player player, int dx, int dy){
@@ -174,7 +181,7 @@ public class Server extends GameController {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
     			send(new WinEvent(player, grid));
-    			reset();
+    			requestReset = true;
     		}
     	}
     }

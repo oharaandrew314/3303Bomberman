@@ -33,6 +33,8 @@ public abstract class Client extends GameController {
 			endGame((WinEvent) event);
 		} else if (event instanceof GameStartEvent){
 			startGame();
+		} else if (event instanceof AcknowledgeKeyEvent){
+			keyEventAcknowledged();
 		}
 	}
 	
@@ -41,6 +43,8 @@ public abstract class Client extends GameController {
 	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
+	
+	protected void keyEventAcknowledged(){}
 	
 	protected void startGame(){
 		running = true;

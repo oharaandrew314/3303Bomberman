@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import client.controllers.TestDriver;
 import server.controllers.Server;
+import test.integration.TestDriver;
 
 public class TestTestDriver{
 	

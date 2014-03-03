@@ -1,4 +1,4 @@
-package client.controllers;
+package test.integration.helpers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,10 +10,7 @@ import static java.awt.event.KeyEvent.*;
 
 
 public class TestCase {
-	public static final String UP = "UP";
-	public static final String DOWN = "DOWN";
-	public static final String RIGHT = "RIGHT";
-	public static final String LEFT = "LEFT";
+	public static final String UP = "UP", DOWN = "DOWN", RIGHT = "RIGHT", LEFT = "LEFT";
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
 	private String filename;
@@ -21,7 +18,6 @@ public class TestCase {
 	public TestCase(String filename){
 		events = readEvents(filename);
 		this.filename = filename;
-		
 	}
 	
 	/**
@@ -59,7 +55,7 @@ public class TestCase {
 		String str = "";
 		
 		try{
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream(TEST_PATH + filename + ".txt");
+			InputStream in = getClass().getClassLoader().getResourceAsStream(TEST_PATH + filename + ".txt");
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 		    if (in!=null) {                         

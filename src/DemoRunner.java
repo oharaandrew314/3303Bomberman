@@ -8,8 +8,8 @@ import javax.swing.JOptionPane;
 
 import server.content.GridLoader;
 import server.controllers.Server;
+import test.integration.TestDriver;
 import client.controllers.Spectator;
-import client.controllers.TestDriver;
 import client.views.JFrameTextView;
 
 
