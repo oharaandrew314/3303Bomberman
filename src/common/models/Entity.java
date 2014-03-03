@@ -9,6 +9,7 @@ public abstract class Entity implements Serializable {
 	
 	final public int id;
 	public final String name;
+	private boolean visible = true;
 	
 	public Entity(String name){
 		this.id = NEXT_ID;
@@ -34,5 +35,13 @@ public abstract class Entity implements Serializable {
 			return ((Entity)o).id == id;
 		}
 		return false;
+	}
+	
+	public boolean isVisible(){
+		return visible;
+	}
+	
+	public void setVisible(boolean visible){
+		this.visible = visible;
 	}
 }
