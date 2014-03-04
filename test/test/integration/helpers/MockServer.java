@@ -2,7 +2,6 @@ package test.integration.helpers;
 
 import java.awt.Point;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import server.content.GridLoader;
 import server.controllers.Server;
@@ -13,17 +12,18 @@ import common.models.Player;
 
 public class MockServer extends Server {
 	
-	public final Semaphore keySem;
+	public final Condition keyCond;
 	
 	public MockServer(){
-		keySem = new Semaphore(1);
+		keyCond = new Condition();
 	}
 	
 	@Override
 	public void receive(Event event){
 		super.receive(event);
 		if (event instanceof GameKeyEvent){
-			keySem.release();
+			//keySem.release();
+			keyCond.notifyCond();
 		}
 	}
 	

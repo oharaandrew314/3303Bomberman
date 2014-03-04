@@ -44,7 +44,7 @@ public class SystemTest {
 		assertTrue(!server.isGameRunning());
 		
 		// start and connect client to local server
-		MockClient client = MockClient.startMockClient(server);
+		MockClient client = new MockClient(server);
 		assertTrue(!client.isGameRunning());
 		assertTrue(!server.isGameRunning());
 		

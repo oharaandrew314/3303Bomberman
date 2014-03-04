@@ -1,7 +1,6 @@
 package test.integration.helpers;
 
 import java.awt.event.KeyEvent;
-import java.util.concurrent.Semaphore;
 
 import client.controllers.Client;
 import common.events.GameKeyEvent;
@@ -16,38 +15,25 @@ import common.models.Grid;
  */
 public class MockClient extends Client {
 	
-	private final Semaphore viewUpdateSem;
-	private static Semaphore connectSem, keySem;
+	private static Condition  keyCond;
+	private final Condition connectCond = new Condition(), updateCond;
 	
-	private MockClient(MockServer mockServer){
-		viewUpdateSem = new Semaphore(1);
-		keySem = mockServer.keySem;
-	}
-	
-	// Factory
-	
-	public static MockClient startMockClient(MockServer mockServer){
-		connectSem = new Semaphore(1);
-		connectSem.acquireUninterruptibly();
-		MockClient client = new MockClient(mockServer);
-		connectSem.acquireUninterruptibly();
-		connectSem.release();
-		return client;
+	public MockClient(MockServer mockServer){
+		keyCond = mockServer.keyCond;	
+		updateCond = new Condition();
+
+		connectCond.waitCond();
 	}
 	
 	// Helpers
 	
 	public void pressKey(int keyCode){
-		keySem.acquireUninterruptibly();
 		nwc.send(new GameKeyEvent(keyCode));
-		keySem.acquireUninterruptibly();
-		keySem.release();
+		keyCond.waitCond();
 	}
 	
 	public void waitForViewUpdate(){
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.release();
+		updateCond.waitCond();
 	}
 	
 	public void startGame(){
@@ -58,18 +44,18 @@ public class MockClient extends Client {
 	
 	@Override
 	protected void processViewUpdate(Grid grid) {
-		viewUpdateSem.release();
+		updateCond.notifyCond();
 	}
 	
 	@Override
 	protected void processPlayerDead(PlayerDeadEvent event) {}
 	@Override
 	protected void processConnectionAccepted() {
-		connectSem.release();
+		connectCond.notifyCond();
 	}
 	@Override
 	protected void processConnectionRejected() {
-		connectSem.release();
+		connectCond.notifyCond();
 	}
 
 	@Override
