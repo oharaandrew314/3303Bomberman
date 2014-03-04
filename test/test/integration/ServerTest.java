@@ -8,24 +8,33 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import server.content.GridLoader;
 import server.controllers.Server;
 import test.integration.helpers.IntegrationHelper;
+import test.integration.helpers.MockServer;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.models.Player;
 
-public class ServerTest extends Server{
+public class ServerTest {
+	
+	private MockServer server;
 
 	@Before
 	public void setUp() throws Exception {
-		reset();
-		grid = GridLoader.loadGrid("grid1.json");
-		assertFalse(isGameRunning());
+		server = new MockServer();
+		server.newGame(GridLoader.loadGrid("grid1.json"));
+		assertFalse(server.isGameRunning());
+	}
+	
+	@After
+	public void tearDown(){
+		server.stop();
 	}
 
 	@Test
@@ -34,13 +43,13 @@ public class ServerTest extends Server{
 		send(1, new ConnectEvent(false));
 		
 		// Ensure Player starts at (0, 0)
-		List<Player> players = IntegrationHelper.findPlayers(grid, 1);
+		List<Player> players = IntegrationHelper.findPlayers(server.getGrid(), 1);
 		Player p = players.get(0);
-		grid.remove(p);
-		grid.set(p, new Point(0, 0));
+		server.getGrid().remove(p);
+		server.getGrid().set(p, new Point(0, 0));
 		
 		start(p);
-		assertTrue(isGameRunning());
+		assertTrue(server.isGameRunning());
 		
 		goUp(p);  // Try going out of bounds
 		checkPos(p, 0, 0);
@@ -76,7 +85,7 @@ public class ServerTest extends Server{
 		goUp(p);
 		goRight(p);
 		goUp(p);
-		assertFalse(isGameRunning());
+		assertFalse(server.isGameRunning());
 	}
 	
 	@Test
@@ -85,14 +94,14 @@ public class ServerTest extends Server{
 		send(1, new ConnectEvent(false));
 		send(2, new ConnectEvent(false));
 		
-		List<Player> players = IntegrationHelper.findPlayers(grid, 2);
+		List<Player> players = IntegrationHelper.findPlayers(server.getGrid(), 2);
 		Player p1 = players.get(0);
-		grid.remove(p1);
-		grid.set(p1, new Point(0, 0));
+		server.getGrid().remove(p1);
+		server.getGrid().set(p1, new Point(0, 0));
 		
 		Player p2 = players.get(1);
-		grid.remove(p2);
-		grid.set(p2, new Point(2, 1));
+		server.getGrid().remove(p2);
+		server.getGrid().set(p2, new Point(2, 1));
 		
 		start(p1);
 		
@@ -106,7 +115,7 @@ public class ServerTest extends Server{
 		
 		// Collide
 		goLeft(p2);
-		IntegrationHelper.findPlayers(grid, 0);
+		IntegrationHelper.findPlayers(server.getGrid(), 0);
 	}
 	
 	/**
@@ -118,7 +127,7 @@ public class ServerTest extends Server{
 		for (int i=0; i<Server.MAX_PLAYERS; i++){
 			send(i, new ConnectEvent(false));
 		}
-		IntegrationHelper.findPlayers(grid, Server.MAX_PLAYERS);
+		IntegrationHelper.findPlayers(server.getGrid(), Server.MAX_PLAYERS);
 	}
 	
 	@Test
@@ -126,16 +135,16 @@ public class ServerTest extends Server{
 		send(1, new ConnectEvent(false));
 		send(2, new ConnectEvent(false));
 		send(3, new ConnectEvent(true));
-		IntegrationHelper.findPlayers(grid, 2);
+		IntegrationHelper.findPlayers(server.getGrid(), 2);
 	}
 	
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);
-		receive(event);
+		server.receive(event);
 	}
 	
 	private void checkPos(Player player, int x, int y){
-		assertEquals(new Point(x, y), grid.find(player));
+		assertEquals(new Point(x, y), server.getGrid().find(player));
 	}
 	
 	private void start(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_ENTER)); }

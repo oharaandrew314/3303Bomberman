@@ -12,13 +12,22 @@ public class SimulationTimer extends TimerTask {
 		UPDATE_DELAY = MS_IN_S / UPDATE_FREQ;
 	
 	private final Server server;
+	private final Timer timer;
 
 	public SimulationTimer(Server server) {
 		this.server = server;
-		new Timer().scheduleAtFixedRate(this, 0, UPDATE_DELAY);
+		timer = new Timer();
 	}
 	@Override
 	public void run() {
 		server.simulationUpdate();		
+	}
+	
+	public void start(){
+		timer.scheduleAtFixedRate(this, 0, UPDATE_DELAY);
+	}
+	
+	public void stop(){
+		timer.cancel();
 	}
 }

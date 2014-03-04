@@ -9,24 +9,22 @@ import server.controllers.Server;
 public class TestDriver {
 	
 	private Collection<TestCase> testcases;
-	private Server server;;
 
 
-	public TestDriver(Server server){
+	public TestDriver(){
 		this.testcases = new ArrayList<TestCase>();
-		this.server = server;
 	}
 	
 	/**
 	 * runs all the testCases specified by the filenames final value
 	 */
-	public void runAll(){
+	public void runAll(Server server){
 		for(TestCase test: testcases){
 			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
 			test.run();
+			server.endGame();
 		}
-		server.reset();
-		System.exit(0);
+		server.stop();
 	}
 	
 	/**
@@ -39,10 +37,10 @@ public class TestDriver {
 	}
 	
 	public static void main(String[] args){		
-		TestDriver driver = new TestDriver(new Server());
+		TestDriver driver = new TestDriver();
 		String[] testfiles = {"test1", "test2", "test3" };
 		driver.readTestCases(testfiles);
-		driver.runAll();
+		driver.runAll(new Server());
 	}
 	
 	public Collection<TestCase> getTestCases(){

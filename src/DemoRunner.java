@@ -25,7 +25,7 @@ public class DemoRunner {
 		add(new ServerAction());
 		add(new SpectatorAction());
 		add(new TestDriverAction());
-		add(new ResetServerAction());
+		//add(new ResetServerAction());
 		
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,11 +36,13 @@ public class DemoRunner {
 		return server != null;
 	}
 	
+	/*
 	public void resetServer(){
 		if (hasServer()){
 			server.reset();
 		}
 	}
+	*/
 	
 	public void message(String message){
 		JOptionPane.showMessageDialog(frame, message);
@@ -94,10 +96,10 @@ public class DemoRunner {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (hasServer()){
-				TestDriver driver = new TestDriver(server);
+				TestDriver driver = new TestDriver();
 				String[] testfiles = {"test1", "test2", "test3" };
 				driver.readTestCases(testfiles);
-				driver.runAll();
+				driver.runAll(new Server());
 			} else {
 				message("Cannot start test driver without a server");
 			}
@@ -105,6 +107,7 @@ public class DemoRunner {
 		}
 	}
 	
+	/*
 	@SuppressWarnings("serial")
 	private class ResetServerAction extends AbstractAction {
 		
@@ -122,6 +125,7 @@ public class DemoRunner {
 				
 		}
 	}
+	*/
 	
 	public static void main(String[] args){
 		new DemoRunner();

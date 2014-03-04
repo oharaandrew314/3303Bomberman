@@ -22,37 +22,34 @@ import common.models.Unit;
 public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
+	public static enum State { stopped, idle, newGame, gameRunning };
 	
 	private Map<Integer, Player> players;
-	protected boolean running = false;
+	private State state = State.stopped;
+	private final SimulationTimer timer;
 
 	public Server() {
-		new SimulationTimer(this);
 		players = new HashMap<>();
 		addObserver(new TestLogger());
+		
+		timer = new SimulationTimer(this);
+		nwc.startListeningOnServerPort();
+		nwc.acceptNewPeers();
+		state = State.idle;
 	}
 	
 	public void newGame(Grid grid){
 		this.grid = grid;
-		nwc.startListeningOnServerPort();
-		nwc.acceptNewPeers();
+		state = State.newGame;
 	}
 	
 	@Override
 	public boolean isGameRunning() {
-		return running;
+		return state == State.gameRunning;
 	}
 	
 	public boolean isAcceptingPlayers(){
 		return nwc.isAcceptingNewPeers();
-	}
-	
-	public void reset(){
-		running = false;
-		nwc.stopListening();
-		nwc.clear();
-		players.clear();
-		grid = null;
 	}
 	
 	public synchronized void simulationUpdate(){		
@@ -67,6 +64,27 @@ public class Server extends GameController {
 		
 		setChanged();
 		notifyObservers(event);
+	}
+	
+	private void startGame(){
+		nwc.rejectNewPeers();
+		state = State.gameRunning;
+		send(new GameStartEvent());
+		timer.start();
+	}
+	
+	public void endGame(){
+		timer.stop();
+		state = State.idle;
+		grid = null;
+		nwc.acceptNewPeers();
+	}
+	
+	public void stop(){
+		endGame();
+		timer.stop();
+		state = State.stopped;
+		nwc.stopListening();
 	}
 
     @Override
@@ -123,11 +141,7 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
-    		   // Start game
-    		   nwc.rejectNewPeers();
-    		   running = true;
-    		   
-    		   send(new GameStartEvent());
+    		   startGame();
     	   }
        }
     }
@@ -174,7 +188,7 @@ public class Server extends GameController {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Door){
     			send(new WinEvent(player, grid));
-    			reset();
+    			endGame();
     		}
     	}
     }
