@@ -16,11 +16,12 @@ import common.models.Grid;
 public class MockClient extends Client {
 	
 	private static Condition  keyCond;
-	private final Condition connectCond = new Condition(), updateCond;
+	private final Condition connectCond , updateCond;
 	
 	public MockClient(MockServer mockServer){
 		keyCond = mockServer.keyCond;	
 		updateCond = new Condition();
+		connectCond = new Condition();
 
 		connectCond.waitCond();
 	}
@@ -51,10 +52,12 @@ public class MockClient extends Client {
 	protected void processPlayerDead(PlayerDeadEvent event) {}
 	@Override
 	protected void processConnectionAccepted() {
+		while (connectCond == null);
 		connectCond.notifyCond();
 	}
 	@Override
 	protected void processConnectionRejected() {
+		while (connectCond == null);
 		connectCond.notifyCond();
 	}
 
