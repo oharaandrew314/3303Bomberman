@@ -7,10 +7,12 @@ import common.models.Grid;
 
 public abstract class Client extends GameController {
 	
-	private boolean running = false;
+	private static enum State {idle, gameRunning };
+	private State state;
 
 	public Client() {
 		this(NetworkController.LOCALHOST);
+		state = State.idle;
 	}
 	
 	public Client(String serverAddress){
@@ -43,16 +45,16 @@ public abstract class Client extends GameController {
 	protected abstract void processConnectionRejected();
 	
 	protected void startGame(){
-		running = true;
+		state = State.gameRunning;
 	}
 	
 	protected void endGame(WinEvent winEvent){
 		processViewUpdate(winEvent.grid);
-		running = false;
+		state = State.idle;
 	}
 	
 	@Override
 	public boolean isGameRunning(){
-		return running;
+		return state == State.gameRunning;
 	}
 }
