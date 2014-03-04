@@ -95,9 +95,12 @@ public class Server extends GameController {
     	int playerId = event.getPlayerID();
     	
     	// Accept ConntectEvent and add player to game
-    	if (event instanceof ConnectEvent && !((ConnectEvent)event).spectator){
+    	if (
+    		event instanceof ConnectEvent && !((ConnectEvent)event).spectator
+    		&& (state == State.newGame || state == State.idle)
+    	){
     		if (players.size() < MAX_PLAYERS){
-                        nwc.acceptNewPeers();
+    			nwc.acceptNewPeers();
     			Player player = new Player(playerId);
     			players.put(playerId, player);
     			
