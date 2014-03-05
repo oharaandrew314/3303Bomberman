@@ -4,7 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class SimulationTimer extends TimerTask {
+public class SimulationTimer {
 	
 	public static final int
 		MS_IN_S = 1000, 
@@ -12,22 +12,28 @@ public class SimulationTimer extends TimerTask {
 		UPDATE_DELAY = MS_IN_S / UPDATE_FREQ;
 	
 	private final Server server;
-	private final Timer timer;
+	private Timer timer;
 
 	public SimulationTimer(Server server) {
 		this.server = server;
+	}
+	
+	public synchronized void start(){
+		stop();
 		timer = new Timer();
-	}
-	@Override
-	public void run() {
-		server.simulationUpdate();		
+		timer.scheduleAtFixedRate(
+			new TimerTask() {
+				@Override
+				public void run() { server.simulationUpdate(); }
+			},
+			0,
+			UPDATE_DELAY
+		);
 	}
 	
-	public void start(){
-		timer.scheduleAtFixedRate(this, 0, UPDATE_DELAY);
-	}
-	
-	public void stop(){
-		timer.cancel();
+	public synchronized void stop(){
+		if (timer != null){
+			timer.cancel();
+		}
 	}
 }

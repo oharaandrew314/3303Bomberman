@@ -39,8 +39,8 @@ public class Server extends GameController {
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 		
-		timer = new SimulationTimer(this);
 		nwc.startListeningOnServerPort();
+		timer = new SimulationTimer(this);
 		state = State.idle;
 	}
 	
@@ -59,11 +59,13 @@ public class Server extends GameController {
 		return state == State.newGame || state == State.idle;
 	}
 	
-	public synchronized void simulationUpdate(){		
-		//TODO: Bomb logic
-		//TODO: AI logic
-		
-		send(new ViewUpdateEvent(grid));
+	public synchronized void simulationUpdate(){
+		if (isGameRunning()){
+			//TODO: Bomb logic
+			//TODO: AI logic
+			
+			send(new ViewUpdateEvent(grid));
+		}
 	}
 	
 	private void send(Event event){
@@ -98,7 +100,6 @@ public class Server extends GameController {
 	
 	public void stop(){
 		endGame();
-		timer.stop();
 		nwc.stopListening();
 		state = State.stopped;
 	}
