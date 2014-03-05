@@ -55,7 +55,6 @@ public class TestCase {
 	 */
 	private ArrayList<ArrayList<Integer>> readEvents(String filename) {
 		ArrayList<ArrayList<Integer>> events = new ArrayList<ArrayList<Integer>>();
-		//read file
 		String str = "";
 		
 		try{
@@ -64,6 +63,8 @@ public class TestCase {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 		    if (in!=null) {                         
 		    	
+		    	
+		    	//Get the number of players in the testCase from the first line
 				if((str = bufferedReader.readLine()) != null) {
 					String[] temp = str.split("=");
 					int players = Integer.parseInt(temp[1].trim());
@@ -73,8 +74,8 @@ public class TestCase {
 						
 				}
 				
+				//Get each command and all details associated with it
 		        while ((str = bufferedReader.readLine()) != null) { 
-		        	//int player = Integer.parseInt(str.substring(0, 2).trim());
 		        	String[] sections = str.split(":");
 		        	int player = Integer.parseInt(sections[0].trim());
 		        	String command = sections[1].trim();
