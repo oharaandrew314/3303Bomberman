@@ -16,12 +16,11 @@ import common.models.Grid;
  */
 public class MockClient extends Client {
 	
-	private static Condition  keyCond;
-	private final Condition connectCond , updateCond;
+	private final Condition connectCond, updateCond, keyCond;
 	private boolean accepted;
 	
-	public MockClient(MockServer mockServer){
-		keyCond = mockServer.keyCond;	
+	public MockClient(){
+		keyCond = new Condition();
 		updateCond = new Condition();
 		connectCond = new Condition();
 
@@ -72,5 +71,10 @@ public class MockClient extends Client {
 	@Override
 	protected boolean isSpectator() {
 		return false;
+	}
+	
+	@Override
+	protected void keyEventAcknowledged(){
+		keyCond.notifyCond();
 	}
 }

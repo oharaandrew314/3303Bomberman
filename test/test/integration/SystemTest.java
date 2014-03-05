@@ -44,14 +44,14 @@ public class SystemTest {
 		assertTrue(!server.isGameRunning());
 		
 		// start and connect client to local server
-		MockClient client = new MockClient(server);
+		MockClient client = new MockClient();
 		assertTrue(!client.isGameRunning());
 		assertTrue(!server.isGameRunning());
 		
 		// start game
 		client.startGame();
 		assertTrue(server.isGameRunning());
-		assertTrue(server.isGameRunning());
+		assertTrue(!server.isAcceptingConnections());
 		
 		// Set player starting position
 		Player p = server.movePlayerTo(0, new Point(0, 0));

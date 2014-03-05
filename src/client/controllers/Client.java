@@ -22,7 +22,7 @@ public abstract class Client extends GameController {
 	}
 
 	@Override
-	public Event receive(Event event) {
+	public Event receive(Event event) {		
 		if (event instanceof ViewUpdateEvent){
 			processViewUpdate(((ViewUpdateEvent)event).getGrid());
 		} else if (event instanceof PlayerDeadEvent){
@@ -34,7 +34,9 @@ public abstract class Client extends GameController {
 		} else if (event instanceof WinEvent){
 			endGame((WinEvent) event);
 		} else if (event instanceof GameStartEvent){
-			startGame();
+			setGameStarted();
+		} else if (event instanceof GameKeyEvent){
+			keyEventAcknowledged();
 		}
 		return null;
 	}
@@ -45,7 +47,9 @@ public abstract class Client extends GameController {
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
 	
-	protected void startGame(){
+	protected void keyEventAcknowledged(){}
+	
+	protected void setGameStarted(){
 		state = State.gameRunning;
 	}
 	
