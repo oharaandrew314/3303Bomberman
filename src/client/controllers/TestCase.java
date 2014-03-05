@@ -74,10 +74,12 @@ public class TestCase {
 				}
 				
 		        while ((str = bufferedReader.readLine()) != null) { 
-		        	int player = Integer.parseInt(str.substring(0, 2).trim());
-		        	String newString = str.substring(2).trim();
+		        	//int player = Integer.parseInt(str.substring(0, 2).trim());
+		        	String[] sections = str.split(":");
+		        	int player = Integer.parseInt(sections[0].trim());
+		        	String command = sections[1].trim();
 		        	
-		        		switch(newString){
+		        		switch(command){
 			        		case UP:  events.get(player-1).add(VK_UP);
 		                    	break;
 			        		case DOWN:  events.get(player-1).add(VK_DOWN);
