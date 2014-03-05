@@ -1,9 +1,5 @@
 package common.controllers;
 
-import common.events.ConnectAcceptedEvent;
-import common.events.ConnectEvent;
-import common.events.ConnectRejectedEvent;
-import common.events.Event;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +16,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import common.events.ConnectAcceptedEvent;
+import common.events.Event;
+
 public class NetworkController {
     public static final String LOCALHOST = "127.0.0.1";
     public static final int SERVER_PORT = 27001;
@@ -27,8 +26,7 @@ public class NetworkController {
     private GameController gameController;
     private DatagramSocket socket;
     private ListenThread listener;
-    private List<InetSocketAddress> peers;
-    private boolean acceptNewPeers = false;
+    protected List<InetSocketAddress> peers;
     
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
@@ -39,8 +37,6 @@ public class NetworkController {
         } catch (SocketException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
     
     /**
@@ -89,13 +85,6 @@ public class NetworkController {
     }
     
     /**
-     * @return true if the network controller will accept new ConnectEvents
-     */
-    public boolean isAcceptingNewPeers(){
-    	return acceptNewPeers;
-    }
-    
-    /**
      * Attempt to translate the given address and port into an InetAddress
      * and add it as a peer.
      * @param address address of the peer to add
@@ -113,7 +102,7 @@ public class NetworkController {
      * Add a new peer, to which all messages will be sent.
      * @param peer The peer to add.
      */
-    private void addPeer(InetSocketAddress peer) {
+    private synchronized void addPeer(InetSocketAddress peer) {
         peers.add(peer);
     }
     
@@ -123,20 +112,6 @@ public class NetworkController {
      */
     public void addLocalServerPeer() {
     	addPeer(LOCALHOST, SERVER_PORT);
-    }
-    
-    /**
-     * Start automatically accepting new peers who send ConnectEvents.
-     */
-    public void acceptNewPeers() {
-        acceptNewPeers = true;
-    }
-    
-    /**
-     * Start automatically rejecting new peers who send ConnectEvents.
-     */
-    public void rejectNewPeers() {
-        acceptNewPeers = false;
     }
     
     /**
@@ -172,28 +147,28 @@ public class NetworkController {
      * acceptNewPeers.
      * @param data The incoming packet.
      */
-    public void receive(DatagramPacket data) throws IOException {
+    public Event receive(DatagramPacket data) throws IOException {
+    	Event event = null;
         try {
-            Event event = deserialize(data);
+            event = deserialize(data);
             
             event.setPlayerID(getPlayerIdFor(data));
             
-            gameController.receive(event);
-            
-            if (event instanceof ConnectEvent) {
-                InetSocketAddress peer = new InetSocketAddress(data.getAddress(), data.getPort());
-                if (acceptNewPeers) {
-                    sendToOnePeer(new ConnectAcceptedEvent(), peer);
-                    synchronized(this) {
-                        peers.add(peer);
-                    }
-                } else {
-                    sendToOnePeer(new ConnectRejectedEvent(), peer);
-                }
+            Event response = gameController.receive(event);
+            if (response != null){
+            	InetSocketAddress peer = new InetSocketAddress(
+            		data.getAddress(), data.getPort()
+            	);
+            	if (response instanceof ConnectAcceptedEvent){
+            		peers.add(peer);
+            	}
+            	
+            	sendToOnePeer(response, peer);
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return event;
     }
     
     /**

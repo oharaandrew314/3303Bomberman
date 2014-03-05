@@ -1,4 +1,4 @@
-package test.integration.helpers;
+package test.helpers;
 
 /**
  * Wait/Notify Synchronization helper.
@@ -7,21 +7,22 @@ package test.integration.helpers;
  */
 public class Condition {
 	
-	public boolean cond = false;
+	public boolean waiting;
 	
 	public synchronized void waitCond(){
-		while(!cond){
+		waiting = true;
+		while(waiting){
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		cond = false;
+		waiting = false;
 	}
 	
 	public synchronized void notifyCond(){
-		cond = true;
+		waiting = false;
 		notify();
 	}
 }

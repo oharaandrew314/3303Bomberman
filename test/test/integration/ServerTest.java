@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import org.junit.Test;
 
 import server.content.GridLoader;
 import server.controllers.Server;
-import test.integration.helpers.IntegrationHelper;
 import test.integration.helpers.MockServer;
 import common.events.ConnectEvent;
 import common.events.Event;
@@ -42,15 +40,11 @@ public class ServerTest {
 		// Connect one player
 		send(1, new ConnectEvent(false));
 		
-		// Ensure Player starts at (0, 0)
-		List<Player> players = IntegrationHelper.findPlayers(server.getGrid(), 1);
-		Player p = players.get(0);
-		server.getGrid().remove(p);
-		server.getGrid().set(p, new Point(0, 0));
-		
-		start(p);
+		start(1);
 		assertTrue(server.isGameRunning());
 		
+		Player p = server.movePlayerTo(1, new Point(0,0));
+
 		goUp(p);  // Try going out of bounds
 		checkPos(p, 0, 0);
 		
@@ -94,16 +88,10 @@ public class ServerTest {
 		send(1, new ConnectEvent(false));
 		send(2, new ConnectEvent(false));
 		
-		List<Player> players = IntegrationHelper.findPlayers(server.getGrid(), 2);
-		Player p1 = players.get(0);
-		server.getGrid().remove(p1);
-		server.getGrid().set(p1, new Point(0, 0));
+		start(1);
 		
-		Player p2 = players.get(1);
-		server.getGrid().remove(p2);
-		server.getGrid().set(p2, new Point(2, 1));
-		
-		start(p1);
+		Player p1 = server.movePlayerTo(1, new Point(0, 0));
+		Player p2 = server.movePlayerTo(2, new Point(2, 1));
 		
 		//Move p1
 		goRight(p1);
@@ -115,19 +103,15 @@ public class ServerTest {
 		
 		// Collide
 		goLeft(p2);
-		IntegrationHelper.findPlayers(server.getGrid(), 0);
+		assertPlayers(2);
 	}
-	
-	/**
-	 * This test creates one too many players, and then ensures that only
-	 * the maximum amount of players exist in the game.
-	 */
+
 	@Test
 	public void testTooManyPlayers(){
 		for (int i=0; i<Server.MAX_PLAYERS; i++){
 			send(i, new ConnectEvent(false));
 		}
-		IntegrationHelper.findPlayers(server.getGrid(), Server.MAX_PLAYERS);
+		assertPlayers(Server.MAX_PLAYERS);
 	}
 	
 	@Test
@@ -135,7 +119,8 @@ public class ServerTest {
 		send(1, new ConnectEvent(false));
 		send(2, new ConnectEvent(false));
 		send(3, new ConnectEvent(true));
-		IntegrationHelper.findPlayers(server.getGrid(), 2);
+		start(1);
+		assertPlayers(2);
 	}
 	
 	private void send(int playerId, Event event){
@@ -147,7 +132,11 @@ public class ServerTest {
 		assertEquals(new Point(x, y), server.getGrid().find(player));
 	}
 	
-	private void start(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_ENTER)); }
+	private void assertPlayers(int expected){
+		assertEquals(expected, server.getPlayers().size());
+	}
+	
+	private void start(int playerId) { send(playerId, new GameKeyEvent(KeyEvent.VK_ENTER)); }
 	private void goUp(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_UP)); }
 	private void goLeft(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_LEFT)); }
 	private void goDown(Player p) { send(p.playerId, new GameKeyEvent(KeyEvent.VK_DOWN)); }

@@ -1,10 +1,12 @@
 package test.integration.helpers;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 import server.content.GridLoader;
 import server.controllers.Server;
+import test.helpers.Condition;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.models.Grid;
@@ -19,12 +21,12 @@ public class MockServer extends Server {
 	}
 	
 	@Override
-	public void receive(Event event){
-		super.receive(event);
+	public Event receive(Event event){
+		Event response = super.receive(event);
 		if (event instanceof GameKeyEvent){
-			//keySem.release();
 			keyCond.notifyCond();
 		}
+		return response;
 	}
 	
 	public void newGame(){
@@ -35,10 +37,16 @@ public class MockServer extends Server {
 		return grid;
 	}
 	
-	public Player movePlayerTo(int playerId, int totalPlayers, Point newPos){
-		List<Player> players =  IntegrationHelper.findPlayers(grid, totalPlayers);
+	public List<Player> getPlayers(){
+		return new ArrayList<Player>(players.values());
+	}
+	
+	public Player movePlayerTo(int playerId, Point newPos){
 		Player player = players.get(playerId);
-		grid.set(player,  newPos);
+		if (grid.contains(player)){
+			grid.remove(player);
+		}
+		grid.set(player, newPos);
 		return player;
 	}
 }

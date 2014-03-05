@@ -2,11 +2,18 @@ package server.controllers;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Random;
 
 import common.controllers.GameController;
+import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
+import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameStartEvent;
@@ -24,7 +31,7 @@ public class Server extends GameController {
 	public static final int MAX_PLAYERS = 4;
 	public static enum State { stopped, idle, newGame, gameRunning };
 	
-	private Map<Integer, Player> players;
+	protected Map<Integer, Player> players;
 	private State state = State.stopped;
 	private final SimulationTimer timer;
 
@@ -34,7 +41,6 @@ public class Server extends GameController {
 		
 		timer = new SimulationTimer(this);
 		nwc.startListeningOnServerPort();
-		nwc.acceptNewPeers();
 		state = State.idle;
 	}
 	
@@ -48,8 +54,9 @@ public class Server extends GameController {
 		return state == State.gameRunning;
 	}
 	
-	public boolean isAcceptingPlayers(){
-		return nwc.isAcceptingNewPeers();
+	@Override
+	public boolean isAcceptingConnections(){
+		return state == State.newGame || state == State.idle;
 	}
 	
 	public synchronized void simulationUpdate(){		
@@ -67,7 +74,17 @@ public class Server extends GameController {
 	}
 	
 	private void startGame(){
-		nwc.rejectNewPeers();
+		// Place players
+		List<Point> points = new ArrayList<>(grid.keySet());
+		Random r = new Random();
+		Queue<Player> queue = new ArrayDeque<>(players.values());
+		while(!queue.isEmpty()){
+			Point dest = points.get(r.nextInt(points.size() - 1));
+			if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+				grid.set(queue.remove(), dest);
+			}
+		}
+		
 		state = State.gameRunning;
 		send(new GameStartEvent());
 		timer.start();
@@ -77,44 +94,34 @@ public class Server extends GameController {
 		timer.stop();
 		state = State.idle;
 		grid = null;
-		nwc.acceptNewPeers();
 	}
 	
 	public void stop(){
 		endGame();
 		timer.stop();
-		state = State.stopped;
 		nwc.stopListening();
+		state = State.stopped;
 	}
 
     @Override
-    public synchronized void receive(Event event) {
+    public synchronized Event receive(Event event) {
     	setChanged();
     	notifyObservers(event);
     	
     	int playerId = event.getPlayerID();
     	
-    	// Accept ConntectEvent and add player to game
-    	if (
-    		event instanceof ConnectEvent && !((ConnectEvent)event).spectator
-    		&& (state == State.newGame || state == State.idle)
-    	){
-    		if (players.size() < MAX_PLAYERS){
-    			nwc.acceptNewPeers();
-    			Player player = new Player(playerId);
-    			players.put(playerId, player);
-    			
-    			// Find place on grid to add player
-    			for (Point point : grid.keySet()){
-    				if (grid.isPassable(point) && !grid.hasPlayer(point)){
-    					grid.set(player, point);
-    					return;
-    				}
-    			}
-    			throw new RuntimeException("Could not find place to add player");
-    		} else {
-    			nwc.rejectNewPeers();
+    	// Decide whethere to accept or reject connection request
+    	if (event instanceof ConnectEvent){
+    		if (((ConnectEvent)event).spectator){
+    			return new ConnectAcceptedEvent();
     		}
+    		else if (isAcceptingConnections()){
+    			if (players.size() < MAX_PLAYERS){
+        			players.put(playerId, new Player(playerId));
+        		}
+    			return new ConnectAcceptedEvent();
+    		}
+    		return new ConnectRejectedEvent();
     	}
     	
     	/*
@@ -146,7 +153,9 @@ public class Server extends GameController {
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
     	   }
+    	   return event;
        }
+    	return null;
     }
     
     private void move(Player player, int dx, int dy){

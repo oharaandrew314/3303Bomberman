@@ -29,7 +29,7 @@ public class Square implements Serializable {
 		return impassableEntity == null;
 	}
 	
-	public boolean add(Entity entity){
+	public synchronized boolean add(Entity entity){
 		if (entity == null){
 			throw new IllegalArgumentException("Cannot add null entity");
 		}
@@ -58,7 +58,7 @@ public class Square implements Serializable {
 		return entities;
 	}
 	
-	public boolean remove(Entity entity){
+	public synchronized boolean remove(Entity entity){
 		if (entity == null){
 			throw new IllegalArgumentException("Cannot remove null entity");
 		}
@@ -75,7 +75,7 @@ public class Square implements Serializable {
 	}
 	
 	@Override
-	public String toString(){
+	public synchronized String toString(){
 		// Impassable object gets priority
 		if (!isPassable()) return impassableEntity.toString();
 		

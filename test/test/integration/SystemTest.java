@@ -22,7 +22,7 @@ public class SystemTest {
 	@Before
 	public void setup(){
 		server = new MockServer();
-		assertTrue(server.isAcceptingPlayers());
+		assertTrue(server.isAcceptingConnections());
 		assertTrue(!server.isGameRunning());
 	}
 	
@@ -40,7 +40,7 @@ public class SystemTest {
 	public void test() {
 		// Open new game
 		server.newGame();
-		assertTrue(server.isAcceptingPlayers());
+		assertTrue(server.isAcceptingConnections());
 		assertTrue(!server.isGameRunning());
 		
 		// start and connect client to local server
@@ -54,7 +54,7 @@ public class SystemTest {
 		assertTrue(server.isGameRunning());
 		
 		// Set player starting position
-		Player p = server.movePlayerTo(0, 1, new Point(0, 0));
+		Player p = server.movePlayerTo(0, new Point(0, 0));
 	
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);

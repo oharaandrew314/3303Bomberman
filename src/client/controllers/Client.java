@@ -22,7 +22,7 @@ public abstract class Client extends GameController {
 	}
 
 	@Override
-	public void receive(Event event) {
+	public Event receive(Event event) {
 		if (event instanceof ViewUpdateEvent){
 			processViewUpdate(((ViewUpdateEvent)event).getGrid());
 		} else if (event instanceof PlayerDeadEvent){
@@ -36,6 +36,7 @@ public abstract class Client extends GameController {
 		} else if (event instanceof GameStartEvent){
 			startGame();
 		}
+		return null;
 	}
 	
 	protected abstract boolean isSpectator();
@@ -56,5 +57,9 @@ public abstract class Client extends GameController {
 	@Override
 	public boolean isGameRunning(){
 		return state == State.gameRunning;
+	}
+	
+	public boolean isAcceptingConnections(){
+		return false;
 	}
 }

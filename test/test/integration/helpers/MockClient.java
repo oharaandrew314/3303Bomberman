@@ -2,6 +2,7 @@ package test.integration.helpers;
 
 import java.awt.event.KeyEvent;
 
+import test.helpers.Condition;
 import client.controllers.Client;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
@@ -17,6 +18,7 @@ public class MockClient extends Client {
 	
 	private static Condition  keyCond;
 	private final Condition connectCond , updateCond;
+	private boolean accepted;
 	
 	public MockClient(MockServer mockServer){
 		keyCond = mockServer.keyCond;	
@@ -41,6 +43,10 @@ public class MockClient extends Client {
 		pressKey(KeyEvent.VK_ENTER);
 	}
 	
+	public boolean wasAccepted(){
+		return accepted;
+	}
+	
 	// Overrides
 	
 	@Override
@@ -53,11 +59,13 @@ public class MockClient extends Client {
 	@Override
 	protected void processConnectionAccepted() {
 		while (connectCond == null);
+		accepted = true;
 		connectCond.notifyCond();
 	}
 	@Override
 	protected void processConnectionRejected() {
 		while (connectCond == null);
+		accepted = false;
 		connectCond.notifyCond();
 	}
 
