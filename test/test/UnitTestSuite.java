@@ -6,6 +6,7 @@ import test.client.controllers.TestTestDriver;
 import test.content.TestGridLoader;
 import test.controllers.TestGridGenerator;
 import test.controllers.TestNetworkController;
+import test.controllers.TestSimulationTimer;
 import test.events.TestGameKeyEvent;
 import test.events.TestViewUpdateEvent;
 import test.integration.ServerTest;
@@ -24,6 +25,7 @@ import test.models.TestSquare;
    TestViewUpdateEvent.class,
    TestGridLoader.class,
    TestTestDriver.class,
+   TestSimulationTimer.class,
    
    //Integration Tests
    ServerTest.class,

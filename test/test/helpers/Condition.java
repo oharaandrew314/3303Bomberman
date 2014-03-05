@@ -7,7 +7,7 @@ package test.helpers;
  */
 public class Condition {
 	
-	public boolean waiting;
+	private boolean waiting;
 	
 	public synchronized void waitCond(){
 		waiting = true;
