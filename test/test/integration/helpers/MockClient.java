@@ -1,11 +1,18 @@
 package test.integration.helpers;
 
-import java.awt.event.KeyEvent;
+import static org.junit.Assert.assertTrue;
 
-import test.helpers.Condition;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import client.controllers.Client;
+import common.events.ConnectAcceptedEvent;
+import common.events.ConnectRejectedEvent;
+import common.events.Event;
 import common.events.GameKeyEvent;
-import common.events.PlayerDeadEvent;
+import common.events.GameStartEvent;
+import common.events.ViewUpdateEvent;
 import common.models.Grid;
 
 /**
@@ -16,56 +23,92 @@ import common.models.Grid;
  */
 public class MockClient extends Client {
 	
-	private final Condition connectCond, updateCond, keyCond;
-	private boolean accepted;
+	public static final int TIMEOUT = 1000;
+	private Collection<Event> events;
 	
-	public MockClient(){
-		keyCond = new Condition();
-		updateCond = new Condition();
-		connectCond = new Condition();
-
-		connectCond.waitCond();
+	public MockClient(boolean expectAccept){
+		waitFor(expectAccept ? ConnectAcceptedEvent.class : ConnectRejectedEvent.class);
 	}
 	
 	// Helpers
 	
-	public void pressKey(int keyCode){
+	public synchronized void pressKey(int keyCode){
+		Collection<GameKeyEvent> wrongKeys = new ArrayList<>();
+		
 		nwc.send(new GameKeyEvent(keyCode));
-		keyCond.waitCond();
+		
+		GameKeyEvent response = null;
+		boolean found = false;
+		while(!found){
+			response = (GameKeyEvent) waitFor(GameKeyEvent.class);
+			
+			// If wrong event; add back to events
+			if (response.getKeyCode() != keyCode){
+				wrongKeys.add(response);
+			} else {
+				found = true;
+			}
+		}
+		
+		events.addAll(wrongKeys);
+		notify();
 	}
 	
 	public void waitForViewUpdate(){
-		updateCond.waitCond();
+		waitFor(ViewUpdateEvent.class);
 	}
 	
 	public void startGame(){
 		pressKey(KeyEvent.VK_ENTER);
+		waitFor(GameStartEvent.class);
 	}
 	
-	public boolean wasAccepted(){
-		return accepted;
+	public synchronized Event waitFor(Class<? extends Event> eventType){
+		long start = System.currentTimeMillis();
+		boolean timeout = false;
+		Event event = search(eventType);
+
+		while (event == null && !timeout){
+			// Wait
+			try {
+				wait(TIMEOUT);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			
+			// Check for timeout
+			if (System.currentTimeMillis() - start > TIMEOUT){
+				timeout = true;
+			}
+			
+			event = search(eventType);
+		}
+		
+		assertTrue("Client response timed out", !timeout);
+		return event;
+	}
+	
+	private Event search(Class<? extends Event> eventType){
+		Event result = null;
+		if (events != null){
+			for (Event event : events){
+				result = eventType.isInstance(event) ? event : null;
+			}
+			events.remove(result);
+		}
+		return result;
 	}
 	
 	// Overrides
 	
 	@Override
-	protected void processViewUpdate(Grid grid) {
-		updateCond.notifyCond();
-	}
-	
-	@Override
-	protected void processPlayerDead(PlayerDeadEvent event) {}
-	@Override
-	protected void processConnectionAccepted() {
-		while (connectCond == null);
-		accepted = true;
-		connectCond.notifyCond();
-	}
-	@Override
-	protected void processConnectionRejected() {
-		while (connectCond == null);
-		accepted = false;
-		connectCond.notifyCond();
+	public synchronized Event receive(Event event){
+		if (events == null){
+			events = new ArrayList<>();
+		}
+		events.add(event);
+		notify();
+		return null;
 	}
 
 	@Override
@@ -74,7 +117,10 @@ public class MockClient extends Client {
 	}
 	
 	@Override
-	protected void keyEventAcknowledged(){
-		keyCond.notifyCond();
-	}
+	protected void processConnectionAccepted() {}
+	@Override
+	protected void processConnectionRejected() {}
+	@Override
+	protected void processViewUpdate(Grid grid) {}
+
 }
