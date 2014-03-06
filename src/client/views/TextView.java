@@ -51,4 +51,7 @@ public class TextView implements View {
 		System.out.println(grid);
 		System.out.println(player.name + "has ended the game");
 	}
+
+	@Override
+	public void close() {}
 }

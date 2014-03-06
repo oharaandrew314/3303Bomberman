@@ -69,8 +69,9 @@ public class Server extends GameController {
 		}
 	}
 	
-	private void send(Event event){
-		nwc.send(event);
+	@Override
+	protected void send(Event event){
+		super.send(event);
 		
 		setChanged();
 		notifyObservers(event);

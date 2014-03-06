@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.TextArea;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import common.models.Grid;
 import common.models.Player;
@@ -15,9 +16,14 @@ public class JFrameTextView implements View {
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_TEXT_SIZE = 30;
 	private TextArea textArea, console;
+	private final JFrame frame;
 	
 	public JFrameTextView(){
-		JFrame frame = new JFrame("Bomberman");
+		this(null);
+	}
+	
+	public JFrameTextView(JMenuBar menuBar){
+		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
 		frame.setSize(FRAME_SIZE);
 		
@@ -31,45 +37,50 @@ public class JFrameTextView implements View {
 		console.setSize(FRAME_SIZE.width, FRAME_SIZE.height / 10);
 		frame.add(console, BorderLayout.SOUTH);
 		
+		// Add Menu Bar
+		if (menuBar != null){
+			frame.setJMenuBar(menuBar);
+		}
+		
 		frame.setVisible(true);
 	}
 
 	@Override
 	public void updateView(Grid grid) {
-		textArea.setText(grid.toString());
-		
-	}
-	
-	private void console(String string){
-		console.append(string);
+		textArea.setText(grid.toString());	
 	}
 
 	@Override
 	public void displayPlayerDead(Player player) {
-		console(player.name + " has died.");
-		
+		console.append(player.name + " has died.");
 	}
 
 	@Override
 	public void displayConnectionAccepted() {
-		console("Connection Accepted");
+		console.append("Connection Accepted");
 		
 	}
 
 	@Override
 	public void displayConnectionRejected() {
-		console("Connection Rejected");
+		console.append("Connection Rejected");
 		
 	}
 
 	@Override
 	public void displayStartGame() {
-		console("Game Started");
+		console.append("Game Started");
 		
 	}
 
 	@Override
 	public void displayEndGame(Grid grid, Player player) {
-		console(player.name + "has ended the game");
-	}	
+		console.append(player.name + "has ended the game");
+	}
+
+	@Override
+	public void close() {
+		frame.setVisible(false);
+		frame.dispose();
+	}
 }

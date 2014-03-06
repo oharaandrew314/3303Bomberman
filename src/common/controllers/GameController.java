@@ -13,8 +13,13 @@ public abstract class GameController extends Observable{
 	public GameController() {
 		nwc = new NetworkController(this);
 	}
+	
+	protected void send(Event event){
+		nwc.send(event);
+	}
 
 	public abstract boolean isGameRunning();
 	public abstract boolean isAcceptingConnections();
     public abstract Event receive(Event event);
+    public abstract void stop();
 }

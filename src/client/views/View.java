@@ -10,4 +10,5 @@ public interface View {
 	void displayConnectionRejected();
 	void displayStartGame();
 	void displayEndGame(Grid grid, Player player);
+	void close();
 }

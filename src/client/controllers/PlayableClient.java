@@ -2,17 +2,26 @@ package client.controllers;
 
 import java.awt.event.KeyEvent;
 
-import common.controllers.NetworkController;
+import client.views.View;
+
 import common.events.GameKeyEvent;
 
-public abstract class PlayableClient extends Client {
+public class PlayableClient extends Client {
 	
 	public PlayableClient(){
-		this(NetworkController.LOCALHOST);
+		super();
+	}
+	
+	public PlayableClient(View view){
+		super(view);
 	}
 	
 	public PlayableClient(String serverAddress){
-        super(serverAddress);
+		super(serverAddress);
+	}
+	
+	public PlayableClient(String serverAddress, View view){
+        super(serverAddress, view);
 	}
 
 	@Override
@@ -27,21 +36,10 @@ public abstract class PlayableClient extends Client {
 	}
 	
 	public void pressKey(int keyCode){
-		nwc.send(new GameKeyEvent(keyCode));
+		send(new GameKeyEvent(keyCode));
 	}
 	
 	public void startGame(){
 		pressKey(KeyEvent.VK_ENTER);
 	}
-	
-	// Overrides
-
-	@Override
-	protected void processConnectionAccepted() {
-	}
-
-	@Override
-	protected void processConnectionRejected() {
-	}
-
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
-import common.models.Grid;
 
 
 public class TestRunner extends Client implements Runnable{
@@ -18,15 +17,9 @@ public class TestRunner extends Client implements Runnable{
 	}
 
 	@Override
-	protected void processViewUpdate(Grid grid2) {}
-
-	@Override
 	protected void processConnectionAccepted() {
 		connected = true;
 	}
-
-	@Override
-	protected void processConnectionRejected() {}
 	
 	public void run(){
 		while(!connected){
