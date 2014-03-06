@@ -2,11 +2,10 @@ package test.integration.helpers;
 
 import static org.junit.Assert.assertTrue;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import client.controllers.Client;
+import client.controllers.PlayableClient;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
@@ -21,7 +20,7 @@ import common.models.Grid;
  * @author Andrew O'Hara
  *
  */
-public class MockClient extends Client {
+public class MockClient extends PlayableClient {
 	
 	public static final int TIMEOUT = 1000;
 	private Collection<Event> events;
@@ -35,7 +34,7 @@ public class MockClient extends Client {
 	public synchronized void pressKey(int keyCode){
 		Collection<GameKeyEvent> wrongKeys = new ArrayList<>();
 		
-		nwc.send(new GameKeyEvent(keyCode));
+		super.pressKey(keyCode);
 		
 		GameKeyEvent response = null;
 		boolean found = false;
@@ -59,7 +58,7 @@ public class MockClient extends Client {
 	}
 	
 	public void startGame(){
-		pressKey(KeyEvent.VK_ENTER);
+		super.startGame();
 		waitFor(GameStartEvent.class);
 	}
 	
@@ -116,10 +115,6 @@ public class MockClient extends Client {
 		return false;
 	}
 	
-	@Override
-	protected void processConnectionAccepted() {}
-	@Override
-	protected void processConnectionRejected() {}
 	@Override
 	protected void processViewUpdate(Grid grid) {}
 
