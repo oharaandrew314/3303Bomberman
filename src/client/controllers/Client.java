@@ -43,7 +43,6 @@ public abstract class Client extends GameController {
 	
 	protected abstract boolean isSpectator();
 	protected abstract void processViewUpdate(Grid grid);
-	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
 	
@@ -55,6 +54,10 @@ public abstract class Client extends GameController {
 	
 	protected void endGame(WinEvent winEvent){
 		processViewUpdate(winEvent.grid);
+		state = State.idle;
+	}
+	
+	protected void processPlayerDead(PlayerDeadEvent event){
 		state = State.idle;
 	}
 	
