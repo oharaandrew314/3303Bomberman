@@ -9,7 +9,7 @@ import client.controllers.PlayableClient;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
-import common.events.GameKeyEvent;
+import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.ViewUpdateEvent;
 import common.models.Grid;
@@ -32,14 +32,14 @@ public class MockClient extends PlayableClient {
 	// Helpers
 	
 	public synchronized void pressKey(int keyCode){
-		Collection<GameKeyEvent> wrongKeys = new ArrayList<>();
+		Collection<GameKeyEventAck> wrongKeys = new ArrayList<>();
 		
 		super.pressKey(keyCode);
 		
-		GameKeyEvent response = null;
+		GameKeyEventAck response = null;
 		boolean found = false;
 		while(!found){
-			response = (GameKeyEvent) waitFor(GameKeyEvent.class);
+			response = (GameKeyEventAck) waitFor(GameKeyEventAck.class);
 			
 			// If wrong event; add back to events
 			if (response.getKeyCode() != keyCode){

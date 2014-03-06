@@ -35,8 +35,8 @@ public abstract class Client extends GameController {
 			endGame((WinEvent) event);
 		} else if (event instanceof GameStartEvent){
 			setGameStarted();
-		} else if (event instanceof GameKeyEvent){
-			keyEventAcknowledged();
+		} else if (event instanceof GameKeyEventAck){
+			keyEventAcknowledged((GameKeyEventAck) event);
 		}
 		return null;
 	}
@@ -46,7 +46,7 @@ public abstract class Client extends GameController {
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
 	
-	protected void keyEventAcknowledged(){}
+	protected void keyEventAcknowledged(GameKeyEvent event){}
 	
 	protected void setGameStarted(){
 		state = State.gameRunning;

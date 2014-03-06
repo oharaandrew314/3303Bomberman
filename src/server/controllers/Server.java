@@ -16,6 +16,7 @@ import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
+import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
@@ -131,7 +132,8 @@ public class Server extends GameController {
     	 */
     	else if (event instanceof GameKeyEvent){
     	   Player player = players.get(playerId);
-    	   int keyCode = ((GameKeyEvent)event).getKeyCode();
+    	   GameKeyEvent keyEvent = (GameKeyEvent) event;
+    	   int keyCode = keyEvent.getKeyCode();
     	   
     	   if (isGameRunning()){
     		   switch(keyCode){
@@ -154,7 +156,7 @@ public class Server extends GameController {
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
     	   }
-    	   return event;
+    	   return new GameKeyEventAck(keyEvent);
        }
     	return null;
     }
