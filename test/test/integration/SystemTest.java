@@ -7,9 +7,9 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import test.integration.helpers.IntegrationHelper;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
 import common.models.Grid;
@@ -19,38 +19,42 @@ public class SystemTest {
 	
 	private MockServer server;
 	
+	@Before
+	public void setup(){
+		server = new MockServer();
+		assertTrue(server.isAcceptingConnections());
+		assertTrue(!server.isGameRunning());
+	}
+	
 	/** Stop game and check state */
 	@After
 	public void after(){
-		server.reset();
+		if (server.isGameRunning()){
+			server.endGame();
+		}
 		assertTrue(!server.isGameRunning());
+		server.stop();
 	}
 
 	@Test
 	public void test() {
-		// Create and Start server
-		server = new MockServer();
-		assertTrue(!server.isAcceptingPlayers());
-		
 		// Open new game
 		server.newGame();
-		assertTrue(server.isAcceptingPlayers());
-		assertTrue(!server.isGameRunning());		
+		assertTrue(server.isAcceptingConnections());
+		assertTrue(!server.isGameRunning());
 		
 		// start and connect client to local server
-		MockClient client = MockClient.startMockClient(server);
-		
-		// Ensure client knows game hasn't started yet
+		MockClient client = new MockClient(true);
 		assertTrue(!client.isGameRunning());
+		assertTrue(!server.isGameRunning());
 		
 		// start game
 		client.startGame();
 		assertTrue(server.isGameRunning());
-		
+		assertTrue(!server.isAcceptingConnections());
 		
 		// Set player starting position
-		Player p = IntegrationHelper.findPlayers(getGrid(), 1).get(0);
-		getGrid().set(p, new Point(0, 0));
+		Player p = server.movePlayerTo(0, new Point(0, 0));
 	
 		// Move player right
 		client.pressKey(KeyEvent.VK_D);

@@ -1,42 +1,60 @@
 package test.controllers;
 
-import static org.junit.Assert.*;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import server.controllers.Server;
 import server.controllers.SimulationTimer;
+import test.helpers.Condition;
 
-public class TestSimulationTimer extends Server {
+public class TestSimulationTimer {
+	
+	private SimulationTimer timer;
+	private TimerServer server;
 
-	private static final int
-		TEST_DURATION = 1 * SimulationTimer.MS_IN_S,
-		EXPECTED_UPDATES = TEST_DURATION / SimulationTimer.UPDATE_DELAY;
-	
-	private static final double ACCEPTABLE_ERROR_RATE = 0.2;
-	
-	private int numUpdates = 0;
-	
-	@Override
-	public void simulationUpdate(){
-		numUpdates++;
+	@Before
+	public void setUp()  {
+		server = new TimerServer();
+		timer = new SimulationTimer(server);
 	}
 
+	@After
+	public void tearDown() {
+		server.stop();
+	}
+	
 	@Test
-	public void test() {
-		// Run the timer for some specified duration
-		try {
-			Thread.sleep(TEST_DURATION);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+	public void testRestart() {
+		timer.start();
+		server.waitForUpdate();
+		
+		timer.start();
+		server.waitForUpdate();
+		
+		timer.stop();
+		timer.start();
+		server.waitForUpdate();
+		
+		timer.stop();
+	}
+	
+	private class TimerServer extends Server {
+		
+		private final Condition condition;
+		
+		public TimerServer(){
+			condition = new Condition();
 		}
 		
-		// make sure number of actual updates was close enought to the expected
-		double error = (
-			((double) Math.max(numUpdates, EXPECTED_UPDATES)) /
-			Math.min(numUpdates, EXPECTED_UPDATES)
-		) - 1;
-		assertTrue(error <= ACCEPTABLE_ERROR_RATE);
+		@Override
+		public void simulationUpdate(){
+			condition.notifyCond();
+		}
+		
+		public void waitForUpdate(){
+			condition.waitCond();
+		}
 	}
 
 }

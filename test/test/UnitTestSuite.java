@@ -19,13 +19,13 @@ import test.models.TestSquare;
 	// Unit Tests
    TestGrid.class,
    TestSquare.class,
-   TestSimulationTimer.class,
    TestGridGenerator.class,
    TestNetworkController.class,
    TestGameKeyEvent.class,
    TestViewUpdateEvent.class,
    TestGridLoader.class,
    TestTestDriver.class,
+   TestSimulationTimer.class,
    
    //Integration Tests
    ServerTest.class,

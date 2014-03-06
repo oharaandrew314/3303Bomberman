@@ -3,15 +3,13 @@ package test.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import test.helpers.MockNetworkController;
+
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -20,18 +18,18 @@ import common.events.GameKeyEvent;
 import common.events.ViewUpdateEvent;
 
 public class TestNetworkController extends GameController {
-    private NetworkController clientA;
-    private NetworkController clientB;
-    private NetworkController server;
+    private MockNetworkController clientA;
+    private MockNetworkController clientB;
+    private MockNetworkController server;
     
-    private List<Event> receivedEvents = new LinkedList<Event>();
+    private boolean isAcceptingConnections;
     
     @Before
     public void setUp() {
-        clientA = new NetworkController(this);
-        clientB = new NetworkController(this);
-        server = new NetworkController(this);
-        resetReceivedEvents();
+        clientA = new MockNetworkController(this);
+        clientB = new MockNetworkController(this);
+        server = new MockNetworkController(this);
+        isAcceptingConnections = true;
     }
     
     @After
@@ -42,8 +40,14 @@ public class TestNetworkController extends GameController {
     }
     
     @Override
-    public synchronized void receive(Event event) {
-        receivedEvents.add(event);
+    public synchronized Event receive(Event event) {
+        if (event instanceof ConnectEvent){
+        	return (
+        		isAcceptingConnections() ?
+        		new ConnectAcceptedEvent() : new ConnectRejectedEvent()
+        	);
+        }
+        return null;
     }
     
     @Override
@@ -51,108 +55,63 @@ public class TestNetworkController extends GameController {
 		return true;
 	}
     
-    /**
-     * Enter a busy waiting state until the receivedEvents list reaches the 
-     * given size. If we have waited for more than 5 seconds, we assume the
-     * packets are not coming and mark the test as a failure.
-     * @param count The expected size of the receivedEvent list.
-     */
-    private void waitToReceiveEvents(int count) {
-        long start = System.currentTimeMillis() / 1000;
-        boolean giveUp = false;
-        while (receivedEvents.size() < count && !giveUp) {
-            long current = System.currentTimeMillis() / 1000;
-            if (current - start > 5) {
-                giveUp = true;
-                assertTrue("Gave up waiting for events after 5 seconds", false);
-            }
-        }
-    }
-    
-    /**
-     * Used to check that the correct number of events of a certain type were
-     * received. Use this rather than checking the receivedEvents list directly
-     * as the order of the list is unreliable.
-     * @param type The type of event to count.
-     * @param expected The number of times the event should have been received.
-     */
-    private void assertReceivedNumberOfEvents(Class<?> type, int expected) {
-        int actual = 0;
-        for(Event event : receivedEvents) {
-            if (type.isInstance(event))
-                actual++;
-        }
-        assertEquals(expected, actual);
-    }
-    
-    private void resetReceivedEvents() {
-        receivedEvents.clear();
-    }
+    @Override
+	public boolean isAcceptingConnections() {
+		return isAcceptingConnections;
+	}
     
     @Test
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
         server.startListeningOnServerPort();
         clientA.addLocalServerPeer();
-        clientA.send(new ConnectEvent(false));
-        waitToReceiveEvents(1);
-        assertTrue(receivedEvents.get(0) instanceof ConnectEvent);
+        
+        Event received = clientA.connectAndWait(server);
+        assertTrue(received instanceof ConnectEvent);
     }
     
     @Test
     public void addServerPeerMethodShouldAddTheServerAddressAsAPeer() {
         server.startListeningOnServerPort();
         clientA.addLocalServerPeer();
-        clientA.send(new GameKeyEvent(0));
-        waitToReceiveEvents(1);
-        assertTrue(receivedEvents.get(0) instanceof GameKeyEvent);
+        
+        Event received = clientA.sendAndWait(new GameKeyEvent(0), server);
+        assertTrue(received instanceof GameKeyEvent);
     }
     
     @Test
-    public void newPeersShouldBeSavedWhenAcceptNewPeersIsSet() {
+    public void newPeersShouldBeSavedWhenControllerAcceptsPeer() {
         clientA.startListeningOn(1);
         clientB.startListeningOn(2);
         clientA.addLocalServerPeer();
         clientB.addLocalServerPeer();
         
         server.startListeningOnServerPort();
-        server.acceptNewPeers();
         
         clientA.send(new ConnectEvent(false));
         clientB.send(new ConnectEvent(false));
-        waitToReceiveEvents(4);
+        server.waitFor(ConnectEvent.class);
+        server.waitFor(ConnectEvent.class);
                 
         server.send(new ViewUpdateEvent(null));
-        waitToReceiveEvents(6);
+        clientA.waitFor(ViewUpdateEvent.class);
+        clientB.waitFor(ViewUpdateEvent.class);
         
-        assertReceivedNumberOfEvents(ConnectEvent.class, 2);
-        assertReceivedNumberOfEvents(ConnectAcceptedEvent.class, 2);
-        assertReceivedNumberOfEvents(ConnectRejectedEvent.class, 0);
-        assertReceivedNumberOfEvents(ViewUpdateEvent.class, 2);
+        assertEquals(2, server.getNumPeers());
     }
     
     @Test
     public void newPeersShouldNotBeSavedWhenRejectNewPeersIsSet() {
+    	isAcceptingConnections = true;
         clientA.startListeningOn(1);
         clientB.startListeningOn(2);
         clientA.addLocalServerPeer();
         clientB.addLocalServerPeer();
         server.startListeningOnServerPort();
         
-        server.acceptNewPeers();
-        clientA.send(new ConnectEvent(false));
-        waitToReceiveEvents(2);
-        
-        server.rejectNewPeers();
-        clientB.send(new ConnectEvent(false));
-        waitToReceiveEvents(4);
-                
-        server.send(new ViewUpdateEvent(null));
-        waitToReceiveEvents(5);
-        
-        assertReceivedNumberOfEvents(ConnectEvent.class, 2);
-        assertReceivedNumberOfEvents(ConnectAcceptedEvent.class, 1);
-        assertReceivedNumberOfEvents(ConnectRejectedEvent.class, 1);
-        assertReceivedNumberOfEvents(ViewUpdateEvent.class, 1);
+        clientA.connectAndWait(server);
+        isAcceptingConnections = false;
+        clientB.connectAndWait(server);
+        assertEquals(1, server.getNumPeers());
     }
     
     @Test
@@ -161,29 +120,20 @@ public class TestNetworkController extends GameController {
         clientB.startListeningOn(2);
         server.startListeningOnServerPort();
         
-        server.acceptNewPeers();
         clientA.addLocalServerPeer();
         clientB.addLocalServerPeer();
+
+        // Connect client A
+        Event received = clientA.connectAndWait(server);
+        assertEquals(0, received.getPlayerID());
         
-        clientA.send(new ConnectEvent(false));
-        waitToReceiveEvents(2);
-        
-        assertEquals(0, receivedEvents.get(0).getPlayerID());
-        assertEquals(0, receivedEvents.get(1).getPlayerID());
-        resetReceivedEvents();
-        
-        clientB.send(new ConnectEvent(false));
-        waitToReceiveEvents(2);
-        
-        //bit hacky, but prevents interrmittant failures due to network unreliability
-        assertEquals(receivedEvents.get(0) instanceof ConnectEvent ? 1 : 0, receivedEvents.get(0).getPlayerID());
-        assertEquals(receivedEvents.get(1) instanceof ConnectEvent ? 1 : 0, receivedEvents.get(1).getPlayerID());
-        resetReceivedEvents();
-        
-        clientB.send(new GameKeyEvent(42));
-        waitToReceiveEvents(1);
-        
-        assertEquals(1, receivedEvents.get(0).getPlayerID());
+        // Connect client B
+        received = clientB.connectAndWait(server);
+        assertEquals(1, received.getPlayerID());
+
+        // Send a key event from a client
+        received = clientB.sendAndWait(new GameKeyEvent(42), server);
+        assertEquals(1, received.getPlayerID());
     }
     
     @Test
@@ -194,13 +144,12 @@ public class TestNetworkController extends GameController {
         clientB.addLocalServerPeer();
         
         server.startListeningOnServerPort();
-        server.acceptNewPeers();
         
         clientA.send(new ConnectEvent(false));
         clientB.send(new ConnectEvent(false));
-        waitToReceiveEvents(4);
+        server.waitFor(ConnectEvent.class);
+        server.waitFor(ConnectEvent.class);
         
-        assertReceivedNumberOfEvents(ConnectEvent.class, 2);
-        assertReceivedNumberOfEvents(ConnectAcceptedEvent.class, 2);
+        assertEquals(2, server.getNumPeers());
     }
 }
