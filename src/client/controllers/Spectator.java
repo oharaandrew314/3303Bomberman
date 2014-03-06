@@ -44,8 +44,8 @@ public class Spectator extends Client {
 	}
 
 	@Override
-	protected void startGame(){
-		super.startGame();
+	protected void setGameStarted(){
+		super.setGameStarted();
 		view.displayStartGame();
 	}
 	

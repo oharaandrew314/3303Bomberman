@@ -7,10 +7,12 @@ import common.models.Grid;
 
 public abstract class Client extends GameController {
 	
-	private boolean running = false;
+	private static enum State {idle, gameRunning };
+	private State state;
 
 	public Client() {
 		this(NetworkController.LOCALHOST);
+		state = State.idle;
 	}
 	
 	public Client(String serverAddress){
@@ -20,7 +22,7 @@ public abstract class Client extends GameController {
 	}
 
 	@Override
-	public void receive(Event event) {
+	public Event receive(Event event) {		
 		if (event instanceof ViewUpdateEvent){
 			processViewUpdate(((ViewUpdateEvent)event).getGrid());
 		} else if (event instanceof PlayerDeadEvent){
@@ -32,27 +34,39 @@ public abstract class Client extends GameController {
 		} else if (event instanceof WinEvent){
 			endGame((WinEvent) event);
 		} else if (event instanceof GameStartEvent){
-			startGame();
+			setGameStarted();
+		} else if (event instanceof GameKeyEventAck){
+			keyEventAcknowledged((GameKeyEventAck) event);
 		}
+		return null;
 	}
 	
 	protected abstract boolean isSpectator();
 	protected abstract void processViewUpdate(Grid grid);
-	protected abstract void processPlayerDead(PlayerDeadEvent event);
 	protected abstract void processConnectionAccepted();
 	protected abstract void processConnectionRejected();
 	
-	protected void startGame(){
-		running = true;
+	protected void keyEventAcknowledged(GameKeyEvent event){}
+	
+	protected void setGameStarted(){
+		state = State.gameRunning;
 	}
 	
 	protected void endGame(WinEvent winEvent){
 		processViewUpdate(winEvent.grid);
-		running = false;
+		state = State.idle;
+	}
+	
+	protected void processPlayerDead(PlayerDeadEvent event){
+		state = State.idle;
 	}
 	
 	@Override
 	public boolean isGameRunning(){
-		return running;
+		return state == State.gameRunning;
+	}
+	
+	public boolean isAcceptingConnections(){
+		return false;
 	}
 }

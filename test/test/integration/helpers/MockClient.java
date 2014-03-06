@@ -1,11 +1,17 @@
 package test.integration.helpers;
 
-import java.awt.event.KeyEvent;
-import java.util.concurrent.Semaphore;
+import static org.junit.Assert.assertTrue;
 
-import client.controllers.Client;
-import common.events.GameKeyEvent;
-import common.events.PlayerDeadEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import client.controllers.PlayableClient;
+import common.events.ConnectAcceptedEvent;
+import common.events.ConnectRejectedEvent;
+import common.events.Event;
+import common.events.GameKeyEventAck;
+import common.events.GameStartEvent;
+import common.events.ViewUpdateEvent;
 import common.models.Grid;
 
 /**
@@ -14,66 +20,102 @@ import common.models.Grid;
  * @author Andrew O'Hara
  *
  */
-public class MockClient extends Client {
+public class MockClient extends PlayableClient {
 	
-	private final Semaphore viewUpdateSem;
-	private static Semaphore connectSem, keySem;
+	public static final int TIMEOUT = 1000;
+	private Collection<Event> events;
 	
-	private MockClient(MockServer mockServer){
-		viewUpdateSem = new Semaphore(1);
-		keySem = mockServer.keySem;
-	}
-	
-	// Factory
-	
-	public static MockClient startMockClient(MockServer mockServer){
-		connectSem = new Semaphore(1);
-		connectSem.acquireUninterruptibly();
-		MockClient client = new MockClient(mockServer);
-		connectSem.acquireUninterruptibly();
-		connectSem.release();
-		return client;
+	public MockClient(boolean expectAccept){
+		waitFor(expectAccept ? ConnectAcceptedEvent.class : ConnectRejectedEvent.class);
 	}
 	
 	// Helpers
 	
-	public void pressKey(int keyCode){
-		keySem.acquireUninterruptibly();
-		nwc.send(new GameKeyEvent(keyCode));
-		keySem.acquireUninterruptibly();
-		keySem.release();
+	public synchronized void pressKey(int keyCode){
+		Collection<GameKeyEventAck> wrongKeys = new ArrayList<>();
+		
+		super.pressKey(keyCode);
+		
+		GameKeyEventAck response = null;
+		boolean found = false;
+		while(!found){
+			response = (GameKeyEventAck) waitFor(GameKeyEventAck.class);
+			
+			// If wrong event; add back to events
+			if (response.getKeyCode() != keyCode){
+				wrongKeys.add(response);
+			} else {
+				found = true;
+			}
+		}
+		
+		events.addAll(wrongKeys);
+		notify();
 	}
 	
 	public void waitForViewUpdate(){
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.acquireUninterruptibly();
-		viewUpdateSem.release();
+		waitFor(ViewUpdateEvent.class);
 	}
 	
 	public void startGame(){
-		pressKey(KeyEvent.VK_ENTER);
+		super.startGame();
+		waitFor(GameStartEvent.class);
+	}
+	
+	public synchronized Event waitFor(Class<? extends Event> eventType){
+		long start = System.currentTimeMillis();
+		boolean timeout = false;
+		Event event = search(eventType);
+
+		while (event == null && !timeout){
+			// Wait
+			try {
+				wait(TIMEOUT);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			
+			// Check for timeout
+			if (System.currentTimeMillis() - start > TIMEOUT){
+				timeout = true;
+			}
+			
+			event = search(eventType);
+		}
+		
+		assertTrue("Client response timed out", !timeout);
+		return event;
+	}
+	
+	private Event search(Class<? extends Event> eventType){
+		Event result = null;
+		if (events != null){
+			for (Event event : events){
+				result = eventType.isInstance(event) ? event : null;
+			}
+			events.remove(result);
+		}
+		return result;
 	}
 	
 	// Overrides
 	
 	@Override
-	protected void processViewUpdate(Grid grid) {
-		viewUpdateSem.release();
-	}
-	
-	@Override
-	protected void processPlayerDead(PlayerDeadEvent event) {}
-	@Override
-	protected void processConnectionAccepted() {
-		connectSem.release();
-	}
-	@Override
-	protected void processConnectionRejected() {
-		connectSem.release();
+	public synchronized Event receive(Event event){
+		if (events == null){
+			events = new ArrayList<>();
+		}
+		events.add(event);
+		notify();
+		return null;
 	}
 
 	@Override
 	protected boolean isSpectator() {
 		return false;
 	}
+	
+	@Override
+	protected void processViewUpdate(Grid grid) {}
+
 }

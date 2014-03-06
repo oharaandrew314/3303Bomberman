@@ -13,4 +13,9 @@ public abstract class Event implements Serializable {
     public int getPlayerID() {
         return playerID;
     }
+    
+    @Override
+    public String toString(){
+    	return getClass().getSimpleName();
+    }
 }
