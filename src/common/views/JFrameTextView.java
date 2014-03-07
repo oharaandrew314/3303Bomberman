@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import common.controllers.GameController;
 import common.models.Grid;
 
 public abstract class JFrameTextView extends AbstractView {
@@ -19,7 +20,9 @@ public abstract class JFrameTextView extends AbstractView {
 	private TextArea textArea, console;
 	protected final JFrame frame;
 	
-	public JFrameTextView(){		
+	public JFrameTextView(GameController gc){	
+		gc.setView(this);
+		
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
 		frame.setSize(FRAME_SIZE);

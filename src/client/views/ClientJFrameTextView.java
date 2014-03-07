@@ -1,5 +1,6 @@
 package client.views;
 
+import client.controllers.PlayableClient;
 import common.models.Player;
 import common.views.JFrameTextView;
 import common.views.MenuBarFactory;
@@ -8,8 +9,9 @@ public class ClientJFrameTextView extends JFrameTextView {
 	
 	private int playerId;
 
-	public ClientJFrameTextView() {
-		super();
+	public ClientJFrameTextView(PlayableClient client) {
+		super(client);
+		addKeyListener(client);
 		addJMenuBar(MenuBarFactory.createClientMenuBar(this));
 	}
 

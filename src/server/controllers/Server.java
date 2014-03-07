@@ -26,7 +26,6 @@ import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
-import common.views.View;
 
 public class Server extends GameController {
 	
@@ -38,11 +37,6 @@ public class Server extends GameController {
 	private final SimulationTimer timer;
 
 	public Server(){
-		this(null);
-	}
-	
-	public Server(View view) {
-		super(view);
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 		

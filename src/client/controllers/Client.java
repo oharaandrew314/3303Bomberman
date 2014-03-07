@@ -2,8 +2,15 @@ package client.controllers;
 
 import common.controllers.GameController;
 import common.controllers.NetworkController;
-import common.events.*;
-import common.views.View;
+import common.events.ConnectAcceptedEvent;
+import common.events.ConnectEvent;
+import common.events.ConnectRejectedEvent;
+import common.events.Event;
+import common.events.GameKeyEvent;
+import common.events.GameKeyEventAck;
+import common.events.GameStartEvent;
+import common.events.PlayerDeadEvent;
+import common.events.WinEvent;
 
 public abstract class Client extends GameController {
 	
@@ -15,16 +22,7 @@ public abstract class Client extends GameController {
 		state = State.idle;
 	}
 	
-	public Client(View view){
-		this(NetworkController.LOCALHOST, view);
-	}
-	
 	public Client(String serverAddress){
-		this(serverAddress, null);
-	}
-	
-	public Client(String serverAddress, View view){
-		super(view);
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.send(new ConnectEvent(isSpectator()));

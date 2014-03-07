@@ -9,12 +9,11 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientJFrameTextView;
-import server.content.GridLoader;
+import client.views.SpectatorJFrameTextView;
 import server.controllers.Server;
 import server.views.ServerJFrameTextView;
 
@@ -22,20 +21,16 @@ public class Launcher extends WindowAdapter {
 	
 	private final JFrame frame;
 	private Server server;
-	private JTextField gridName;
 
 	public Launcher() {
 		frame = new JFrame("Bomberman");
-		frame.setLayout(new GridLayout(3, 2));
+		frame.setLayout(new GridLayout(3, 1));
 		frame.addWindowListener(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		add(new NewServerAction(this));
 		add(new NewSpectatorAction());
 		add(new NewClientAction());
-		
-		frame.add(gridName = new JTextField());
-		add(new LoadNewGameAction(this));
 		
 		frame.pack();
 		frame.setVisible(true);
@@ -46,19 +41,14 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	private void newServer(){
-		server = new Server(new ServerJFrameTextView());
+		server = new Server();
+		new ServerJFrameTextView(server);
 	}
 	
 	@Override
 	public void windowClosing(WindowEvent e){
 		if (server != null){
 			server.stop();
-		}
-	}
-	
-	public void loadNewGame(){
-		if (server != null){
-			server.newGame(GridLoader.loadGrid(gridName.getText()));
 		}
 	}
 	
@@ -89,7 +79,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new Spectator(new ServerJFrameTextView());
+			new SpectatorJFrameTextView(new Spectator());
 		}
 	}
 	
@@ -102,28 +92,11 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new PlayableClient(new ClientJFrameTextView());
+			new ClientJFrameTextView(new PlayableClient());
 		}
 	}
 	
 	public static void main(String[] args){
 		new Launcher();
 	}
-	
-	@SuppressWarnings("serial")
-	private static class LoadNewGameAction extends AbstractAction {
-		
-		private final Launcher launcher;
-		
-		public LoadNewGameAction(Launcher launcher){
-			super("Load Game");
-			this.launcher = launcher;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			launcher.loadNewGame();
-		}
-	}
-
 }

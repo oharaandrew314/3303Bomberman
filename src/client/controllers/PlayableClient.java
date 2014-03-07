@@ -4,26 +4,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import common.events.GameKeyEvent;
-import common.views.View;
 
 public class PlayableClient extends Client implements KeyListener {
 	
 	public PlayableClient(){
 		super();
 	}
-	
-	public PlayableClient(View view){
-		super(view);
-		view.addKeyListener(this);
-	}
-	
+
 	public PlayableClient(String serverAddress){
 		super(serverAddress);
-	}
-	
-	public PlayableClient(String serverAddress, View view){
-        super(serverAddress, view);
-        view.addKeyListener(this);
 	}
 
 	@Override

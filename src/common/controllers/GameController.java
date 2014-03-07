@@ -4,20 +4,19 @@ import java.util.Observable;
 
 import common.events.Event;
 import common.models.Grid;
-import common.views.View;
+import common.views.AbstractView;
 
 public abstract class GameController extends Observable{
 	
 	protected final NetworkController nwc;
-	private final View view;
+	private AbstractView view;
 	protected Grid grid;
-	
-	public GameController(){
-		this(null);
-	}
 
-	public GameController(View view) {
+	public GameController() {
 		nwc = new NetworkController(this);
+	}
+	
+	public void setView(AbstractView view){
 		this.view = view;
 	}
 	
@@ -26,7 +25,9 @@ public abstract class GameController extends Observable{
 	}
 	
 	protected void updateView(Event event){
-		view.handleEvent(event);
+		if (view != null){
+			view.handleEvent(event);
+		}
 	}
 
 	public abstract boolean isGameRunning();
