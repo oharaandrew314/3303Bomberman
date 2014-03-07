@@ -18,12 +18,8 @@ public abstract class JFrameTextView extends AbstractView {
 	public static final String LINE_SEP = System.getProperty("line.separator");
 	private TextArea textArea, console;
 	private final JFrame frame;
-
-	public JFrameTextView(){
-		this(null);
-	}
 	
-	public JFrameTextView(JMenuBar menuBar){		
+	public JFrameTextView(){		
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
 		frame.setSize(FRAME_SIZE);
@@ -40,12 +36,11 @@ public abstract class JFrameTextView extends AbstractView {
 		console.setEditable(false);
 		frame.add(console, BorderLayout.SOUTH);
 		
-		// Add Menu Bar
-		if (menuBar != null){
-			frame.setJMenuBar(menuBar);
-		}
-		
 		frame.setVisible(true);
+	}
+	
+	public void addJMenuBar(JMenuBar menuBar){
+		frame.setJMenuBar(menuBar);
 	}
 	
 	protected void setTitle(String title){

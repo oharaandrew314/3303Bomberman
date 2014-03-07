@@ -60,6 +60,8 @@ public class Launcher extends WindowAdapter {
 		server.newGame(GridLoader.loadGrid(gridName.getText()));
 	}
 	
+	// Actions
+	
 	@SuppressWarnings("serial")
 	private static class NewServerAction extends AbstractAction {
 		

@@ -1,4 +1,4 @@
-package common.controllers;
+package common.views;
 
 import java.awt.event.ActionEvent;
 
@@ -6,14 +6,12 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import common.views.View;
-
 public class MenuBarFactory {
 	
 	public static JMenuBar createClientMenuBar(View view){
 		JMenuBar menuBar = new JMenuBar();
 		
-		JMenu fileMenu = new JMenu();
+		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(new ExitAction(view));
 		
 		menuBar.add(fileMenu);

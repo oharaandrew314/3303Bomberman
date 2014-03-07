@@ -1,9 +1,8 @@
 package client.views;
 
-import javax.swing.JMenuBar;
-
 import common.models.Player;
 import common.views.JFrameTextView;
+import common.views.MenuBarFactory;
 
 public class ClientJFrameTextView extends JFrameTextView {
 	
@@ -11,10 +10,7 @@ public class ClientJFrameTextView extends JFrameTextView {
 
 	public ClientJFrameTextView() {
 		super();
-	}
-
-	public ClientJFrameTextView(JMenuBar menuBar) {
-		super(menuBar);
+		addJMenuBar(MenuBarFactory.createClientMenuBar(this));
 	}
 
 	@Override

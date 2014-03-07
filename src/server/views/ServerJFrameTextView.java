@@ -1,7 +1,5 @@
 package server.views;
 
-import javax.swing.JMenuBar;
-
 import common.models.Player;
 import common.views.JFrameTextView;
 
@@ -9,10 +7,6 @@ public class ServerJFrameTextView extends JFrameTextView {
 
 	public ServerJFrameTextView() {
 		super();
-	}
-
-	public ServerJFrameTextView(JMenuBar menuBar) {
-		super(menuBar);
 	}
 
 	@Override
