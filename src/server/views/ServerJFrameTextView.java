@@ -1,5 +1,7 @@
 package server.views;
 
+import javax.swing.JFrame;
+
 import common.models.Player;
 import common.views.JFrameTextView;
 
@@ -7,6 +9,7 @@ public class ServerJFrameTextView extends JFrameTextView {
 
 	public ServerJFrameTextView() {
 		super();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	@Override

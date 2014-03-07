@@ -17,7 +17,7 @@ public abstract class JFrameTextView extends AbstractView {
 	public static final int GRID_TEXT_SIZE = 30;
 	public static final String LINE_SEP = System.getProperty("line.separator");
 	private TextArea textArea, console;
-	private final JFrame frame;
+	protected final JFrame frame;
 	
 	public JFrameTextView(){		
 		frame = new JFrame("Bomberman");
