@@ -50,5 +50,4 @@ public class LevelLoaderDialog extends JDialog {
 			loader.dispose();
 		}
 	}
-
 }

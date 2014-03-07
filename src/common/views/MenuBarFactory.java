@@ -24,7 +24,8 @@ public class MenuBarFactory {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
-		fileMenu.add(new LoadGameAction(server));
+		fileMenu.add(new LoadGridAction(server));
+		fileMenu.add(new GenerateGridAction(server));
 		fileMenu.add(new ExitAction(view));
 		
 		menuBar.add(fileMenu);
@@ -48,18 +49,34 @@ public class MenuBarFactory {
 	}
 	
 	@SuppressWarnings("serial")
-	private static class LoadGameAction extends AbstractAction {
+	private static class LoadGridAction extends AbstractAction {
 		
 		private final Server server;
 		
-		public LoadGameAction(Server server){
-			super("Load Game");
+		public LoadGridAction(Server server){
+			super("Load Grid");
 			this.server = server;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			new LevelLoaderDialog(server);
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	private static class GenerateGridAction extends AbstractAction {
+		
+		private final Server server;
+		
+		public GenerateGridAction(Server server){
+			super("Generate Grid");
+			this.server = server;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			new LevelGeneratorDialog(server);
 		}
 	}
 
