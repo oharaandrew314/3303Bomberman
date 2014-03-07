@@ -13,12 +13,12 @@ import server.content.GridLoader;
 import server.controllers.Server;
 
 @SuppressWarnings("serial")
-public class LevelLoaderView extends JDialog {
+public class LevelLoaderDialog extends JDialog {
 	
 	private final Server server;
 	private final JTextField gridName;
 
-	public LevelLoaderView(Server server) {
+	public LevelLoaderDialog(Server server) {
 		this.server = server;
 		
 		setLayout(new GridLayout(3, 1));
@@ -36,9 +36,9 @@ public class LevelLoaderView extends JDialog {
 	
 	private static class LoadNewGameAction extends AbstractAction {
 		
-		private final LevelLoaderView loader;
+		private final LevelLoaderDialog loader;
 		
-		public LoadNewGameAction(LevelLoaderView loader){
+		public LoadNewGameAction(LevelLoaderDialog loader){
 			super("Load Game");
 			this.loader = loader;
 		}

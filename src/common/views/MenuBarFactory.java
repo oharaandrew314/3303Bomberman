@@ -59,7 +59,7 @@ public class MenuBarFactory {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new LevelLoaderView(server);
+			new LevelLoaderDialog(server);
 		}
 	}
 
