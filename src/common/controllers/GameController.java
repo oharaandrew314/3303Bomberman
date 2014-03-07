@@ -2,15 +2,9 @@ package common.controllers;
 
 import java.util.Observable;
 
-import client.views.View;
-import common.events.ConnectAcceptedEvent;
-import common.events.ConnectRejectedEvent;
 import common.events.Event;
-import common.events.GameStartEvent;
-import common.events.PlayerDeadEvent;
-import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
 import common.models.Grid;
+import common.views.View;
 
 public abstract class GameController extends Observable{
 	
@@ -32,30 +26,7 @@ public abstract class GameController extends Observable{
 	}
 	
 	protected void updateView(Event event){
-		if (view != null){
-			if (event instanceof ViewUpdateEvent){
-				ViewUpdateEvent viewEvent = (ViewUpdateEvent) event;
-				view.updateView(viewEvent.getGrid());
-			}
-			else if (event instanceof PlayerDeadEvent){
-				PlayerDeadEvent deadEvent = (PlayerDeadEvent) event;
-				view.displayPlayerDead(deadEvent.player);
-			}
-			else if (event instanceof ConnectAcceptedEvent){
-				view.displayConnectionAccepted();
-			}
-			else if (event instanceof ConnectRejectedEvent){
-				view.displayConnectionRejected();
-			}
-			else if (event instanceof WinEvent){
-				WinEvent winEvent = (WinEvent) event;
-				view.displayEndGame(winEvent.grid, winEvent.player);
-				view.updateView(winEvent.grid);
-			}
-			else if (event instanceof GameStartEvent){
-				view.displayStartGame();
-			}
-		}
+		view.handleEvent(event);
 	}
 
 	public abstract boolean isGameRunning();

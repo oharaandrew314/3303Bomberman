@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
-import client.views.View;
 import common.controllers.GameController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
@@ -27,6 +26,7 @@ import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
+import common.views.View;
 
 public class Server extends GameController {
 	
@@ -51,11 +51,7 @@ public class Server extends GameController {
 		state = State.idle;
 	}
 	
-	public void newGame(Grid grid){
-		this.grid = grid;
-		state = State.newGame;
-		updateView(new ViewUpdateEvent(grid));
-	}
+	// Accessors
 	
 	@Override
 	public boolean isGameRunning() {
@@ -67,21 +63,12 @@ public class Server extends GameController {
 		return state == State.newGame || state == State.idle;
 	}
 	
-	public synchronized void simulationUpdate(){
-		if (isGameRunning()){
-			//TODO: Bomb logic
-			//TODO: AI logic
-			
-			send(new ViewUpdateEvent(grid));
-		}
-	}
+	// State Methods
 	
-	@Override
-	protected void send(Event event){
-		super.send(event);
-		
-		setChanged();
-		notifyObservers(event);
+	public void newGame(Grid grid){
+		this.grid = grid;
+		state = State.newGame;
+		updateView(new ViewUpdateEvent(grid));
 	}
 	
 	private void startGame(){
@@ -111,6 +98,28 @@ public class Server extends GameController {
 		endGame();
 		nwc.stopListening();
 		state = State.stopped;
+	}
+	
+	// Other methods
+	
+	public synchronized void simulationUpdate(){
+		if (isGameRunning()){
+			//TODO: Bomb logic
+			//TODO: AI logic
+			
+			send(new ViewUpdateEvent(grid));
+		}
+	}
+	
+	// Event Methods
+	
+	@Override
+	protected void send(Event event){
+		super.send(event);
+		updateView(event);
+		
+		setChanged();
+		notifyObservers(event);
 	}
 
     @Override

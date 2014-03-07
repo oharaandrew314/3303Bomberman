@@ -3,8 +3,8 @@ package client.controllers;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import client.views.View;
 import common.events.GameKeyEvent;
+import common.views.View;
 
 public class PlayableClient extends Client implements KeyListener {
 	

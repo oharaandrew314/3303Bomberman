@@ -6,7 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import client.views.View;
+import common.views.View;
 
 public class MenuBarFactory {
 	

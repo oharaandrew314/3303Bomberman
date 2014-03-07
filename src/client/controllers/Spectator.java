@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.views.View;
+import common.views.View;
 
 public class Spectator extends Client {
 	

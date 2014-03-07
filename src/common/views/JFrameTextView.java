@@ -1,4 +1,4 @@
-package client.views;
+package common.views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -10,21 +10,20 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
 import common.models.Grid;
-import common.models.Player;
 
-public class JFrameTextView implements View {
+public abstract class JFrameTextView extends AbstractView {
 	
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_TEXT_SIZE = 30;
 	public static final String LINE_SEP = System.getProperty("line.separator");
 	private TextArea textArea, console;
 	private final JFrame frame;
-	
+
 	public JFrameTextView(){
 		this(null);
 	}
 	
-	public JFrameTextView(JMenuBar menuBar){
+	public JFrameTextView(JMenuBar menuBar){		
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
 		frame.setSize(FRAME_SIZE);
@@ -48,41 +47,9 @@ public class JFrameTextView implements View {
 		
 		frame.setVisible(true);
 	}
-
-	@Override
-	public void updateView(Grid grid) {
-		textArea.setText(grid.toString());	
-	}
 	
-	private void console(String string){
-		console.append(string + LINE_SEP);
-	}
-
-	@Override
-	public void displayPlayerDead(Player player) {
-		console(player.name + " has died.");
-	}
-
-	@Override
-	public void displayConnectionAccepted() {
-		console("Connection Accepted");
-		
-	}
-
-	@Override
-	public void displayConnectionRejected() {
-		console("Connection Rejected");
-		
-	}
-
-	@Override
-	public void displayStartGame() {
-		console("Game Started");
-	}
-
-	@Override
-	public void displayEndGame(Grid grid, Player player) {
-		console(player.name + "has ended the game");
+	protected void setTitle(String title){
+		frame.setTitle(title);
 	}
 
 	@Override
@@ -90,11 +57,21 @@ public class JFrameTextView implements View {
 		frame.setVisible(false);
 		frame.dispose();
 	}
+	
+	@Override
+	public String updateView(Grid grid) {
+		textArea.setText(grid.toString());
+		return null;
+	}
 
 	@Override
 	public void addKeyListener(KeyListener l) {
 		frame.addKeyListener(l);
 		textArea.addKeyListener(l);
 		console.addKeyListener(l);
+	}
+	
+	public void displayMessage(String message){
+		console.append(message + LINE_SEP);
 	}
 }

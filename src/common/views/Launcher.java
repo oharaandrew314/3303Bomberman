@@ -1,4 +1,4 @@
-package client.views;
+package common.views;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -13,8 +13,10 @@ import javax.swing.JTextField;
 
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
+import client.views.ClientJFrameTextView;
 import server.content.GridLoader;
 import server.controllers.Server;
+import server.views.ServerJFrameTextView;
 
 public class Launcher extends WindowAdapter {
 	
@@ -44,7 +46,7 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	private void newServer(){
-		server = new Server(new JFrameTextView());
+		server = new Server(new ServerJFrameTextView());
 	}
 	
 	@Override
@@ -83,7 +85,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new Spectator(new JFrameTextView());
+			new Spectator(new ServerJFrameTextView());
 		}
 	}
 	
@@ -96,7 +98,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new PlayableClient(new JFrameTextView());
+			new PlayableClient(new ClientJFrameTextView());
 		}
 	}
 	

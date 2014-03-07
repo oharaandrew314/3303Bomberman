@@ -1,9 +1,9 @@
 package client.controllers;
 
-import client.views.View;
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.*;
+import common.views.View;
 
 public abstract class Client extends GameController {
 	
