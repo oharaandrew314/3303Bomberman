@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.TextArea;
+import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -30,11 +31,13 @@ public class JFrameTextView implements View {
 		// Add Text Area
 		textArea = new TextArea();
 		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_TEXT_SIZE));
+		textArea.setEditable(false);
 		frame.add(textArea, BorderLayout.CENTER);
 		
 		// Add Console
 		console = new TextArea();
 		console.setSize(FRAME_SIZE.width, FRAME_SIZE.height / 10);
+		console.setEditable(false);
 		frame.add(console, BorderLayout.SOUTH);
 		
 		// Add Menu Bar
@@ -82,5 +85,12 @@ public class JFrameTextView implements View {
 	public void close() {
 		frame.setVisible(false);
 		frame.dispose();
+	}
+
+	@Override
+	public void addKeyListener(KeyListener l) {
+		frame.addKeyListener(l);
+		textArea.addKeyListener(l);
+		console.addKeyListener(l);
 	}
 }

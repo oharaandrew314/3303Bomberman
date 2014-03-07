@@ -1,12 +1,12 @@
 package client.controllers;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import client.views.View;
-
 import common.events.GameKeyEvent;
 
-public class PlayableClient extends Client {
+public class PlayableClient extends Client implements KeyListener {
 	
 	public PlayableClient(){
 		super();
@@ -14,6 +14,7 @@ public class PlayableClient extends Client {
 	
 	public PlayableClient(View view){
 		super(view);
+		view.addKeyListener(this);
 	}
 	
 	public PlayableClient(String serverAddress){
@@ -22,6 +23,7 @@ public class PlayableClient extends Client {
 	
 	public PlayableClient(String serverAddress, View view){
         super(serverAddress, view);
+        view.addKeyListener(this);
 	}
 
 	@Override
@@ -41,5 +43,15 @@ public class PlayableClient extends Client {
 	
 	public void startGame(){
 		pressKey(KeyEvent.VK_ENTER);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
+	@Override
+	public void keyReleased(KeyEvent e) {}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		pressKey(e);
 	}
 }

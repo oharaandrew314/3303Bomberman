@@ -1,5 +1,7 @@
 package client.views;
 
+import java.awt.event.KeyListener;
+
 import common.models.Grid;
 import common.models.Player;
 
@@ -54,4 +56,7 @@ public class TextView implements View {
 
 	@Override
 	public void close() {}
+
+	@Override
+	public void addKeyListener(KeyListener l) {}
 }
