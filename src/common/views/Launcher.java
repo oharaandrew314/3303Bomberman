@@ -57,7 +57,9 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	public void loadNewGame(){
-		server.newGame(GridLoader.loadGrid(gridName.getText()));
+		if (server != null){
+			server.newGame(GridLoader.loadGrid(gridName.getText()));
+		}
 	}
 	
 	// Actions

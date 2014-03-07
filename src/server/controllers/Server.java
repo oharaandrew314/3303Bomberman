@@ -66,7 +66,7 @@ public class Server extends GameController {
 	// State Methods
 	
 	public void newGame(Grid grid){
-		if (state == State.idle){
+		if (state == State.idle && grid != null){
 			this.grid = grid;
 			state = State.newGame;
 			updateView(new ViewUpdateEvent(grid));
