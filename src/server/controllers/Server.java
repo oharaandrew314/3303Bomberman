@@ -81,11 +81,25 @@ public class Server extends GameController {
 		List<Point> points = new ArrayList<>(grid.keySet());
 		Random r = new Random();
 		Queue<Player> queue = new ArrayDeque<>(players.values());
+		
+		boolean tried = false;
 		while(!queue.isEmpty()){
+			Player p = queue.peek();
 			Point dest = points.get(r.nextInt(points.size() - 1));
+			//System.out.println(p.startLoc);
+			if(p.startLoc != null && !tried){
+				//System.out.println("HERE");
+				dest = p.startLoc;
+			} 
 			if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+				
+				//System.out.println("p.start: " + p.startLoc + "    placed: " + dest);
 				grid.set(queue.remove(), dest);
+				tried = false;
+			} else{
+				tried = true;
 			}
+			
 		}
 		
 		state = State.gameRunning;
@@ -97,6 +111,7 @@ public class Server extends GameController {
 		timer.stop();
 		state = State.idle;
 		grid = null;
+		players.clear();
 	}
 	
 	public void stop(){
@@ -119,7 +134,12 @@ public class Server extends GameController {
     		}
     		else if (isAcceptingConnections()){
     			if (players.size() < MAX_PLAYERS){
-        			players.put(playerId, new Player(playerId));
+    				Point location = ((ConnectEvent)event).startLocation;
+    				if(location == null){
+    					players.put(playerId, new Player(playerId));
+    				} else{
+    					players.put(playerId, new Player(playerId, location));
+    				}
         		}
     			return new ConnectAcceptedEvent();
     		}

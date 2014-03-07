@@ -1,5 +1,7 @@
 package client.controllers;
 
+import java.awt.Point;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.*;
@@ -19,6 +21,12 @@ public abstract class Client extends GameController {
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.send(new ConnectEvent(isSpectator()));
+	}
+	
+	public Client(String serverAddress, Point startLoc){
+		nwc.startListeningOnAnyAvailablePort();
+		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
+		nwc.send(new ConnectEvent(startLoc));
 	}
 
 	@Override

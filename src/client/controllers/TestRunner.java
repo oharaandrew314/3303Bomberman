@@ -1,5 +1,6 @@
 package client.controllers;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -12,9 +13,16 @@ public class TestRunner extends Client implements Runnable{
 	private ArrayList<Integer> events;
 	private boolean connected = false;
 	private boolean dead = false;
+	//public final Point startLoc;
 	
-	public TestRunner(ArrayList<Integer> events, int playerNumber){
+	public TestRunner(ArrayList<Integer> events){
+		this(events, null);
+	}
+	
+	public TestRunner(ArrayList<Integer> events, Point startLoc){
+		super("127.0.0.1", startLoc);
 		this.events = events;
+		//this.startLoc = startLoc;
 	}
 
 	@Override
