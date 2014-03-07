@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import client.views.View;
 import common.controllers.GameController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
@@ -36,7 +37,12 @@ public class Server extends GameController {
 	private State state = State.stopped;
 	private final SimulationTimer timer;
 
-	public Server() {
+	public Server(){
+		this(null);
+	}
+	
+	public Server(View view) {
+		super(view);
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 		
@@ -48,6 +54,7 @@ public class Server extends GameController {
 	public void newGame(Grid grid){
 		this.grid = grid;
 		state = State.newGame;
+		updateView(new ViewUpdateEvent(grid));
 	}
 	
 	@Override
@@ -115,16 +122,7 @@ public class Server extends GameController {
     	
     	// Decide whethere to accept or reject connection request
     	if (event instanceof ConnectEvent){
-    		if (((ConnectEvent)event).spectator){
-    			return new ConnectAcceptedEvent();
-    		}
-    		else if (isAcceptingConnections()){
-    			if (players.size() < MAX_PLAYERS){
-        			players.put(playerId, new Player(playerId));
-        		}
-    			return new ConnectAcceptedEvent();
-    		}
-    		return new ConnectRejectedEvent();
+    		return handleConnectionRequest((ConnectEvent) event);
     	}
     	
     	/*
@@ -160,6 +158,25 @@ public class Server extends GameController {
     	   return new GameKeyEventAck(keyEvent);
        }
     	return null;
+    }
+    
+    private Event handleConnectionRequest(ConnectEvent event){
+    	int playerId = event.getPlayerID();
+    	boolean accept = false;
+    	
+    	if (((ConnectEvent)event).spectator){
+			accept = true;
+		}
+		else if (isAcceptingConnections()){
+			if (players.size() < MAX_PLAYERS){
+    			players.put(playerId, new Player(playerId));
+    		}
+			accept = true;
+		}
+    	
+    	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	updateView(response);
+    	return response;
     }
     
     private void move(Player player, int dx, int dy){

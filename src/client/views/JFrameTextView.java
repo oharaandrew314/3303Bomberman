@@ -16,6 +16,7 @@ public class JFrameTextView implements View {
 	
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_TEXT_SIZE = 30;
+	public static final String LINE_SEP = System.getProperty("line.separator");
 	private TextArea textArea, console;
 	private final JFrame frame;
 	
@@ -52,33 +53,36 @@ public class JFrameTextView implements View {
 	public void updateView(Grid grid) {
 		textArea.setText(grid.toString());	
 	}
+	
+	private void console(String string){
+		console.append(string + LINE_SEP);
+	}
 
 	@Override
 	public void displayPlayerDead(Player player) {
-		console.append(player.name + " has died.");
+		console(player.name + " has died.");
 	}
 
 	@Override
 	public void displayConnectionAccepted() {
-		console.append("Connection Accepted");
+		console("Connection Accepted");
 		
 	}
 
 	@Override
 	public void displayConnectionRejected() {
-		console.append("Connection Rejected");
+		console("Connection Rejected");
 		
 	}
 
 	@Override
 	public void displayStartGame() {
-		console.append("Game Started");
-		
+		console("Game Started");
 	}
 
 	@Override
 	public void displayEndGame(Grid grid, Player player) {
-		console.append(player.name + "has ended the game");
+		console(player.name + "has ended the game");
 	}
 
 	@Override

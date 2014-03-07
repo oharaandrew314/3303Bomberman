@@ -8,7 +8,6 @@ import common.events.*;
 public abstract class Client extends GameController {
 	
 	private static enum State {idle, gameRunning };
-	private final View view;
 	private State state;
 
 	public Client() {
@@ -25,51 +24,33 @@ public abstract class Client extends GameController {
 	}
 	
 	public Client(String serverAddress, View view){
-		this.view = view;
-		
+		super(view);
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.send(new ConnectEvent(isSpectator()));
 	}
-	
-	public View getView(){
-		return view;
-	}
 
 	@Override
-	public Event receive(Event event) {		
-		if (event instanceof ViewUpdateEvent){
-			ViewUpdateEvent viewEvent = (ViewUpdateEvent) event;
-			if (view != null) { view.updateView(viewEvent.getGrid()); }
-		}
-		else if (event instanceof PlayerDeadEvent){
-			PlayerDeadEvent deadEvent = (PlayerDeadEvent) event;
-			processPlayerDead(deadEvent);
-			if (view != null) { view.displayPlayerDead(deadEvent.player); }
+	public Event receive(Event event) {
+		if (event instanceof PlayerDeadEvent){
+			processPlayerDead((PlayerDeadEvent) event);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
 			processConnectionAccepted();
-			if (view != null) { view.displayConnectionAccepted(); }
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
-			if (view != null) {view.displayConnectionRejected(); }
 		}
 		else if (event instanceof WinEvent){
-			WinEvent winEvent = (WinEvent) event;
-			endGame(winEvent);
-			if (view != null) {
-				view.displayEndGame(winEvent.grid, winEvent.player);
-				view.updateView(winEvent.grid);
-			}
+			endGame((WinEvent) event);
 		}
 		else if (event instanceof GameStartEvent){
 			setGameStarted();
-			if (view != null) { view.displayStartGame(); }
 		}
 		else if (event instanceof GameKeyEventAck){
 			keyEventAcknowledged((GameKeyEventAck) event);
 		}
+		updateView(event);
 		return null;
 	}
 	

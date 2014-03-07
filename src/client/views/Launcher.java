@@ -23,7 +23,7 @@ public class Launcher extends WindowAdapter {
 	private JTextField gridName;
 
 	public Launcher() {
-		frame = new JFrame();
+		frame = new JFrame("Bomberman");
 		frame.setLayout(new GridLayout(3, 2));
 		frame.addWindowListener(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,7 +44,7 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	private void newServer(){
-		server = new Server();
+		server = new Server(new JFrameTextView());
 	}
 	
 	@Override
@@ -57,7 +57,6 @@ public class Launcher extends WindowAdapter {
 	public void loadNewGame(){
 		server.newGame(GridLoader.loadGrid(gridName.getText()));
 	}
-	
 	
 	@SuppressWarnings("serial")
 	private static class NewServerAction extends AbstractAction {
