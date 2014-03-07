@@ -66,32 +66,38 @@ public class Server extends GameController {
 	// State Methods
 	
 	public void newGame(Grid grid){
-		this.grid = grid;
-		state = State.newGame;
-		updateView(new ViewUpdateEvent(grid));
+		if (state == State.idle){
+			this.grid = grid;
+			state = State.newGame;
+			updateView(new ViewUpdateEvent(grid));
+		}
 	}
 	
 	private void startGame(){
-		// Place players
-		List<Point> points = new ArrayList<>(grid.keySet());
-		Random r = new Random();
-		Queue<Player> queue = new ArrayDeque<>(players.values());
-		while(!queue.isEmpty()){
-			Point dest = points.get(r.nextInt(points.size() - 1));
-			if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
-				grid.set(queue.remove(), dest);
+		if (state == State.newGame){
+			// Place players
+			List<Point> points = new ArrayList<>(grid.keySet());
+			Random r = new Random();
+			Queue<Player> queue = new ArrayDeque<>(players.values());
+			while(!queue.isEmpty()){
+				Point dest = points.get(r.nextInt(points.size() - 1));
+				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+					grid.set(queue.remove(), dest);
+				}
 			}
+			
+			state = State.gameRunning;
+			send(new GameStartEvent());
+			timer.start();
 		}
-		
-		state = State.gameRunning;
-		send(new GameStartEvent());
-		timer.start();
 	}
 	
 	public void endGame(){
-		timer.stop();
-		state = State.idle;
-		grid = null;
+		if (state == State.gameRunning){
+			timer.stop();
+			state = State.idle;
+			grid = null;
+		}
 	}
 	
 	public void stop(){
