@@ -13,6 +13,10 @@ public class ConnectEvent extends Event {
 		startLocation = null;
 	}
 	
+	/**
+	 * ConnectEvent for testRunner -> spectator is false, since its the testRunner
+	 * @param startLocation
+	 */
 	public ConnectEvent(Point startLocation){
 		this.startLocation = startLocation;
 		spectator = false;

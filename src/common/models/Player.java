@@ -16,6 +16,11 @@ public class Player extends Unit {
 		this(playerId, null);
 	}
 	
+	/**
+	 * Seperate contructor for specifying the starting location of a testRunner
+	 * @param playerId
+	 * @param startLoc
+	 */
 	public Player(int playerId, Point startLoc){
 		super("Player" + playerId);
 		numBombs = START_NUM_BOMBS;

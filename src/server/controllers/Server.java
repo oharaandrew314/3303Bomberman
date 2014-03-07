@@ -82,18 +82,16 @@ public class Server extends GameController {
 		Random r = new Random();
 		Queue<Player> queue = new ArrayDeque<>(players.values());
 		
+		//If a starting location is specified, check it, if can't be placed, then do random (might want to change this
+		//to gracefully fail when an invalid location is specified
 		boolean tried = false;
 		while(!queue.isEmpty()){
 			Player p = queue.peek();
 			Point dest = points.get(r.nextInt(points.size() - 1));
-			//System.out.println(p.startLoc);
 			if(p.startLoc != null && !tried){
-				//System.out.println("HERE");
 				dest = p.startLoc;
 			} 
 			if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
-				
-				//System.out.println("p.start: " + p.startLoc + "    placed: " + dest);
 				grid.set(queue.remove(), dest);
 				tried = false;
 			} else{

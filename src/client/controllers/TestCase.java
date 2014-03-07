@@ -37,9 +37,11 @@ public class TestCase {
 		
 		Thread[] threads = new Thread[events.size()];
 		for(int i = 0 ; i != events.size();i++){
+			//start location is specified (should hit this)
 			if(startLocations.get(i) != null){
 				threads[i] = new Thread(new TestRunner(events.get(i), startLocations.get(i)));
 			} else{
+				//start location isn't specified, might want to remove this (test case should have initial coordinates)
 				threads[i] = new Thread(new TestRunner(events.get(i)));
 			}
 			threads[i].start();
@@ -73,7 +75,7 @@ public class TestCase {
 		    	
 		    	//Get the number of players in the testCase from the first line
 				if((str = bufferedReader.readLine()) != null) {
-					String[] lineSegment = str.split(",");
+					String[] lineSegment = str.split(";");
 					String[] player = lineSegment[0].split("=");
 					int players = Integer.parseInt(player[1].trim());
 					//Location=[ 1-> 0,0 : 2->3,0]
@@ -86,7 +88,7 @@ public class TestCase {
 					for(int i = 0 ; i != locSplit.length ; i++){
 						String[] locParts = locSplit[i].replaceAll("\\[", "").replaceAll("\\]", "").split("->");
 						int id = Integer.parseInt(locParts[0].trim());
-						String[] coordinates = locParts[1].split(";");
+						String[] coordinates = locParts[1].split(",");
 						Point point = new Point(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
 						startLocations.set(id-1, point);
 					}

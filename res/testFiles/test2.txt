@@ -1,4 +1,4 @@
-Players = 2, Location=[1->0;0:2->3;0]
+Players = 2; Location=[1->0,0:2->3,0]
 1:DOWN
 2:LEFT
 1:DOWN 
