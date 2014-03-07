@@ -3,11 +3,13 @@ package client.views;
 import common.controllers.GameController;
 import common.models.Player;
 import common.views.JFrameTextView;
+import common.views.MenuBarFactory;
 
 public class SpectatorJFrameTextView extends JFrameTextView {
 	
 	public SpectatorJFrameTextView(GameController gc){
 		super(gc);
+		addJMenuBar(MenuBarFactory.createClientMenuBar(this));
 	}
 
 	@Override
