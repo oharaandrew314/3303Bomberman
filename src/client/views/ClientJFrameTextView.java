@@ -23,6 +23,7 @@ public class ClientJFrameTextView extends JFrameTextView {
 	@Override
 	public String displayConnectionAccepted(int playerId) {
 		this.playerId = playerId;
+		this.setTitle("Bomberman: Player " + playerId);
 		return "You have been added to the game as 'Player " + playerId + "'";
 	}
 
