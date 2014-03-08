@@ -18,14 +18,10 @@ public class SpectatorJFrameTextView extends JFrameTextView {
 	}
 
 	@Override
-	public String displayConnectionAccepted(int playerId) {
-		return "Player " + playerId + " has been added to the game.";
-	}
+	public String displayConnectionAccepted(int playerId) { return null;}
 
 	@Override
-	public String displayConnectionRejected() {
-		return "A connection attempt was rejected";
-	}
+	public String displayConnectionRejected() { return null; }
 
 	@Override
 	public String displayStartGame() {
