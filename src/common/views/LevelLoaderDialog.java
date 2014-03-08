@@ -7,8 +7,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import server.content.CreateGridException;
 import server.content.GridLoader;
 import server.controllers.Server;
 
@@ -31,7 +33,11 @@ public class LevelLoaderDialog extends JDialog {
 	}
 	
 	private void loadNewGame(){
-		server.newGame(GridLoader.loadGrid(gridName.getText()));
+		try {
+			server.newGame(GridLoader.loadGrid(gridName.getText()));
+		} catch (CreateGridException e) {
+			JOptionPane.showMessageDialog(this, "Error loading grid");
+		}
 	}
 	
 	private static class LoadNewGameAction extends AbstractAction {

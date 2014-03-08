@@ -38,17 +38,26 @@ public class GridLoader {
 		loader = getClass().getClassLoader();
 	}
 	
-	public Grid load(String gridFileName){
+	public Grid load(String gridFileName) throws CreateGridException {
 		InputStream s = loader.getResourceAsStream(GRID_PATH + gridFileName);
-		Reader reader = new InputStreamReader(s);
+		
+		Reader reader = null;
+		try {
+			reader = new InputStreamReader(s);
+		} catch (NullPointerException ex){
+			throw new CreateGridException(
+				"Error loading grid: " + gridFileName + " does not exist"
+			);
+		}
+		
 		try{
 			return gson.fromJson(reader, Grid.class);
 		} catch (JsonSyntaxException ex){
-			return null;
-		}
+			throw new CreateGridException("Error loading grid: Invalid content.");
+		} 
 	}
 	
-	public static Grid loadGrid(String gridFileName){
+	public static Grid loadGrid(String gridFileName) throws CreateGridException {
 		GridLoader loader = new GridLoader();
 		return loader.load(gridFileName);
 	}
