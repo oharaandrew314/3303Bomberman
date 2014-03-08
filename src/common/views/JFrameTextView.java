@@ -16,7 +16,6 @@ public abstract class JFrameTextView extends AbstractView {
 	
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_TEXT_SIZE = 30;
-	public static final float CONSOLE_HEIGHT_PERCENT = (float) 0.1;
 	
 	public static final String LINE_SEP = System.getProperty("line.separator");
 	private TextArea textArea, console;
@@ -37,10 +36,6 @@ public abstract class JFrameTextView extends AbstractView {
 		
 		// Add Console
 		console = new TextArea();
-		console.setSize(
-			FRAME_SIZE.width, 
-			(int) (FRAME_SIZE.height / CONSOLE_HEIGHT_PERCENT)
-		);
 		console.setEditable(false);
 		frame.add(console, BorderLayout.SOUTH);
 		
