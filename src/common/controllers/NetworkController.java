@@ -152,7 +152,8 @@ public class NetworkController {
         try {
             event = deserialize(data);
             
-            event.setPlayerID(getPlayerIdFor(data));
+            int playerId = getPlayerIdFor(data);
+            event.setPlayerID(playerId);
             
             Event response = gameController.receive(event);
             if (response != null){
@@ -163,6 +164,7 @@ public class NetworkController {
             		peers.add(peer);
             	}
             	
+            	response.setPlayerID(playerId);
             	sendToOnePeer(response, peer);
             }
         } catch (ClassNotFoundException ex) {

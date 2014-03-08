@@ -3,6 +3,7 @@ package client.controllers;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import server.content.CreateGridException;
 import server.content.GridLoader;
 import server.controllers.Server;
 
@@ -20,7 +21,11 @@ public class TestDriver {
 	 */
 	public void runAll(Server server){
 		for(TestCase test: testcases){
-			server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
+			try {
+				server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
+			} catch (CreateGridException e) {
+				e.printStackTrace();
+			}
 			test.run();
 			server.endGame();
 		}

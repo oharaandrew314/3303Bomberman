@@ -1,18 +1,18 @@
 package client.controllers;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import common.controllers.NetworkController;
 import common.events.GameKeyEvent;
 
-public abstract class PlayableClient extends Client {
+public class PlayableClient extends Client implements KeyListener {
 	
 	public PlayableClient(){
-		this(NetworkController.LOCALHOST);
+		super();
 	}
-	
+
 	public PlayableClient(String serverAddress){
-        super(serverAddress);
+		super(serverAddress);
 	}
 
 	@Override
@@ -27,21 +27,20 @@ public abstract class PlayableClient extends Client {
 	}
 	
 	public void pressKey(int keyCode){
-		nwc.send(new GameKeyEvent(keyCode));
+		send(new GameKeyEvent(keyCode));
 	}
 	
 	public void startGame(){
 		pressKey(KeyEvent.VK_ENTER);
 	}
-	
-	// Overrides
 
 	@Override
-	protected void processConnectionAccepted() {
-	}
+	public void keyTyped(KeyEvent e) {}
+	@Override
+	public void keyReleased(KeyEvent e) {}
 
 	@Override
-	protected void processConnectionRejected() {
+	public void keyPressed(KeyEvent e) {
+		pressKey(e);
 	}
-
 }

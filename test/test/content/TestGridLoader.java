@@ -16,6 +16,7 @@ import common.models.Grid;
 import common.models.Pillar;
 import common.models.Player;
 import common.models.Wall;
+import server.content.CreateGridException;
 import server.content.GridLoader;
 
 public class TestGridLoader {
@@ -30,7 +31,11 @@ public class TestGridLoader {
 
 	@Test
 	public void test() {
-		grid = GridLoader.loadGrid("test/testGrid1.json");
+		try {
+			grid = GridLoader.loadGrid("test/testGrid1.json");
+		} catch (CreateGridException e) {
+			assertTrue(false);
+		}
 		assertEquals(grid.getSize(), new Dimension(4, 4));
 		
 		assertEntity(1, 1, Pillar.class);

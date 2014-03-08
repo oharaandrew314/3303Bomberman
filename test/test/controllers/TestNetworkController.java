@@ -60,6 +60,9 @@ public class TestNetworkController extends GameController {
 		return isAcceptingConnections;
 	}
     
+    @Override
+	public void stop() {}
+    
     @Test
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
         server.startListeningOnServerPort();

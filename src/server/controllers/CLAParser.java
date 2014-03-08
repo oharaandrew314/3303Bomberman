@@ -1,7 +1,10 @@
 package server.controllers;
 
 import common.models.Grid;
+
 import java.awt.Dimension;
+
+import server.content.CreateGridException;
 import server.content.GridGenerator;
 import server.content.GridLoader;
 
@@ -16,8 +19,8 @@ public class CLAParser {
                     if (args.length == 2) {
                         try {
                             grid = GridLoader.loadGrid(args[1]);
-                        } catch(NullPointerException e) {
-                            System.out.println("Error: Failed to locate json file.");
+                        } catch(CreateGridException e) {
+                            System.out.println(e.getMessage());
                             showHelp = true;
                         }
                     } else {
