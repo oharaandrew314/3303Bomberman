@@ -43,7 +43,7 @@ public class TestDriver {
 	
 	public static void main(String[] args){		
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {"test1", "test2", "test3" };
+		String[] testfiles = {"test1", "test2", "test3", "test4", "placementErrorTest" };
 		driver.readTestCases(testfiles);
 		driver.runAll(new Server());
 	}

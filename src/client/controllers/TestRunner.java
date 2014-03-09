@@ -1,8 +1,10 @@
 package client.controllers;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import common.controllers.NetworkController;
 import common.events.GameKeyEvent;
 import common.events.PlayerDeadEvent;
 
@@ -12,7 +14,12 @@ public class TestRunner extends Client implements Runnable{
 	private boolean connected = false;
 	private boolean dead = false;
 	
-	public TestRunner(ArrayList<Integer> events, int playerNumber){
+	public TestRunner(ArrayList<Integer> events){
+		this(events, null);
+	}
+	
+	public TestRunner(ArrayList<Integer> events, Point startLoc){
+		super(NetworkController.LOCALHOST, startLoc);
 		this.events = events;
 	}
 

@@ -68,29 +68,48 @@ public class Server extends GameController {
 	}
 	
 	private void startGame(){
+
+		// Place players
+		
 		if (state == State.newGame){
 			// Place players
 			List<Point> points = new ArrayList<>(grid.keySet());
 			Random r = new Random();
 			Queue<Player> queue = new ArrayDeque<>(players.values());
 			while(!queue.isEmpty()){
+				boolean tried = false;
+				Player p = queue.peek();
 				Point dest = points.get(r.nextInt(points.size() - 1));
+				if(p.startLoc != null && !tried){
+					dest = p.startLoc;
+					tried = true;
+				}
 				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
 					grid.set(queue.remove(), dest);
+				} else{
+					if(tried){
+						//error out since we failed to place the player into the expected spot
+						//we shouldn't randomize it at this point, otherwise test may fail
+						throw new IllegalArgumentException("Player could not be placed on the specified square");
+					}
+					//otherwise, continue
 				}
 			}
 			
 			state = State.gameRunning;
 			send(new GameStartEvent());
 			timer.start();
+
 		}
 	}
 	
 	public void endGame(){
+
 		if (state == State.gameRunning){
 			timer.stop();
 			state = State.idle;
 			grid = null;
+			players.clear();
 		}
 	}
 	
@@ -129,7 +148,7 @@ public class Server extends GameController {
     	
     	int playerId = event.getPlayerID();
     	
-    	// Decide whethere to accept or reject connection request
+    	// Decide whether to accept or reject connection request
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
     	}
@@ -178,8 +197,13 @@ public class Server extends GameController {
 		}
 		else if (isAcceptingConnections()){
 			if (players.size() < MAX_PLAYERS){
-    			players.put(playerId, new Player(playerId));
-    		}
+				Point location = ((ConnectEvent)event).startLocation;
+				if(location == null){
+					players.put(playerId, new Player(playerId));
+				} else{
+					players.put(playerId, new Player(playerId, location));
+				}
+			}
 			accept = true;
 		}
     	

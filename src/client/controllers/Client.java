@@ -1,5 +1,7 @@
 package client.controllers;
 
+import java.awt.Point;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
@@ -26,6 +28,13 @@ public abstract class Client extends GameController {
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
 		nwc.send(new ConnectEvent(isSpectator()));
+	}
+	
+	//should only be used by the testRunner (need starting locations for players, so that they aren't random)
+	public Client(String serverAddress, Point startLoc){
+		nwc.startListeningOnAnyAvailablePort();
+		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
+		nwc.send(new ConnectEvent(startLoc));
 	}
 
 	@Override
