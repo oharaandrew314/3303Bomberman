@@ -4,16 +4,20 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import server.content.CreateGridException;
 import server.content.GridLoader;
 import server.controllers.Server;
-
 import common.models.Grid;
 import common.models.Player;
 
 public class MockServer extends Server {
 	
 	public void newGame(){
-		newGame(GridLoader.loadGrid("test/testGrid2.json"));
+		try {
+			newGame(GridLoader.loadGrid("test/testGrid2.json"));
+		} catch (CreateGridException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Grid getGrid(){

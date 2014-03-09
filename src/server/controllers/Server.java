@@ -36,7 +36,7 @@ public class Server extends GameController {
 	private State state = State.stopped;
 	private final SimulationTimer timer;
 
-	public Server() {
+	public Server(){
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 		
@@ -45,10 +45,7 @@ public class Server extends GameController {
 		state = State.idle;
 	}
 	
-	public void newGame(Grid grid){
-		this.grid = grid;
-		state = State.newGame;
-	}
+	// Accessors
 	
 	@Override
 	public boolean isGameRunning() {
@@ -60,23 +57,18 @@ public class Server extends GameController {
 		return state == State.newGame || state == State.idle;
 	}
 	
-	public synchronized void simulationUpdate(){
-		if (isGameRunning()){
-			//TODO: Bomb logic
-			//TODO: AI logic
-			
-			send(new ViewUpdateEvent(grid));
+	// State Methods
+	
+	public void newGame(Grid grid){
+		if (state == State.idle && grid != null){
+			this.grid = grid;
+			state = State.newGame;
+			updateView(new ViewUpdateEvent(grid));
 		}
 	}
 	
-	private void send(Event event){
-		nwc.send(event);
-		
-		setChanged();
-		notifyObservers(event);
-	}
-	
 	private void startGame(){
+<<<<<<< HEAD
 		// Place players
 		List<Point> points = new ArrayList<>(grid.keySet());
 		Random r = new Random();
@@ -98,24 +90,67 @@ public class Server extends GameController {
 				tried = true;
 			}
 			
+=======
+		if (state == State.newGame){
+			// Place players
+			List<Point> points = new ArrayList<>(grid.keySet());
+			Random r = new Random();
+			Queue<Player> queue = new ArrayDeque<>(players.values());
+			while(!queue.isEmpty()){
+				Point dest = points.get(r.nextInt(points.size() - 1));
+				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+					grid.set(queue.remove(), dest);
+				}
+			}
+			
+			state = State.gameRunning;
+			send(new GameStartEvent());
+			timer.start();
+>>>>>>> dev
 		}
-		
-		state = State.gameRunning;
-		send(new GameStartEvent());
-		timer.start();
 	}
 	
 	public void endGame(){
+<<<<<<< HEAD
 		timer.stop();
 		state = State.idle;
 		grid = null;
 		players.clear();
+=======
+		if (state == State.gameRunning){
+			timer.stop();
+			state = State.idle;
+			grid = null;
+		}
+>>>>>>> dev
 	}
 	
 	public void stop(){
 		endGame();
 		nwc.stopListening();
 		state = State.stopped;
+	}
+	
+	// Other methods
+	
+	public synchronized void simulationUpdate(){
+		if (isGameRunning()){
+			//TODO: Bomb logic
+			//TODO: AI logic
+			
+			send(new ViewUpdateEvent(grid));
+		}
+	}
+	
+	// Event Methods
+	
+	@Override
+	protected void send(Event event){
+		super.send(event);
+		updateView(event);
+		
+		setChanged();
+		notifyObservers(event);
 	}
 
     @Override
@@ -127,6 +162,7 @@ public class Server extends GameController {
     	
     	// Decide whethere to accept or reject connection request
     	if (event instanceof ConnectEvent){
+<<<<<<< HEAD
     		if (((ConnectEvent)event).spectator){
     			return new ConnectAcceptedEvent();
     		}
@@ -142,6 +178,9 @@ public class Server extends GameController {
     			return new ConnectAcceptedEvent();
     		}
     		return new ConnectRejectedEvent();
+=======
+    		return handleConnectionRequest((ConnectEvent) event);
+>>>>>>> dev
     	}
     	
     	/*
@@ -177,6 +216,25 @@ public class Server extends GameController {
     	   return new GameKeyEventAck(keyEvent);
        }
     	return null;
+    }
+    
+    private Event handleConnectionRequest(ConnectEvent event){
+    	int playerId = event.getPlayerID();
+    	boolean accept = false;
+    	
+    	if (((ConnectEvent)event).spectator){
+			accept = true;
+		}
+		else if (isAcceptingConnections()){
+			if (players.size() < MAX_PLAYERS){
+    			players.put(playerId, new Player(playerId));
+    		}
+			accept = true;
+		}
+    	
+    	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	updateView(response);
+    	return response;
     }
     
     private void move(Player player, int dx, int dy){

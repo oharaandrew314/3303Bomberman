@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import client.controllers.PlayableClient;
+
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.ViewUpdateEvent;
-import common.models.Grid;
 
 /**
  * Test Client
@@ -55,11 +55,6 @@ public class MockClient extends PlayableClient {
 	
 	public void waitForViewUpdate(){
 		waitFor(ViewUpdateEvent.class);
-	}
-	
-	public void startGame(){
-		super.startGame();
-		waitFor(GameStartEvent.class);
 	}
 	
 	public synchronized Event waitFor(Class<? extends Event> eventType){
@@ -107,15 +102,12 @@ public class MockClient extends PlayableClient {
 		}
 		events.add(event);
 		notify();
-		return null;
-	}
-
-	@Override
-	protected boolean isSpectator() {
-		return false;
+		return super.receive(event);
 	}
 	
 	@Override
-	protected void processViewUpdate(Grid grid) {}
-
+	public void startGame(){
+		super.startGame();
+		waitFor(GameStartEvent.class);
+	}
 }
