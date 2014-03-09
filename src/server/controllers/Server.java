@@ -76,8 +76,8 @@ public class Server extends GameController {
 			List<Point> points = new ArrayList<>(grid.keySet());
 			Random r = new Random();
 			Queue<Player> queue = new ArrayDeque<>(players.values());
-			boolean tried = false;
 			while(!queue.isEmpty()){
+				boolean tried = false;
 				Player p = queue.peek();
 				Point dest = points.get(r.nextInt(points.size() - 1));
 				if(p.startLoc != null && !tried){
@@ -87,7 +87,12 @@ public class Server extends GameController {
 				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
 					grid.set(queue.remove(), dest);
 				} else{
-					//error out
+					if(tried){
+						//error out since we failed to place the player into the expected spot
+						//we shouldn't randomize it at this point, otherwise test may fail
+						throw new IllegalArgumentException("Player could not be placed on the specified square");
+					}
+					//otherwise, continue
 				}
 			}
 			
@@ -104,6 +109,7 @@ public class Server extends GameController {
 			timer.stop();
 			state = State.idle;
 			grid = null;
+			players.clear();
 		}
 	}
 	
