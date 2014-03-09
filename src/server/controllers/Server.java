@@ -68,61 +68,43 @@ public class Server extends GameController {
 	}
 	
 	private void startGame(){
-<<<<<<< HEAD
+
 		// Place players
-		List<Point> points = new ArrayList<>(grid.keySet());
-		Random r = new Random();
-		Queue<Player> queue = new ArrayDeque<>(players.values());
 		
-		//If a starting location is specified, check it, if can't be placed, then do random (might want to change this
-		//to gracefully fail when an invalid location is specified
-		boolean tried = false;
-		while(!queue.isEmpty()){
-			Player p = queue.peek();
-			Point dest = points.get(r.nextInt(points.size() - 1));
-			if(p.startLoc != null && !tried){
-				dest = p.startLoc;
-			} 
-			if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
-				grid.set(queue.remove(), dest);
-				tried = false;
-			} else{
-				tried = true;
-			}
-			
-=======
 		if (state == State.newGame){
 			// Place players
 			List<Point> points = new ArrayList<>(grid.keySet());
 			Random r = new Random();
 			Queue<Player> queue = new ArrayDeque<>(players.values());
+			boolean tried = false;
 			while(!queue.isEmpty()){
+				Player p = queue.peek();
 				Point dest = points.get(r.nextInt(points.size() - 1));
+				if(p.startLoc != null && !tried){
+					dest = p.startLoc;
+					tried = true;
+				}
 				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
 					grid.set(queue.remove(), dest);
+				} else{
+					//error out
 				}
 			}
 			
 			state = State.gameRunning;
 			send(new GameStartEvent());
 			timer.start();
->>>>>>> dev
+
 		}
 	}
 	
 	public void endGame(){
-<<<<<<< HEAD
-		timer.stop();
-		state = State.idle;
-		grid = null;
-		players.clear();
-=======
+
 		if (state == State.gameRunning){
 			timer.stop();
 			state = State.idle;
 			grid = null;
 		}
->>>>>>> dev
 	}
 	
 	public void stop(){
@@ -160,27 +142,9 @@ public class Server extends GameController {
     	
     	int playerId = event.getPlayerID();
     	
-    	// Decide whethere to accept or reject connection request
+    	// Decide whether to accept or reject connection request
     	if (event instanceof ConnectEvent){
-<<<<<<< HEAD
-    		if (((ConnectEvent)event).spectator){
-    			return new ConnectAcceptedEvent();
-    		}
-    		else if (isAcceptingConnections()){
-    			if (players.size() < MAX_PLAYERS){
-    				Point location = ((ConnectEvent)event).startLocation;
-    				if(location == null){
-    					players.put(playerId, new Player(playerId));
-    				} else{
-    					players.put(playerId, new Player(playerId, location));
-    				}
-        		}
-    			return new ConnectAcceptedEvent();
-    		}
-    		return new ConnectRejectedEvent();
-=======
     		return handleConnectionRequest((ConnectEvent) event);
->>>>>>> dev
     	}
     	
     	/*
@@ -227,8 +191,13 @@ public class Server extends GameController {
 		}
 		else if (isAcceptingConnections()){
 			if (players.size() < MAX_PLAYERS){
-    			players.put(playerId, new Player(playerId));
-    		}
+				Point location = ((ConnectEvent)event).startLocation;
+				if(location == null){
+					players.put(playerId, new Player(playerId));
+				} else{
+					players.put(playerId, new Player(playerId, location));
+				}
+			}
 			accept = true;
 		}
     	
