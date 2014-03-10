@@ -2,6 +2,7 @@ package common.views;
 
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
+import common.events.DisconnectEvent;
 import common.events.Event;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
@@ -35,10 +36,17 @@ public abstract class AbstractView implements View {
 		else if (event instanceof GameStartEvent){
 			message = displayStartGame();
 		}
+		else if (event instanceof DisconnectEvent){
+			message = getPlayerDisconnected(event.getPlayerID());
+		}
 		
 		if (message != null){
 			displayMessage(message);
 		}
+	}
+	
+	public String getPlayerDisconnected(int playerId){
+		return "Player " + playerId + " was disconnected from the game";
 	}
 	
 	public abstract void displayMessage(String message);
