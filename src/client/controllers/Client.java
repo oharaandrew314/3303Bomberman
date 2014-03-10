@@ -73,11 +73,10 @@ public abstract class Client extends GameController {
 		return false;
 	}
 	
+	protected abstract boolean isSpectator();
+	
 	protected  void processConnectionAccepted() {}
 	protected void processConnectionRejected() {}
 	public void stop(){}
-	
-	protected abstract boolean isSpectator();
-	
 	protected void keyEventAcknowledged(GameKeyEvent event){}
 }
