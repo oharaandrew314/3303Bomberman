@@ -29,9 +29,15 @@ public abstract class GameController extends Observable{
 			view.handleEvent(event);
 		}
 	}
+	
+	public void stop(){
+		nwc.stopListening();
+		nwc.clear();
+		view.close();
+	}
 
 	public abstract boolean isGameRunning();
 	public abstract Event receive(Event event);
 	public abstract boolean isAcceptingConnections();
-    public abstract void stop();
+    
 }

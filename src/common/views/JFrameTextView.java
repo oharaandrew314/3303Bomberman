@@ -20,9 +20,11 @@ public abstract class JFrameTextView extends AbstractView {
 	public static final String LINE_SEP = System.getProperty("line.separator");
 	private TextArea textArea, console;
 	protected final JFrame frame;
+	private final GameController gc;
 	
 	public JFrameTextView(GameController gc){	
 		gc.setView(this);
+		this.gc = gc;
 		
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
@@ -52,8 +54,11 @@ public abstract class JFrameTextView extends AbstractView {
 
 	@Override
 	public void close() {
-		frame.setVisible(false);
-		frame.dispose();
+		if (frame.isVisible()){
+			frame.setVisible(false);
+			frame.dispose();
+			gc.stop();
+		}
 	}
 	
 	@Override

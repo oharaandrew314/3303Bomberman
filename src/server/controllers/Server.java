@@ -14,6 +14,7 @@ import common.controllers.GameController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
+import common.events.DisconnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
@@ -96,7 +97,7 @@ public class Server extends GameController {
 	
 	public void stop(){
 		endGame();
-		nwc.stopListening();
+		super.stop();
 		state = State.stopped;
 	}
 	
@@ -143,7 +144,11 @@ public class Server extends GameController {
     	   GameKeyEvent keyEvent = (GameKeyEvent) event;
     	   int keyCode = keyEvent.getKeyCode();
     	   
-    	   if (isGameRunning()){
+    	   // Handle DisconnectEvent at all states
+    	   if (keyCode == KeyEvent.VK_ESCAPE){
+    		   return disconnectPlayer(event);
+    	   } 
+    	   else if (isGameRunning()){
     		   switch(keyCode){
 		   	   		case KeyEvent.VK_UP:
 		   	   		case KeyEvent.VK_W:
@@ -160,6 +165,7 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_SPACE:
 		   	   		case KeyEvent.VK_F:
 		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+		   	   		case KeyEvent.VK_ESCAPE: return disconnectPlayer(event);
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
@@ -186,6 +192,17 @@ public class Server extends GameController {
     	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
     	updateView(response);
     	return response;
+    }
+    
+    private Event disconnectPlayer(Event event){
+    	players.remove(event.getPlayerID()); // remove player from game
+    	
+    	Event notice = new DisconnectEvent();
+    	notice.setPlayerID(event.getPlayerID());
+    	send(notice); // Notify players of disconnect
+    	
+    	// Acknowledge disconnect
+		return new ConnectRejectedEvent();
     }
     
     private void move(Player player, int dx, int dy){
