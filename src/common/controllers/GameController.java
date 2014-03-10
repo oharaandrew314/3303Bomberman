@@ -33,7 +33,9 @@ public abstract class GameController extends Observable{
 	public void stop(){
 		nwc.stopListening();
 		nwc.clear();
-		view.close();
+		if (view != null){
+			view.close();
+		}
 	}
 
 	public abstract boolean isGameRunning();

@@ -60,7 +60,7 @@ public class Server extends GameController {
 	
 	// State Methods
 	
-	public void newGame(Grid grid){
+	public synchronized void newGame(Grid grid){
 		if (state == State.idle && grid != null){
 			this.grid = grid;
 			state = State.newGame;
@@ -87,7 +87,7 @@ public class Server extends GameController {
 		}
 	}
 	
-	public void endGame(){
+	public synchronized void endGame(){
 		if (state == State.gameRunning){
 			timer.stop();
 			state = State.idle;
@@ -95,7 +95,7 @@ public class Server extends GameController {
 		}
 	}
 	
-	public void stop(){
+	public synchronized void stop(){
 		endGame();
 		super.stop();
 		state = State.stopped;
@@ -165,12 +165,13 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_SPACE:
 		   	   		case KeyEvent.VK_F:
 		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
-		   	   		case KeyEvent.VK_ESCAPE: return disconnectPlayer(event);
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
     	   }
     	   return new GameKeyEventAck(keyEvent);
+       } else if (event instanceof DisconnectEvent){
+    	   return disconnectPlayer(event);
        }
     	return null;
     }

@@ -57,7 +57,7 @@ public class SystemTest {
 		Player p = server.movePlayerTo(0, new Point(0, 0));
 	
 		// Move player right
-		client.pressKey(KeyEvent.VK_D);
+		client.pressKeyAndWait(KeyEvent.VK_D);
 		assertEquals(new Point(1, 0), getGrid().find(p));
 		
 		// Wait for view update response

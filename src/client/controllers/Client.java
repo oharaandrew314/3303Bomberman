@@ -15,7 +15,7 @@ import common.events.WinEvent;
 
 public abstract class Client extends GameController {
 	
-	private static enum State {stopped, idle, gameRunning, stopping };
+	public static enum State {stopped, idle, gameRunning, stopping };
 	private State state = State.stopped;
 
 	public Client() {
@@ -73,8 +73,12 @@ public abstract class Client extends GameController {
 		return false;
 	}
 	
+	public State getState(){
+		return state;
+	}
+	
 	@Override
-	public synchronized void stop(){
+	public void stop(){
 		if (state != State.stopped){
 			state = State.stopping;
 			send(new DisconnectEvent());
@@ -87,7 +91,7 @@ public abstract class Client extends GameController {
 		state = State.idle;
 	}
 	
-	protected synchronized void processConnectionRejected() {
+	protected void processConnectionRejected() {
 		state = State.stopped;
 		stop();
 	}
