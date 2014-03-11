@@ -11,12 +11,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import common.events.ConnectAcceptedEvent;
+import common.events.ConnectRejectedEvent;
 import common.events.Event;
 
 public class NetworkController {
@@ -26,11 +28,11 @@ public class NetworkController {
     private GameController gameController;
     private DatagramSocket socket;
     private ListenThread listener;
-    protected List<InetSocketAddress> peers;
+    protected Map<Integer, InetSocketAddress> peers;
     
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
-        this.peers = new ArrayList<InetSocketAddress>();
+        this.peers = new HashMap<>();
         
         try {
             socket = new DatagramSocket();
@@ -103,7 +105,7 @@ public class NetworkController {
      * @param peer The peer to add.
      */
     private synchronized void addPeer(InetSocketAddress peer) {
-        peers.add(peer);
+        peers.put( getPlayerIdFor(peer), peer);
     }
     
     /**
@@ -120,7 +122,7 @@ public class NetworkController {
      */
     public synchronized void send(Event event) {
         try {
-            for(InetSocketAddress peer : peers) {
+            for(InetSocketAddress peer : peers.values()) {
                 sendToOnePeer(event, peer);
             }
         } catch (IOException ex) {
@@ -161,7 +163,9 @@ public class NetworkController {
             		data.getAddress(), data.getPort()
             	);
             	if (response instanceof ConnectAcceptedEvent){
-            		peers.add(peer);
+            		peers.put(playerId, peer);
+            	} else if (response instanceof ConnectRejectedEvent){
+            		peers.remove(playerId);
             	}
             	
             	response.setPlayerID(playerId);
@@ -178,13 +182,27 @@ public class NetworkController {
      * the next ID is given.
      */
     private int getPlayerIdFor(DatagramPacket packet) {
-        for(int id = 0; id < peers.size(); id++) {
-            InetSocketAddress peer = peers.get(id);
-            if (peer.getHostString().equals(packet.getAddress().getHostAddress()) &&
-                peer.getPort() == packet.getPort())
-                return id;
+    	InetSocketAddress peer = new InetSocketAddress(
+    		packet.getAddress().getHostAddress(), packet.getPort()
+    	);
+    	return getPlayerIdFor(peer);
+    }
+    
+    private int getPlayerIdFor(InetSocketAddress address){
+    	// Search for existing peer    	
+        for(Entry<Integer, InetSocketAddress> entry : peers.entrySet()) {
+        	InetSocketAddress peer = entry.getValue();
+        	if(peer.equals(address)){
+        		 return entry.getKey();
+        	}
         }
-        return peers.size();
+        
+        // If peer does not exist, assign next id
+        int max = 0;
+        for (int id : peers.keySet()){
+        	max = Math.max(max, id + 1);
+        }
+        return max; 
     }
     
     /**
