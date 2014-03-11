@@ -32,4 +32,8 @@ public class Player extends Unit {
 	public int getNumBombs(){
 		return factory.getNumBombs();
 	}
+	
+	public boolean hasBombs(){
+		return getNumBombs() > 0;
+	}
 }

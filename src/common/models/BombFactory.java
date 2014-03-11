@@ -1,9 +1,11 @@
 package common.models;
 
+import java.io.Serializable;
 import java.util.concurrent.Semaphore;
 
-public class BombFactory {
+public class BombFactory implements Serializable {
 	
+	private static final long serialVersionUID = -5483632574557742377L;
 	public static final int INIT_MAX_BOMBS = 1, INIT_FUSE_TIME = 2000;
 	private int numBombs;
 	private final Semaphore bombSem;

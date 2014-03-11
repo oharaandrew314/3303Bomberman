@@ -22,6 +22,7 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
+import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
@@ -259,7 +260,11 @@ public class Server extends GameController {
     		return;
     	}
     	
-    	// TODO: implement
+    	if (player.hasBombs()){
+    		Bomb bomb = player.getNextBomb();
+    		Point loc = grid.find(player);
+    		grid.set(bomb, loc);
+    	}
     }
 
     public static void main(String[] args){
