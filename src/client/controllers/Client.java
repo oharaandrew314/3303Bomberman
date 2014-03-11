@@ -5,6 +5,7 @@ import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
+import common.events.DisconnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
@@ -14,12 +15,11 @@ import common.events.WinEvent;
 
 public abstract class Client extends GameController {
 	
-	private static enum State {idle, gameRunning };
-	private State state;
+	public static enum State {stopped, idle, gameRunning, stopping };
+	private State state = State.stopped;
 
 	public Client() {
 		this(NetworkController.LOCALHOST);
-		state = State.idle;
 	}
 	
 	public Client(String serverAddress){
@@ -73,11 +73,32 @@ public abstract class Client extends GameController {
 		return false;
 	}
 	
-	protected  void processConnectionAccepted() {}
-	protected void processConnectionRejected() {}
-	public void stop(){}
+	public State getState(){
+		return state;
+	}
 	
+	@Override
+	public void stop(){
+		if (state != State.stopped){
+			state = State.stopping;
+			send(new DisconnectEvent());
+		} else {
+			super.stop();
+		}
+	}
+	
+	protected  void processConnectionAccepted() {
+		state = State.idle;
+	}
+	
+	protected void processConnectionRejected() {
+		state = State.stopped;
+		stop();
+	}
+	
+	// Abstract methods
 	protected abstract boolean isSpectator();
 	
+	// Optional methods (currently no functionality)
 	protected void keyEventAcknowledged(GameKeyEvent event){}
 }

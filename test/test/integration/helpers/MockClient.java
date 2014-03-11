@@ -31,10 +31,10 @@ public class MockClient extends PlayableClient {
 	
 	// Helpers
 	
-	public synchronized void pressKey(int keyCode){
+	public synchronized void pressKeyAndWait(int keyCode){
 		Collection<GameKeyEventAck> wrongKeys = new ArrayList<>();
 		
-		super.pressKey(keyCode);
+		pressKey(keyCode);
 		
 		GameKeyEventAck response = null;
 		boolean found = false;
@@ -78,7 +78,7 @@ public class MockClient extends PlayableClient {
 			event = search(eventType);
 		}
 		
-		assertTrue("Client response timed out", !timeout);
+		assertTrue("Client timed out waiting for response", !timeout);
 		return event;
 	}
 	

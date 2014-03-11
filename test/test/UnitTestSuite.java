@@ -11,6 +11,7 @@ import test.events.TestGameKeyEvent;
 import test.events.TestViewUpdateEvent;
 import test.integration.ServerTest;
 import test.integration.SystemTest;
+import test.integration.TestClient;
 import test.models.TestGrid;
 import test.models.TestSquare;
 
@@ -30,6 +31,7 @@ import test.models.TestSquare;
    //Integration Tests
    ServerTest.class,
    SystemTest.class,
+   TestClient.class,
 })
 
 public class UnitTestSuite {}
