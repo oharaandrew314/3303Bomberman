@@ -14,6 +14,7 @@ import common.controllers.GameController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
+import common.events.DisconnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
@@ -59,7 +60,7 @@ public class Server extends GameController {
 	
 	// State Methods
 	
-	public void newGame(Grid grid){
+	public synchronized void newGame(Grid grid){
 		if (state == State.idle && grid != null){
 			this.grid = grid;
 			state = State.newGame;
@@ -86,7 +87,7 @@ public class Server extends GameController {
 		}
 	}
 	
-	public void endGame(){
+	public synchronized void endGame(){
 		if (state == State.gameRunning){
 			timer.stop();
 			state = State.idle;
@@ -94,9 +95,9 @@ public class Server extends GameController {
 		}
 	}
 	
-	public void stop(){
+	public synchronized void stop(){
 		endGame();
-		nwc.stopListening();
+		super.stop();
 		state = State.stopped;
 	}
 	
@@ -143,7 +144,11 @@ public class Server extends GameController {
     	   GameKeyEvent keyEvent = (GameKeyEvent) event;
     	   int keyCode = keyEvent.getKeyCode();
     	   
-    	   if (isGameRunning()){
+    	   // Handle DisconnectEvent at all states
+    	   if (keyCode == KeyEvent.VK_ESCAPE){
+    		   return disconnectPlayer(event);
+    	   } 
+    	   else if (isGameRunning()){
     		   switch(keyCode){
 		   	   		case KeyEvent.VK_UP:
 		   	   		case KeyEvent.VK_W:
@@ -165,6 +170,8 @@ public class Server extends GameController {
     		   startGame();
     	   }
     	   return new GameKeyEventAck(keyEvent);
+       } else if (event instanceof DisconnectEvent){
+    	   return disconnectPlayer(event);
        }
     	return null;
     }
@@ -186,6 +193,17 @@ public class Server extends GameController {
     	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
     	updateView(response);
     	return response;
+    }
+    
+    private Event disconnectPlayer(Event event){
+    	players.remove(event.getPlayerID()); // remove player from game
+    	
+    	Event notice = new DisconnectEvent();
+    	notice.setPlayerID(event.getPlayerID());
+    	send(notice); // Notify players of disconnect
+    	
+    	// Acknowledge disconnect
+		return new ConnectRejectedEvent();
     }
     
     private void move(Player player, int dx, int dy){

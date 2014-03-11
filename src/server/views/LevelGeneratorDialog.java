@@ -1,4 +1,4 @@
-package common.views;
+package server.views;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;

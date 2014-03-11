@@ -7,6 +7,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import server.controllers.Server;
+import server.views.LevelGeneratorDialog;
+import server.views.LevelLoaderDialog;
 
 public class MenuBarFactory {
 	

@@ -13,6 +13,7 @@ public interface View {
 	String displayConnectionRejected();
 	String displayStartGame();
 	String displayEndGame(Player player);
+	String getPlayerDisconnected(int playerId);
 	void addKeyListener(KeyListener l);
 	void close();
 	void handleEvent(Event event);
