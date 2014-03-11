@@ -1,8 +1,9 @@
 package test.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import org.junit.After;
@@ -11,9 +12,9 @@ import org.junit.Test;
 
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
-
 import common.models.Bomb;
 import common.models.BombFactory;
+import common.models.Grid;
 import common.models.Player;
 
 public class TestBombs {
@@ -35,6 +36,9 @@ public class TestBombs {
 		// Start game (and simulation timer)
 		server.newGame();
 		client.startGame();
+		
+		// move player to top left
+		server.movePlayerTo(player.playerId, new Point(0, 0));
 	}
 	
 	@After
@@ -65,7 +69,22 @@ public class TestBombs {
 	
 	@Test
 	public void testBombDeployPosition(){
+		// Drop bomb and do not move
+		Bomb bomb = server.bomb(player);
+		Grid grid = server.getGrid();
+		assertEquals(grid.find(player), grid.find(bomb));
+	}
+	
+	@Test
+	public void testBombDeployPositionAfterMove(){
+		Bomb bomb = server.bomb(player);
 		
+		Grid grid = server.getGrid();
+		Point dropLoc = grid.find(player);
+		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
+		
+		assertEquals(dropLoc, grid.find(bomb));
+		assertNotEquals(grid.find(player), grid.find(bomb));
 	}
 	
 	@Test
