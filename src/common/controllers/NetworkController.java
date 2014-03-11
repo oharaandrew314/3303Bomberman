@@ -52,7 +52,7 @@ public class NetworkController {
      * Start listening for messages on the given port.
      * @param port The port to listen on.
      */
-    public void startListeningOn(int port) {
+    private void startListeningOn(int port) {
         try {
             socket = new DatagramSocket(port);
         } catch (SocketException ex) {
