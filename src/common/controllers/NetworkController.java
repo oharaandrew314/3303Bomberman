@@ -189,20 +189,17 @@ public class NetworkController {
     }
     
     private int getPlayerIdFor(InetSocketAddress address){
-    	// Search for existing peer    	
+    	int nextId = 1;
+    	
+    	// Search for existing peer
         for(Entry<Integer, InetSocketAddress> entry : peers.entrySet()) {
         	InetSocketAddress peer = entry.getValue();
+        	nextId = Math.max(nextId, entry.getKey() + 1);
         	if(peer.equals(address)){
         		 return entry.getKey();
         	}
         }
-        
-        // If peer does not exist, assign next id
-        int max = 1;
-        for (int id : peers.keySet()){
-        	max = Math.max(max, id + 1);
-        }
-        return max; 
+        return nextId;  // If peer does not exist, assign next id
     }
     
     /**
