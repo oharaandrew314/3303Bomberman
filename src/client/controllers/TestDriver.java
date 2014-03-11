@@ -26,7 +26,7 @@ public class TestDriver {
 			} catch (CreateGridException e) {
 				e.printStackTrace();
 			}
-			test.run();
+			test.run(server);
 			server.endGame();
 		}
 		server.stop();

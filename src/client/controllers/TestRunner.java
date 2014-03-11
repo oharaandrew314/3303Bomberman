@@ -12,7 +12,7 @@ public class TestRunner extends Client implements Runnable{
 	private boolean connected = false;
 	private boolean dead = false;
 	
-	public TestRunner(ArrayList<Integer> events, int playerNumber){
+	public TestRunner(ArrayList<Integer> events){
 		this.events = events;
 	}
 
@@ -26,9 +26,6 @@ public class TestRunner extends Client implements Runnable{
 			waitForResponse(1);  //wait
 			
 		}
-		GameKeyEvent startEvent = new GameKeyEvent(KeyEvent.VK_ENTER);
-		nwc.send(startEvent);
-		waitForResponse(100);
 		int i = 0;
 		while (!events.isEmpty() && i != events.size() && !dead&& isGameRunning()) {
 			GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
@@ -59,5 +56,15 @@ public class TestRunner extends Client implements Runnable{
 	@Override
 	protected boolean isSpectator() {
 		return false;
+	}
+	
+	public boolean isConnected(){
+		return connected;
+	}
+
+	
+	public void sendGameStartEvent(){
+		GameKeyEvent startEvent = new GameKeyEvent(KeyEvent.VK_ENTER);
+		nwc.send(startEvent);
 	}
 }

@@ -1,11 +1,12 @@
 package client.controllers;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-
+import server.controllers.Server;
 import static java.awt.event.KeyEvent.*;
 
 
@@ -16,38 +17,76 @@ public class TestCase {
 	public static final String LEFT = "LEFT";
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
+	private ArrayList<Point> startLocations;
 	private String filename;
-	
+
 	public TestCase(String filename){
+
+		startLocations = new ArrayList<Point>();
 		events = readEvents(filename);
 		this.filename = filename;
-		
+
 	}
-	
+
 	/**
 	 * runs the testCase
 	 * Creates a thread for each player involved with the testCase
 	 * Each thread is a player with all the events that player performs
 	 */
-	public void run(){
+	public void run(Server server){
 		System.out.print("testing " + filename + "...");
-		
+
+		ArrayList<TestRunner> testClients = new ArrayList<TestRunner>();
 		Thread[] threads = new Thread[events.size()];
 		for(int i = 0 ; i != events.size();i++){
-				threads[i] = new Thread(new TestRunner(events.get(i) , i+1));
-				threads[i].start();
+			testClients.add(new TestRunner(events.get(i)));
+			threads[i] = new Thread(testClients.get(i));
 		}
-		for(Thread t: threads){
+		boolean ready = false;
+		long timeStartWaiting = System.currentTimeMillis();
+		while(!ready){
+			if(System.currentTimeMillis() - timeStartWaiting > 5000){
+				System.out.println("connect: Waited too long... exiting");
+				return;
+			}
+			boolean allConnected = true;
+			for(TestRunner r : testClients){
+				if(!r.isConnected()){
+					allConnected = false;
+				}
+			}
+			ready = allConnected;
+		}
+		if(!testClients.isEmpty()){
+			testClients.get(0).sendGameStartEvent();
+			timeStartWaiting = System.currentTimeMillis();
+			while(!testClients.get(0).isGameRunning()){
+				System.out.print("waiting...");
+				if(System.currentTimeMillis() - timeStartWaiting > 1000){
+					System.out.println("\nStart: Waited too long... exiting");
+					return;
+				}
+			}
+		}
+		
+		for(TestRunner t : testClients){
+			int index = testClients.indexOf(t);
+			server.movePlayerTo(index, startLocations.get(index));
+		}
+		for(int i = 0 ; i != threads.length;i++){
 			try {
-				t.join();
+				threads[i].start();
+				threads[i].join();
 			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
 		System.out.println("Done");
 	}
-	
-	
+
+
 	/**
 	 * Parses the file, separating each players events
 	 * @param filename
@@ -55,29 +94,45 @@ public class TestCase {
 	 */
 	private ArrayList<ArrayList<Integer>> readEvents(String filename) {
 		ArrayList<ArrayList<Integer>> events = new ArrayList<ArrayList<Integer>>();
-		//read file
 		String str = "";
-		
+
 		try{
 			InputStream in = this.getClass().getClassLoader().getResourceAsStream(TEST_PATH + filename + ".txt");
-			
+
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 		    if (in!=null) {                         
-		    	
+
+
+		    	//Get the number of players in the testCase from the first line
 				if((str = bufferedReader.readLine()) != null) {
-					String[] temp = str.split("=");
-					int players = Integer.parseInt(temp[1].trim());
+					String[] lineSegment = str.split(";");
+					String[] player = lineSegment[0].split("=");
+					int players = Integer.parseInt(player[1].trim());
+					//Location=[ 1-> 0,0 : 2->3,0]
+					String loc = lineSegment[1].trim().split("=")[1];
+					String[] locSplit = loc.split(":");
 					for(int i = 0 ; i != players ; i++){
 						events.add(new ArrayList<Integer>());
+						startLocations.add(null);
 					}
-						
+					for(int i = 0 ; i != locSplit.length ; i++){
+						String[] locParts = locSplit[i].replaceAll("\\[", "").replaceAll("\\]", "").split("->");
+						int id = Integer.parseInt(locParts[0].trim());
+						String[] coordinates = locParts[1].split(",");
+						Point point = new Point(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
+						startLocations.set(id-1, point);
+					}
+
+
 				}
-				
+
+				//Get each command and all details associated with it
 		        while ((str = bufferedReader.readLine()) != null) { 
-		        	int player = Integer.parseInt(str.substring(0, 2).trim());
-		        	String newString = str.substring(2).trim();
-		        	
-		        		switch(newString){
+		        	String[] sections = str.split(":");
+		        	int player = Integer.parseInt(sections[0].trim());
+		        	String command = sections[1].trim();
+
+		        		switch(command){
 			        		case UP:  events.get(player-1).add(VK_UP);
 		                    	break;
 			        		case DOWN:  events.get(player-1).add(VK_DOWN);
@@ -89,7 +144,7 @@ public class TestCase {
 		                	default:
 		                		break;
 		        		}
-		        	
+
 		        }               
 		    }
 		}
@@ -98,6 +153,5 @@ public class TestCase {
 		}
 		return events;
 	}
-	
-}
 
+}

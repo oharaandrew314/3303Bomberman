@@ -54,6 +54,7 @@ public abstract class Client extends GameController {
 	
 	protected void setGameStarted(){
 		state = State.gameRunning;
+		System.out.println("Client: setGameStarted");
 	}
 	
 	protected void endGame(WinEvent winEvent){

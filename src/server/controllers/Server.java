@@ -129,7 +129,7 @@ public class Server extends GameController {
     	
     	int playerId = event.getPlayerID();
     	
-    	// Decide whethere to accept or reject connection request
+    	// Decide whether to accept or reject connection request
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
     	}
@@ -243,6 +243,15 @@ public class Server extends GameController {
     	
     	// TODO: implement
     }
+    
+    public Player movePlayerTo(int playerId, Point newPos){
+		Player player = players.get(playerId);
+		if (grid.contains(player)){
+			grid.remove(player);
+		}
+		grid.set(player, newPos);
+		return player;
+	}
 
     public static void main(String[] args){
         Server server = new Server();
