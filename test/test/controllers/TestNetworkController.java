@@ -136,14 +136,14 @@ public class TestNetworkController extends GameController {
 
         // Connect client A
         Event received = clientA.connectAndWait(server);
-        assertEquals(0, received.getPlayerID());
+        assertEquals(1, received.getPlayerID());
         
         // Connect client B
         received = clientB.connectAndWait(server);
-        assertEquals(1, received.getPlayerID());
+        assertEquals(2, received.getPlayerID());
 
         // Test player id
-        assertEquals(1, getClientIdFromServer(clientB));
+        assertEquals(2, getClientIdFromServer(clientB));
     }
     
     @Test
@@ -165,31 +165,31 @@ public class TestNetworkController extends GameController {
     	
     	// Check ids
     	assertEquals(4, server.getNumPeers());
-    	 assertEquals(0, getClientIdFromServer(clientA));
-    	 assertEquals(1, getClientIdFromServer(clientB));
-    	 assertEquals(2, getClientIdFromServer(clientC));
-    	 assertEquals(3, getClientIdFromServer(clientD));
+    	 assertEquals(1, getClientIdFromServer(clientA));
+    	 assertEquals(2, getClientIdFromServer(clientB));
+    	 assertEquals(3, getClientIdFromServer(clientC));
+    	 assertEquals(4, getClientIdFromServer(clientD));
     	 
     	 //Remove one peer and ensure it is re-added after the existing peers
-    	 server.removePeer(1);
+    	 server.removePeer(2);
     	 assertEquals(3, server.getNumPeers());
     	 clientB.connectAndWait(server);
     	 assertEquals(4, server.getNumPeers());
-    	 assertEquals(4, getClientIdFromServer(clientB));
+    	 assertEquals(5, getClientIdFromServer(clientB));
     	 
     	 // Remove all peers and ensure they are assigned ids starting from 0
-    	 server.removePeer(0);
-    	 server.removePeer(2);
+    	 server.removePeer(1);
     	 server.removePeer(3);
     	 server.removePeer(4);
+    	 server.removePeer(5);
     	 clientD.connectAndWait(server);
      	 clientA.connectAndWait(server);
      	 clientB.connectAndWait(server);
      	 clientC.connectAndWait(server);
-     	assertEquals(0, getClientIdFromServer(clientD));
-     	assertEquals(1, getClientIdFromServer(clientA));
-     	assertEquals(2, getClientIdFromServer(clientB));
-     	assertEquals(3, getClientIdFromServer(clientC));
+     	assertEquals(1, getClientIdFromServer(clientD));
+     	assertEquals(2, getClientIdFromServer(clientA));
+     	assertEquals(3, getClientIdFromServer(clientB));
+     	assertEquals(4, getClientIdFromServer(clientC));
     	 
     }
 }

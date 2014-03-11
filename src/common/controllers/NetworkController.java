@@ -198,7 +198,7 @@ public class NetworkController {
         }
         
         // If peer does not exist, assign next id
-        int max = 0;
+        int max = 1;
         for (int id : peers.keySet()){
         	max = Math.max(max, id + 1);
         }
