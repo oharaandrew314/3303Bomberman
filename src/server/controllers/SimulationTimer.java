@@ -20,8 +20,10 @@ public class SimulationTimer {
 		listeners = new ArrayList<>();
 	}
 	
-	public synchronized void addListener(SimulationListener l){
-		listeners.add(l);
+	public void addListener(SimulationListener l){
+		synchronized(listeners){
+			listeners.add(l);
+		}
 	}
 	
 	public synchronized void start(){
@@ -30,8 +32,10 @@ public class SimulationTimer {
 			new TimerTask() {
 				@Override
 				public void run() {
-					for (SimulationListener l : listeners){
-						l.simulationUpdate();
+					synchronized(listeners){
+						for (SimulationListener l : listeners){
+							l.simulationUpdate();
+						}
 					}
 				}
 			},
@@ -44,9 +48,11 @@ public class SimulationTimer {
 		if (timer != null){
 			timer.cancel();
 		}
-		for (SimulationListener l : listeners){
-			l.onRemovedFromTimer();
+		synchronized(listeners){
+			for (SimulationListener l : listeners){
+				l.onRemovedFromTimer();
+			}
+			listeners.clear();
 		}
-		listeners.clear();
 	}
 }
