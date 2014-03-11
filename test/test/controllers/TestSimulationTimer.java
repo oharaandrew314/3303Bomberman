@@ -16,7 +16,8 @@ public class TestSimulationTimer {
 	@Before
 	public void setUp()  {
 		server = new TimerServer();
-		timer = new SimulationTimer(server);
+		timer = new SimulationTimer();
+		timer.addListener(server);
 	}
 
 	@After

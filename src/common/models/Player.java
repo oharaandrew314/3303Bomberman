@@ -15,6 +15,7 @@ public class Player extends Unit {
 		this.playerId = playerId;
 		factory = new BombFactory();
 	}
+	
 	public Bomb getNextBomb(){
 		return factory.createBomb();
 	}

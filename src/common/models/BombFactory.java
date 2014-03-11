@@ -6,19 +6,16 @@ import java.util.concurrent.Semaphore;
 public class BombFactory implements Serializable {
 	
 	private static final long serialVersionUID = -5483632574557742377L;
-	public static final int INIT_MAX_BOMBS = 1, INIT_FUSE_TIME = 2000;
-	private int numBombs;
+	public static final int INIT_MAX_BOMBS = 1;
 	private final Semaphore bombSem;
 
 	public BombFactory() {
-		numBombs = INIT_MAX_BOMBS;
 		bombSem = new Semaphore(INIT_MAX_BOMBS);
 	}
 	
 	public Bomb createBomb(){
 		bombSem.acquireUninterruptibly();
-		numBombs--;
-		return new Bomb(this, INIT_FUSE_TIME);
+		return new Bomb(this);
 	}
 	
 	public void bombDetonated(Bomb bomb){
@@ -26,16 +23,14 @@ public class BombFactory implements Serializable {
 			throw new NullPointerException("Detonated bomb was null!");
 		}
 		bombSem.release();
-		numBombs++;
 	}
 	
 	public void increaseMaxBombs(){
-		numBombs++;
 		bombSem.release();
 	}
 	
 	public int getNumBombs(){
-		return numBombs;
+		return bombSem.availablePermits();
 	}
 
 }

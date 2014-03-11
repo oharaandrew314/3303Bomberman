@@ -2,27 +2,27 @@ package common.models;
 
 public class Bomb extends Entity {
 
+	public static final int FUSE_TIME = 2000;
 	private static final long serialVersionUID = 5546213627619819574L;
 	private final BombFactory factory;
-	public final int fuseTime;
-	private long startTime;
+	private boolean detonated;
 
-	public Bomb(BombFactory factory, int fuseTime) {
+	public Bomb(BombFactory factory) {
 		super("Bomb");
 		this.factory = factory;
-		this.fuseTime = fuseTime;
-	}
-	
-	public void fuse(){
-		startTime = System.currentTimeMillis();
-	}
-	
-	public void tryDetonate(){
-		
+		detonated = false;
 	}
 	
 	public void detonate(){
+		if (detonated){
+			throw new RuntimeException("Cannot detonate a bomb more than once.");
+		}
+		detonated = true;
 		factory.bombDetonated(this);
+	}
+	
+	public boolean isDetonated(){
+		return detonated;
 	}
 
 	@Override

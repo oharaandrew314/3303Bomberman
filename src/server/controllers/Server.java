@@ -29,7 +29,7 @@ import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
 
-public class Server extends GameController {
+public class Server extends GameController implements SimulationListener {
 	
 	public static final int MAX_PLAYERS = 4;
 	public static enum State { stopped, idle, newGame, gameRunning };
@@ -37,13 +37,15 @@ public class Server extends GameController {
 	protected Map<Integer, Player> players;
 	private State state = State.stopped;
 	private final SimulationTimer timer;
+	private final BombScheduler bombScheduler;
 
 	public Server(){
 		players = new HashMap<>();
 		addObserver(new TestLogger());
+		bombScheduler = new BombScheduler();
 		
 		nwc.startListeningOnServerPort();
-		timer = new SimulationTimer(this);
+		timer = new SimulationTimer();
 		state = State.idle;
 	}
 	
@@ -84,6 +86,8 @@ public class Server extends GameController {
 			
 			state = State.gameRunning;
 			send(new GameStartEvent());
+			timer.addListener(this);
+			timer.addListener(bombScheduler);
 			timer.start();
 		}
 	}
@@ -104,6 +108,7 @@ public class Server extends GameController {
 	
 	// Other methods
 	
+	@Override
 	public synchronized void simulationUpdate(){
 		if (isGameRunning()){
 			//TODO: Bomb logic
@@ -254,17 +259,15 @@ public class Server extends GameController {
     	}
     }
     
-    private void bomb(Player player){
-    	// Do nothing if game is not running
-    	if (!isGameRunning()){
-    		return;
-    	}
-    	
-    	if (player.hasBombs()){
+    protected Bomb bomb(Player player){
+    	if (isGameRunning() && player.hasBombs()){
     		Bomb bomb = player.getNextBomb();
     		Point loc = grid.find(player);
     		grid.set(bomb, loc);
+    		bombScheduler.scheduleBomb(bomb);
+    		return bomb;
     	}
+    	return null;
     }
 
     public static void main(String[] args){
@@ -273,4 +276,7 @@ public class Server extends GameController {
         System.out.println("Server now running with initial grid of: ");
         System.out.println(server.grid.toString());
     }
+
+	@Override
+	public void onRemovedFromTimer() {}
 }
