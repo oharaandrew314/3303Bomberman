@@ -48,7 +48,7 @@ public class Grid implements Serializable {
 	public Point find(Entity entity){
 		Point point = search(entity);
 		if (point == null){
-			throw new IllegalArgumentException("Square not found in grid");
+			throw new IllegalArgumentException(entity.name + " not found in grid");
 		}
 		return point;
 	}
