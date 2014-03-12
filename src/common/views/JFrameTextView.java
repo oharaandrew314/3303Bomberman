@@ -12,17 +12,18 @@ import javax.swing.JMenuBar;
 import common.controllers.GameController;
 import common.models.Grid;
 
-public abstract class JFrameTextView extends AbstractView {
+public class JFrameTextView extends AbstractView {
 	
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_TEXT_SIZE = 30;
-	
 	public static final String LINE_SEP = System.getProperty("line.separator");
-	private TextArea textArea, console;
+	
 	protected final JFrame frame;
 	private final GameController gc;
+	private TextArea textArea, console;
 	
-	public JFrameTextView(GameController gc){	
+	public JFrameTextView(GameController gc, TextGenerator textGen){
+		super(textGen);
 		gc.setView(this);
 		this.gc = gc;
 		
@@ -44,8 +45,10 @@ public abstract class JFrameTextView extends AbstractView {
 		frame.setVisible(true);
 	}
 	
-	public void addJMenuBar(JMenuBar menuBar){
-		frame.setJMenuBar(menuBar);
+	public void addMenuBar(JMenuBar menuBar){
+		if (menuBar != null){
+			frame.setJMenuBar(menuBar);
+		}
 	}
 	
 	protected void setTitle(String title){
@@ -62,9 +65,8 @@ public abstract class JFrameTextView extends AbstractView {
 	}
 	
 	@Override
-	public String updateView(Grid grid) {
+	public void displayGrid(Grid grid) {
 		textArea.setText(grid.toString());
-		return null;
 	}
 
 	@Override
@@ -74,6 +76,7 @@ public abstract class JFrameTextView extends AbstractView {
 		console.addKeyListener(l);
 	}
 	
+	@Override
 	public void displayMessage(String message){
 		console.append(message + LINE_SEP);
 	}
