@@ -6,6 +6,7 @@ import java.util.List;
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
+	private static final long INVULNERABLE_TIME = 1000*15;
 	private final int START_NUM_BOMBS = 1;
 	public final int playerId;
 	
@@ -44,6 +45,10 @@ public class Player extends Unit {
 		return String.valueOf(playerId);
 	}
 	
+	/**
+	 * Add the powerups to the players list of powerups and change the players properties accordingly
+	 * @param powerup - powerup picked up by the player
+	 */
 	public void addPowerup(Powerup powerup){
 		powerups.add(powerup);
 		if(powerup instanceof BombPlusOnePowerup){
@@ -51,25 +56,36 @@ public class Player extends Unit {
 		} else if(powerup instanceof BombRangePowerup){
 			addedBombRange++;
 		} else if(powerup instanceof MysteryPowerup){
-			invulnerableTill = System.currentTimeMillis() + (1000*15);//TODO:remove magic numbers
+			invulnerableTill = System.currentTimeMillis() + INVULNERABLE_TIME;
 		} else if(powerup instanceof FlamePassPowerup){
 			immuneToBombs = true;
 		}
 	}
 	
+	/**
+	 * @return the number of BombRange powerups picked up
+	 */
 	public int getAddedBombRange(){
 		return addedBombRange;
 	}
 	
+	/**
+	 * @return the number of BombPlusOnePowerups picked up
+	 */
 	public int getAddedBombs(){
 		return addedBombs;
 	}
 	
+	/**
+	 * @return true if currentTime is less than the time when Invulnerability ends
+	 */
 	public boolean isInvulnerable(){
-		long currentTime = System.currentTimeMillis();
-		return currentTime < invulnerableTill;
+		return System.currentTimeMillis() < invulnerableTill;
 	}
 	
+	/**
+	 * @return true if player picked up a flamePass powerup, false otherwise
+	 */
 	public boolean isImmuneToBombs(){
 		return immuneToBombs;
 	}
