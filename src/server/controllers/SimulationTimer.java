@@ -1,5 +1,6 @@
 package server.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,8 +16,14 @@ public class SimulationTimer {
 	private final List<SimulationListener> listeners;
 	private Timer timer;
 
-	public SimulationTimer(List<SimulationListener> listeners){
-		this.listeners = listeners;
+	public SimulationTimer(){
+		listeners = new ArrayList<>();
+	}
+	
+	public void addListener(SimulationListener l){
+		synchronized(listeners){
+			listeners.add(l);
+		}
 	}
 	
 	public synchronized void start(){

@@ -42,14 +42,12 @@ public class Server extends GameController implements SimulationListener {
 	public Server(){
 		players = new HashMap<>();
 		addObserver(new TestLogger());
-		bombScheduler = new BombScheduler(this);
 		
 		nwc.startListeningOnServerPort();
 		
-		ArrayList<SimulationListener> simListeners = new ArrayList<>();
-		simListeners.add(this);
-		simListeners.add(bombScheduler);
-		timer = new SimulationTimer(simListeners);
+		timer = new SimulationTimer();
+		timer.addListener(this);
+		timer.addListener(bombScheduler = new BombScheduler(this));
 		
 		state = State.idle;
 	}

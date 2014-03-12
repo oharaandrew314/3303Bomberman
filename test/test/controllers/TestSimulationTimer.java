@@ -1,7 +1,5 @@
 package test.controllers;
 
-import java.util.ArrayList;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +15,8 @@ public class TestSimulationTimer {
 
 	@Before
 	public void setUp()  {
-		ArrayList<SimulationListener> listeners = new ArrayList<>();
-		listeners.add(listener = new TimerListener());
-		timer = new SimulationTimer(listeners);
+		timer = new SimulationTimer();
+		timer.addListener(listener = new TimerListener());
 	}
 
 	@After
