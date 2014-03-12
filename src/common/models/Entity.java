@@ -44,4 +44,8 @@ public abstract class Entity implements Serializable {
 	public void setVisible(boolean visible){
 		this.visible = visible;
 	}
+	
+	public boolean isDestructible(){
+		return true;
+	}
 }

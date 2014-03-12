@@ -1,10 +1,11 @@
 package test.models;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import common.models.Wall;
 
 public class TestGrid {
 	
-	private Grid grid;
+	private MockGrid grid;
 	
 	/**
 	 * Sets up a grid for testing. It should look like this:
@@ -30,7 +31,7 @@ public class TestGrid {
 	 */
 	@Before
 	public void SetupGrid(){
-		grid = new Grid(new Dimension(3, 3));
+		grid = new MockGrid(new Dimension(3, 3));
 		
 		grid.set(new Wall(), new Point(2, 0));
 		grid.set(new Pillar(), new Point(0, 1));
@@ -62,5 +63,49 @@ public class TestGrid {
 		Object[] actual = grid.getPossibleMoves(new Point(2, 1)).toArray();
 		Point[] expected = new Point[]{new Point(2, 2), new Point(1, 1)};
 		assertArrayEquals(actual, expected);
+	}
+	
+	@Test
+	public void testPathfindingRange1(){
+		Point origin = new Point(1, 0);
+		
+		Set<Point> expectedPoints = new HashSet<>();
+		expectedPoints.add(new Point(2, 0));
+		expectedPoints.add(new Point(1, 1));
+		expectedPoints.add(origin);
+		expectedPoints.add(new Point(0, 0));
+		
+		assertEquals(expectedPoints, grid.pathfind(origin, 1));
+	}
+	
+	@Test
+	public void testPathfindingRange2(){
+		Point origin = new Point(1, 0);
+		
+		Set<Point> expectedPoints = new HashSet<>();
+		expectedPoints.add(new Point(2, 0));
+		expectedPoints.add(new Point(1, 1));
+		expectedPoints.add(origin);
+		expectedPoints.add(new Point(0, 0));
+		expectedPoints.add(new Point(2, 1));
+		expectedPoints.add(new Point(1, 2));
+		
+		assertEquals(expectedPoints, grid.pathfind(origin, 2));
+	}
+	
+	@SuppressWarnings("serial")
+	private class MockGrid extends Grid {
+
+		public MockGrid(Dimension size) {
+			super(size);
+		}
+		
+		public Set<Point> pathfind(Point origin, int range){
+			Set<Point> affectedSquares = new HashSet<>();
+			affectedSquares.add(origin);
+			addNeighbors(affectedSquares, origin, range, 1);			
+			return affectedSquares;
+		}
+		
 	}
 }

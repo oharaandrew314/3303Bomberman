@@ -1,10 +1,13 @@
 package server.controllers;
 
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import common.models.Bomb;
+import common.models.Entity;
+import common.models.Grid;
 
 public class BombScheduler implements SimulationListener {
 	
@@ -31,11 +34,24 @@ public class BombScheduler implements SimulationListener {
 			Bomb bomb = entry.getKey();
 			long detonationTime = entry.getValue();
 			if (!bomb.isDetonated() && now - detonationTime >= 0){
-				bomb.detonate();
-				server.getGrid().remove(bomb);
+				detonate(bomb);
 			}
 			if (bomb.isDetonated()){
 				bombs.remove(bomb);
+			}
+		}
+	}
+	
+	private void detonate(Bomb bomb){
+		System.err.println("detonate");
+		bomb.detonate();
+		Grid grid = server.getGrid();
+		for (Point p : grid.getAffectedExplosionSquares(bomb)){
+			for (Entity entity : grid.get(p)){
+				if (entity.isDestructible()){
+					System.err.println("boom " + entity);
+					grid.remove(entity);
+				}
 			}
 		}
 	}

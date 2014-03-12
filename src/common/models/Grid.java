@@ -102,6 +102,10 @@ public class Grid implements Serializable {
 	
 	
 	public Set<Point> getPossibleMoves(Point point){
+		return getPossibleMoves(point, false);
+	}
+	
+	public Set<Point> getPossibleMoves(Point point, boolean includeImpassable){
 		Set<Point> adjacents = new HashSet<Point>();
 		adjacents.add(new Point(point.x - 1, point.y));
 		adjacents.add(new Point(point.x + 1, point.y));
@@ -111,7 +115,7 @@ public class Grid implements Serializable {
 		Set<Point> points = new HashSet<>();
 		for (Point p : adjacents){
 			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
-				if (isPassable(p)){
+				if (includeImpassable || isPassable(p)){
 					points.add(p);
 				}
 			}
@@ -120,8 +124,33 @@ public class Grid implements Serializable {
 		return points;
 	}
 	
-	public Set<Point> getAffectedExplosionSquares(){
-		throw new UnsupportedOperationException(); //no bombs in milestone 1
+	public Set<Point> getAffectedExplosionSquares(Bomb bomb){
+		Point loc = find(bomb);
+		int range = bomb.getRange();
+		Set<Point> affectedSquares = new HashSet<>();
+		affectedSquares.add(loc);
+		addNeighbors(affectedSquares, loc, range, 1);
+		return affectedSquares;
+	}
+	
+	protected void addNeighbors(Set<Point> points, Point loc, int range, int depth){		
+		for(Point p : getPossibleMoves(loc, true)){
+			if (!hasTypeAt(Pillar.class, p) && !points.contains(p)){
+				points.add(p);
+				if (depth < range){
+					addNeighbors(points, p, range, depth + 1);
+				}
+			}
+		}
+	}
+	
+	private boolean hasTypeAt(Class<? extends Entity> type, Point location){
+		for (Entity e : get(location)){
+			if (type.isInstance(e)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

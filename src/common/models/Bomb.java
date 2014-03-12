@@ -2,7 +2,7 @@ package common.models;
 
 public class Bomb extends Entity {
 
-	public static final int FUSE_TIME = 2000;
+	public static final int FUSE_TIME = 2000, INIT_RANGE = 1;
 	private static final long serialVersionUID = 5546213627619819574L;
 	private final BombFactory factory;
 	private boolean detonated;
@@ -33,6 +33,10 @@ public class Bomb extends Entity {
 	@Override
 	public boolean isHideable() {
 		return true;
+	}
+	
+	public int getRange(){
+		return INIT_RANGE;
 	}
 
 }
