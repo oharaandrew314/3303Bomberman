@@ -86,7 +86,7 @@ public class Server extends GameController implements SimulationListener {
 			Queue<Player> queue = new ArrayDeque<>(players.values());
 			while(!queue.isEmpty()){
 				Point dest = points.get(r.nextInt(points.size() - 1));
-				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+				if (grid.isPassable(dest) && !grid.hasTypeAt(Player.class, dest)){
 					grid.set(queue.remove(), dest);
 				}
 			}
@@ -266,7 +266,7 @@ public class Server extends GameController implements SimulationListener {
     
     public Bomb dropBombBy(Player player){
     	Point loc = grid.find(player);
-    	if (isGameRunning() && player.hasBombs() && !grid.hasBombAt(loc)){
+    	if (isGameRunning() && player.hasBombs() && !grid.hasTypeAt(Bomb.class, loc)){
     		Bomb bomb = player.getNextBomb();
     		grid.set(bomb, loc);
     		bombScheduler.scheduleBomb(bomb);

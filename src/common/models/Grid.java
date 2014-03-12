@@ -82,25 +82,6 @@ public class Grid implements Serializable {
 		return getSquare(point).isPassable();
 	}
 	
-	public boolean hasPlayer(Point point){
-		for (Entity entity: get(point)){
-			if (entity instanceof Player){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean hasBombAt(Point point){
-		for (Entity e : get(point)){
-			if (e instanceof Bomb){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
 	public Set<Point> getPossibleMoves(Point point){
 		return getPossibleMoves(point, false);
 	}
