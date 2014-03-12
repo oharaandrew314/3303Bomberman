@@ -12,10 +12,9 @@ import javax.swing.JFrame;
 
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
-import client.views.ClientJFrameTextView;
-import client.views.SpectatorJFrameTextView;
+import client.views.ClientTextGenerator;
+import client.views.SpectatorTextGenerator;
 import server.controllers.Server;
-import server.views.ServerJFrameTextView;
 
 public class Launcher extends WindowAdapter {
 	
@@ -42,7 +41,9 @@ public class Launcher extends WindowAdapter {
 	
 	private void newServer(){
 		server = new Server();
-		new ServerJFrameTextView(server);
+		JFrameTextView view = new JFrameTextView(server, new SpectatorTextGenerator());
+		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
+		
 	}
 	
 	@Override
@@ -80,7 +81,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new SpectatorJFrameTextView(new Spectator());
+			new JFrameTextView(new Spectator(), new SpectatorTextGenerator());
 		}
 	}
 	
@@ -93,7 +94,12 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new ClientJFrameTextView(new PlayableClient());
+			PlayableClient client = new PlayableClient();
+			JFrameTextView view = new JFrameTextView(
+				client, new ClientTextGenerator()
+			);
+			view.addKeyListener(client);
+			view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
 		}
 	}
 	
