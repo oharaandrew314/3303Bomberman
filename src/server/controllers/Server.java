@@ -45,7 +45,12 @@ public class Server extends GameController implements SimulationListener {
 		bombScheduler = new BombScheduler();
 		
 		nwc.startListeningOnServerPort();
-		timer = new SimulationTimer();
+		
+		ArrayList<SimulationListener> simListeners = new ArrayList<>();
+		simListeners.add(this);
+		simListeners.add(bombScheduler);
+		timer = new SimulationTimer(simListeners);
+		
 		state = State.idle;
 	}
 	
@@ -88,8 +93,6 @@ public class Server extends GameController implements SimulationListener {
 			
 			state = State.gameRunning;
 			send(new GameStartEvent());
-			timer.addListener(this);
-			timer.addListener(bombScheduler);
 			timer.start();
 		} else {
 			System.err.println("Could not start game; not in new game state.");
@@ -282,7 +285,7 @@ public class Server extends GameController implements SimulationListener {
         System.out.println("Server now running with initial grid of: ");
         System.out.println(server.grid.toString());
     }
-
-	@Override
-	public void onRemovedFromTimer() {}
+    
+    @Override
+    public void onTimerReset(){}
 }

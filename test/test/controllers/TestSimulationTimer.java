@@ -1,50 +1,52 @@
 package test.controllers;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import server.controllers.Server;
+import server.controllers.SimulationListener;
 import server.controllers.SimulationTimer;
 import test.helpers.Condition;
 
 public class TestSimulationTimer {
 	
 	private SimulationTimer timer;
-	private TimerServer server;
+	private TimerListener listener;
 
 	@Before
 	public void setUp()  {
-		server = new TimerServer();
-		timer = new SimulationTimer();
-		timer.addListener(server);
+		ArrayList<SimulationListener> listeners = new ArrayList<>();
+		listeners.add(listener = new TimerListener());
+		timer = new SimulationTimer(listeners);
 	}
 
 	@After
 	public void tearDown() {
-		server.stop();
+		timer.stop();
 	}
 	
 	@Test
 	public void testRestart() {
 		timer.start();
-		server.waitForUpdate();
+		listener.waitForUpdate();
 		
 		timer.start();
-		server.waitForUpdate();
+		listener.waitForUpdate();
 		
 		timer.stop();
 		timer.start();
-		server.waitForUpdate();
+		listener.waitForUpdate();
 		
 		timer.stop();
 	}
 	
-	private class TimerServer extends Server {
+	private class TimerListener implements SimulationListener {
 		
 		private final Condition condition;
 		
-		public TimerServer(){
+		public TimerListener(){
 			condition = new Condition();
 		}
 		
@@ -55,6 +57,10 @@ public class TestSimulationTimer {
 		
 		public void waitForUpdate(){
 			condition.waitCond();
+		}
+
+		@Override
+		public void onTimerReset() {
 		}
 	}
 

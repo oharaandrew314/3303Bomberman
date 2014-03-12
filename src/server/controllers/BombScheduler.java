@@ -38,7 +38,7 @@ public class BombScheduler implements SimulationListener {
 	}
 
 	@Override
-	public void onRemovedFromTimer() {
+	public void onTimerReset() {
 		bombs.clear();
 	}
 }
