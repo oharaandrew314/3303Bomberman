@@ -13,7 +13,7 @@ public class Bomb extends Entity {
 		detonated = false;
 	}
 	
-	public void detonate(){
+	public void setDetonated(){
 		if (detonated){
 			throw new RuntimeException("Cannot detonate a bomb more than once.");
 		}

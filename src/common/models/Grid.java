@@ -144,7 +144,7 @@ public class Grid implements Serializable {
 		}
 	}
 	
-	private boolean hasTypeAt(Class<? extends Entity> type, Point location){
+	public boolean hasTypeAt(Class<? extends Entity> type, Point location){
 		for (Entity e : get(location)){
 			if (type.isInstance(e)){
 				return true;

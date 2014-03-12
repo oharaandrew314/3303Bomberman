@@ -145,7 +145,7 @@ public class Server extends GameController implements SimulationListener {
     	setChanged();
     	notifyObservers(event);
     	
-    	// Decide whethere to accept or reject connection request
+    	// Decide whether to accept or reject connection request
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
     	}
@@ -179,7 +179,7 @@ public class Server extends GameController implements SimulationListener {
 		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
 		   	   		case KeyEvent.VK_SPACE:
 		   	   		case KeyEvent.VK_F:
-		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+		   	   		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
@@ -245,16 +245,12 @@ public class Server extends GameController implements SimulationListener {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Unit && !player.equals(entity)){
     			// Kill own player
-    			players.remove(player);
-				send(new PlayerDeadEvent(player));
-				grid.remove(player);
+    			killPlayer(player);
     			
     			// If other unit was player, kill it
     			if (entity instanceof Player){
-    				Player otherPlayer = (Player) entity;
-    				players.remove(otherPlayer);
-    				send(new PlayerDeadEvent(otherPlayer));
-    				grid.remove(otherPlayer);
+    				killPlayer((Player) entity);
+    				
     			}
     		}
     	}
@@ -268,7 +264,7 @@ public class Server extends GameController implements SimulationListener {
     	}
     }
     
-    protected Bomb bomb(Player player){
+    public Bomb dropBombBy(Player player){
     	Point loc = grid.find(player);
     	if (isGameRunning() && player.hasBombs() && !grid.hasBombAt(loc)){
     		Bomb bomb = player.getNextBomb();
@@ -278,12 +274,36 @@ public class Server extends GameController implements SimulationListener {
     	}
     	return null;
     }
+    
+    public void detonateBomb(Bomb bomb){
+    	bomb.setDetonated();
+		for (Point p : grid.getAffectedExplosionSquares(bomb)){
+			for (Entity entity : grid.get(p)){
+				if (entity.isDestructible()){
+					if (entity instanceof Player){
+						killPlayer((Player) entity);
+					} else {
+						grid.remove(entity);
+					}
+				}
+			}
+		}
+    }
 
     public static void main(String[] args){
         Server server = new Server();
         server.newGame(CLAParser.parse(args));
         System.out.println("Server now running with initial grid of: ");
         System.out.println(server.grid.toString());
+    }
+    
+    public void killPlayer(Player player){
+    	if (player == null){
+    		throw new IllegalArgumentException("Player cannot be null.");
+    	}
+    	players.remove(player.playerId);
+		send(new PlayerDeadEvent(player));
+		grid.remove(player);
     }
     
     @Override

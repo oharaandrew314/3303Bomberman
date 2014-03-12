@@ -8,7 +8,6 @@ import server.content.CreateGridException;
 import server.content.GridLoader;
 import server.controllers.Server;
 
-import common.models.Bomb;
 import common.models.Player;
 
 public class MockServer extends Server {
@@ -32,9 +31,5 @@ public class MockServer extends Server {
 		}
 		grid.set(player, newPos);
 		return player;
-	}
-	
-	public Bomb bomb(Player player){
-		return super.bomb(player);
 	}
 }
