@@ -1,9 +1,13 @@
 package client.controllers;
 
+
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import common.events.ConnectAcceptedEvent;
+import common.events.Event;
 import common.events.GameKeyEvent;
+import common.events.GameKeyEventAck;
 import common.events.PlayerDeadEvent;
 
 
@@ -18,22 +22,41 @@ public class TestRunner extends Client implements Runnable{
 
 	@Override
 	protected void processConnectionAccepted() {
+		super.processConnectionAccepted();
 		connected = true;
 	}
+
 	
 	public void run(){
-		while(!connected){
-			waitForResponse(1);  //wait
+		//while(!connected){
+			//waitForResponse(1);  //wait
 			
-		}
+		//}
+		//waitCond(1000);
 		int i = 0;
-		while (!events.isEmpty() && i != events.size() && !dead&& isGameRunning()) {
+		boolean timeOut = false;
+			
+		while (!events.isEmpty() && i != events.size() && !dead&& isGameRunning() && !timeOut) {
 			GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
 			nwc.send(keyEvent);
+			long lastKeyPress = System.currentTimeMillis();
+			long timeBeforeNextPress = 200;
+			timeOut = false;
+			waitFor(GameKeyEventAck.class);
 			i++;
-			waitForResponse(100);
+			long currentTime = System.currentTimeMillis();
+			while(currentTime - lastKeyPress < timeBeforeNextPress){
+				currentTime = System.currentTimeMillis();
+			}
+			//waitForResponse(100);
+			//waitCond(1000);
 		}
-		waitForResponse(500);
+		if(timeOut){
+			System.err.println("test client timed out waiting for Game key acknowledgment");
+		}
+		
+		//waitForResponse(500);
+		//waitCond(1000);
 		stop();
 		nwc.stopListening();
 		
@@ -43,6 +66,7 @@ public class TestRunner extends Client implements Runnable{
 	protected void processPlayerDead(PlayerDeadEvent event) {
 		dead = true;
 		nwc.stopListening();
+		//notifyCond();
 	}
 
 
@@ -54,6 +78,8 @@ public class TestRunner extends Client implements Runnable{
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	@Override
 	protected boolean isSpectator() {
@@ -68,5 +94,21 @@ public class TestRunner extends Client implements Runnable{
 	public void sendGameStartEvent(){
 		GameKeyEvent startEvent = new GameKeyEvent(KeyEvent.VK_ENTER);
 		nwc.send(startEvent);
+	}
+	
+	public synchronized void waitFor(Class<? extends Event> eventType){
+		try {
+			wait(1000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	@Override
+	public synchronized Event receive(Event event) {
+		if(event instanceof GameKeyEventAck){
+			notify();
+		}
+		return super.receive(event);
 	}
 }
