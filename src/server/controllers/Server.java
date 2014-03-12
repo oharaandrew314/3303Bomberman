@@ -269,9 +269,9 @@ public class Server extends GameController implements SimulationListener {
     }
     
     protected Bomb bomb(Player player){
-    	if (isGameRunning() && player.hasBombs()){
+    	Point loc = grid.find(player);
+    	if (isGameRunning() && player.hasBombs() && !grid.hasBombAt(loc)){
     		Bomb bomb = player.getNextBomb();
-    		Point loc = grid.find(player);
     		grid.set(bomb, loc);
     		bombScheduler.scheduleBomb(bomb);
     		return bomb;

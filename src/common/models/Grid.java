@@ -91,6 +91,15 @@ public class Grid implements Serializable {
 		return false;
 	}
 	
+	public boolean hasBombAt(Point point){
+		for (Entity e : get(point)){
+			if (e instanceof Bomb){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	public Set<Point> getPossibleMoves(Point point){
 		Set<Point> adjacents = new HashSet<Point>();
