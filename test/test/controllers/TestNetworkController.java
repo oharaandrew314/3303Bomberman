@@ -190,6 +190,5 @@ public class TestNetworkController extends GameController {
      	assertEquals(2, getClientIdFromServer(clientA));
      	assertEquals(3, getClientIdFromServer(clientB));
      	assertEquals(4, getClientIdFromServer(clientC));
-    	 
     }
 }
