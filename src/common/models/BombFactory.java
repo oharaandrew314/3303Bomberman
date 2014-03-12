@@ -1,36 +1,38 @@
 package common.models;
 
 import java.io.Serializable;
-import java.util.concurrent.Semaphore;
 
 public class BombFactory implements Serializable {
 	
 	private static final long serialVersionUID = -5483632574557742377L;
 	public static final int INIT_MAX_BOMBS = 1;
-	private final Semaphore bombSem;
+	private int numBombs;
 
 	public BombFactory() {
-		bombSem = new Semaphore(INIT_MAX_BOMBS);
+		numBombs = INIT_MAX_BOMBS;
 	}
 	
-	public Bomb createBomb(){
-		bombSem.acquireUninterruptibly();
+	public synchronized Bomb createBomb(){
+		if (numBombs == 0){
+			throw new RuntimeException("Cannot create a bomb; out of bombs");
+		}
+		numBombs--;
 		return new Bomb(this);
 	}
 	
-	public void bombDetonated(Bomb bomb){
+	public synchronized void bombDetonated(Bomb bomb){
 		if (bomb == null){
 			throw new NullPointerException("Detonated bomb was null!");
 		}
-		bombSem.release();
+		numBombs++;
 	}
 	
-	public void increaseMaxBombs(){
-		bombSem.release();
+	public synchronized void increaseMaxBombs(){
+		numBombs++;
 	}
 	
-	public int getNumBombs(){
-		return bombSem.availablePermits();
+	public synchronized int getNumBombs(){
+		return numBombs;
 	}
 
 }

@@ -43,6 +43,7 @@ public class TestBombs {
 	
 	@After
 	public void tearDown(){
+		client.stop();
 		server.stop();
 	}
 
@@ -102,6 +103,19 @@ public class TestBombs {
 		
 		assertTrue(bomb.isDetonated());
 		assertEquals(BombFactory.INIT_MAX_BOMBS, player.getNumBombs());
+	}
+	
+	@Test
+	public void testDropUnavailableBomb(){
+		Bomb bomb = null;
+		for (int i=1; i<=BombFactory.INIT_MAX_BOMBS; i++){
+			bomb = server.bomb(player);
+			assertNotNull(bomb);
+			assertEquals(BombFactory.INIT_MAX_BOMBS - i, player.getNumBombs());
+		}
+		assertEquals(0, player.getNumBombs());
+		bomb = server.bomb(player);
+		assertNull(bomb);
 	}
 
 }
