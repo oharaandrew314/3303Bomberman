@@ -39,6 +39,8 @@ public class TestNetworkController extends GameController {
         server.stopListening();
     }
     
+    // Overrides
+    
     @Override
     public synchronized Event receive(Event event) {
         if (event instanceof ConnectEvent){
@@ -63,6 +65,20 @@ public class TestNetworkController extends GameController {
     @Override
 	public void stop() {}
     
+    // Helpers
+    
+    private void addServerToClient(MockNetworkController client){
+    	client.startListeningOnAnyAvailablePort();
+    	client.addLocalServerPeer();
+    }
+    
+    private int getClientIdFromServer(MockNetworkController client){
+    	Event response = client.sendAndWait(new GameKeyEvent(42), server);
+        return response.getPlayerID();
+    }
+    
+    // Tests
+
     @Test
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
         server.startListeningOnServerPort();
@@ -83,12 +99,9 @@ public class TestNetworkController extends GameController {
     
     @Test
     public void newPeersShouldBeSavedWhenControllerAcceptsPeer() {
-        clientA.startListeningOn(1);
-        clientB.startListeningOn(2);
-        clientA.addLocalServerPeer();
-        clientB.addLocalServerPeer();
-        
-        server.startListeningOnServerPort();
+    	server.startListeningOnServerPort();
+    	addServerToClient(clientA);
+    	addServerToClient(clientB);
         
         clientA.send(new ConnectEvent(false));
         clientB.send(new ConnectEvent(false));
@@ -105,11 +118,9 @@ public class TestNetworkController extends GameController {
     @Test
     public void newPeersShouldNotBeSavedWhenRejectNewPeersIsSet() {
     	isAcceptingConnections = true;
-        clientA.startListeningOn(1);
-        clientB.startListeningOn(2);
-        clientA.addLocalServerPeer();
-        clientB.addLocalServerPeer();
-        server.startListeningOnServerPort();
+    	server.startListeningOnServerPort();
+    	addServerToClient(clientA);
+    	addServerToClient(clientB);
         
         clientA.connectAndWait(server);
         isAcceptingConnections = false;
@@ -119,40 +130,65 @@ public class TestNetworkController extends GameController {
     
     @Test
     public void receivedEventsShouldIncludePlayerIDs() {
-        clientA.startListeningOn(1);
-        clientB.startListeningOn(2);
-        server.startListeningOnServerPort();
-        
-        clientA.addLocalServerPeer();
-        clientB.addLocalServerPeer();
+    	server.startListeningOnServerPort();
+    	addServerToClient(clientA);
+    	addServerToClient(clientB);
 
         // Connect client A
         Event received = clientA.connectAndWait(server);
-        assertEquals(0, received.getPlayerID());
+        assertEquals(1, received.getPlayerID());
         
         // Connect client B
         received = clientB.connectAndWait(server);
-        assertEquals(1, received.getPlayerID());
+        assertEquals(2, received.getPlayerID());
 
-        // Send a key event from a client
-        received = clientB.sendAndWait(new GameKeyEvent(42), server);
-        assertEquals(1, received.getPlayerID());
+        // Test player id
+        assertEquals(2, getClientIdFromServer(clientB));
     }
     
     @Test
-    public void clientsShouldBeAbleToListenOnAnyAvailablePort() {
-        clientA.startListeningOnAnyAvailablePort();
-        clientB.startListeningOnAnyAvailablePort();
-        clientA.addLocalServerPeer();
-        clientB.addLocalServerPeer();
+    public void testPeerIdAssignment(){
+    	server.startListeningOnServerPort();
         
-        server.startListeningOnServerPort();
+        MockNetworkController clientC = new MockNetworkController(this);
+        MockNetworkController clientD = new MockNetworkController(this);
         
-        clientA.send(new ConnectEvent(false));
-        clientB.send(new ConnectEvent(false));
-        server.waitFor(ConnectEvent.class);
-        server.waitFor(ConnectEvent.class);
-        
-        assertEquals(2, server.getNumPeers());
+        addServerToClient(clientA);
+    	addServerToClient(clientB);
+    	addServerToClient(clientC);
+    	addServerToClient(clientD);
+    	
+    	clientA.connectAndWait(server);
+    	clientB.connectAndWait(server);
+    	clientC.connectAndWait(server);
+    	clientD.connectAndWait(server);
+    	
+    	// Check ids
+    	assertEquals(4, server.getNumPeers());
+    	 assertEquals(1, getClientIdFromServer(clientA));
+    	 assertEquals(2, getClientIdFromServer(clientB));
+    	 assertEquals(3, getClientIdFromServer(clientC));
+    	 assertEquals(4, getClientIdFromServer(clientD));
+    	 
+    	 //Remove one peer and ensure it is re-added after the existing peers
+    	 server.removePeer(2);
+    	 assertEquals(3, server.getNumPeers());
+    	 clientB.connectAndWait(server);
+    	 assertEquals(4, server.getNumPeers());
+    	 assertEquals(5, getClientIdFromServer(clientB));
+    	 
+    	 // Remove all peers and ensure they are assigned ids starting from 0
+    	 server.removePeer(1);
+    	 server.removePeer(3);
+    	 server.removePeer(4);
+    	 server.removePeer(5);
+    	 clientD.connectAndWait(server);
+     	 clientA.connectAndWait(server);
+     	 clientB.connectAndWait(server);
+     	 clientC.connectAndWait(server);
+     	assertEquals(1, getClientIdFromServer(clientD));
+     	assertEquals(2, getClientIdFromServer(clientA));
+     	assertEquals(3, getClientIdFromServer(clientB));
+     	assertEquals(4, getClientIdFromServer(clientC));
     }
 }
