@@ -51,16 +51,15 @@ public class MockNetworkController extends NetworkController {
 		return dest.waitFor(event.getClass());
 	}
 	
-	public synchronized Event receive(DatagramPacket packet){
-		Event event = null;
-		try {
-			event = super.receive(packet);
-			events.add(event);
-			notify();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+	public void removePeer(int playerId){
+		peers.remove(playerId);
+	}
+
+	@Override
+	public synchronized Event receive(DatagramPacket data) throws IOException {
+		Event event = super.receive(data);
+		events.add(event);
+		notify();
 		return event;
 	}
 }

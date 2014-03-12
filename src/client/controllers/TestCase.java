@@ -71,7 +71,7 @@ public class TestCase {
 		
 		for(TestRunner t : testClients){
 			int index = testClients.indexOf(t);
-			server.movePlayerTo(index, startLocations.get(index));
+			server.movePlayerTo(index+1, startLocations.get(index));
 		}
 		for(int i = 0 ; i != threads.length;i++){
 			try {

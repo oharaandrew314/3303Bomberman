@@ -34,7 +34,9 @@ public class TestRunner extends Client implements Runnable{
 			waitForResponse(100);
 		}
 		waitForResponse(500);
+		stop();
 		nwc.stopListening();
+		
 	}
 
 	@Override
