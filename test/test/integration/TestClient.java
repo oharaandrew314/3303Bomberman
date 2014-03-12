@@ -25,6 +25,7 @@ public class TestClient {
 		server = new MockServer();
 		assertEquals(0, server.getPlayers().size());
 		client = new MockClient(true);
+		assertEquals(1, server.getPlayers().size());
 	}
 	
 	@After

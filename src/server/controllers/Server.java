@@ -66,6 +66,8 @@ public class Server extends GameController {
 			this.grid = grid;
 			state = State.newGame;
 			updateView(new ViewUpdateEvent(grid));
+		} else {
+			System.err.println("Could not create new game.");
 		}
 	}
 	
@@ -85,6 +87,8 @@ public class Server extends GameController {
 			state = State.gameRunning;
 			send(new GameStartEvent());
 			timer.start();
+		} else {
+			System.err.println("Could not start game; not in new game state.");
 		}
 	}
 	
@@ -93,11 +97,15 @@ public class Server extends GameController {
 			timer.stop();
 			state = State.idle;
 			grid = null;
+		} else {
+			System.err.println("Could not end game; no game running");
 		}
 	}
 	
 	public synchronized void stop(){
-		endGame();
+		if (isGameRunning()){
+			endGame();
+		}
 		super.stop();
 		state = State.stopped;
 	}
@@ -129,8 +137,6 @@ public class Server extends GameController {
     	setChanged();
     	notifyObservers(event);
     	
-    	int playerId = event.getPlayerID();
-    	
     	// Decide whethere to accept or reject connection request
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
@@ -141,7 +147,7 @@ public class Server extends GameController {
     	 * 3 different key profiles: n00b, Righty, Southpaw
     	 */
     	else if (event instanceof GameKeyEvent){
-    	   Player player = players.get(playerId);
+    	   Player player = players.get(event.getPlayerID());
     	   GameKeyEvent keyEvent = (GameKeyEvent) event;
     	   int keyCode = keyEvent.getKeyCode();
     	   
