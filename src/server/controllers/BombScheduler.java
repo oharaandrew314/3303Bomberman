@@ -9,9 +9,11 @@ import common.models.Bomb;
 public class BombScheduler implements SimulationListener {
 	
 	private final Map<Bomb, Long> bombs;
+	private final Server server;
 	
-	public BombScheduler(){
+	public BombScheduler(Server server){
 		bombs = new HashMap<>();
+		this.server = server;
 	}
 	
 	public synchronized void scheduleBomb(Bomb bomb){
@@ -22,7 +24,7 @@ public class BombScheduler implements SimulationListener {
 	}
 	
 	@Override
-	public synchronized void simulationUpdate(){		
+	public synchronized void simulationUpdate(){
 		// Detonate bombs ready for detonation
 		long now = System.currentTimeMillis();
 		for (Entry<Bomb, Long> entry : bombs.entrySet()){
@@ -30,6 +32,7 @@ public class BombScheduler implements SimulationListener {
 			long detonationTime = entry.getValue();
 			if (!bomb.isDetonated() && now - detonationTime >= 0){
 				bomb.detonate();
+				server.getGrid().remove(bomb);
 			}
 			if (bomb.isDetonated()){
 				bombs.remove(bomb);

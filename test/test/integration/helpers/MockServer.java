@@ -7,8 +7,8 @@ import java.util.List;
 import server.content.CreateGridException;
 import server.content.GridLoader;
 import server.controllers.Server;
+
 import common.models.Bomb;
-import common.models.Grid;
 import common.models.Player;
 
 public class MockServer extends Server {
@@ -19,10 +19,6 @@ public class MockServer extends Server {
 		} catch (CreateGridException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public Grid getGrid(){
-		return grid;
 	}
 	
 	public List<Player> getPlayers(){

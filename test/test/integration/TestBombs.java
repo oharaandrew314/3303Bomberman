@@ -90,9 +90,11 @@ public class TestBombs {
 	
 	@Test
 	public void testTimedDetonation(){
+		Point playerLoc = server.getGrid().find(player);
 		Bomb bomb = server.bomb(player);
 		assertTrue(!bomb.isDetonated());
 		assertEquals(BombFactory.INIT_MAX_BOMBS - 1, player.getNumBombs());
+		assertTrue(server.getGrid().hasBombAt(playerLoc));
 		
 		// Wait for bomb to detonate
 		try {
@@ -101,6 +103,7 @@ public class TestBombs {
 			e.printStackTrace();
 		}
 		
+		assertTrue(!server.getGrid().hasBombAt(playerLoc));
 		assertTrue(bomb.isDetonated());
 		assertEquals(BombFactory.INIT_MAX_BOMBS, player.getNumBombs());
 	}

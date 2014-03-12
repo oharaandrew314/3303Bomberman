@@ -16,6 +16,10 @@ public abstract class GameController extends Observable{
 		nwc = new NetworkController(this);
 	}
 	
+	public Grid getGrid(){
+		return grid;
+	}
+	
 	public void setView(AbstractView view){
 		this.view = view;
 	}
