@@ -12,3 +12,4 @@ manifest.mf
 /nbproject/
 /dist/
 *.log
+.metadata/
