@@ -17,9 +17,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import common.models.BombPlusOnePowerup;
+import common.models.BombRangePowerup;
 import common.models.Door;
 import common.models.Entity;
+import common.models.FlamePassPowerup;
 import common.models.Grid;
+import common.models.MysteryPowerup;
 import common.models.Pillar;
 import common.models.Player;
 import common.models.Wall;
@@ -119,6 +123,10 @@ public class GridLoader {
 				case "wall": return new Wall();
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
+				case "bombrange": return new BombRangePowerup("R");
+				case "flamepass": return new FlamePassPowerup("F");
+				case "mystery": return new MysteryPowerup("M");
+				case "bombplus": return new BombPlusOnePowerup("B");
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"
 				);

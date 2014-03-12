@@ -26,6 +26,7 @@ import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
+import common.models.Powerup;
 import common.models.Unit;
 
 public class Server extends GameController {
@@ -249,6 +250,14 @@ public class Server extends GameController {
     		if (entity instanceof Door){
     			send(new WinEvent(player, grid));
     			endGame();
+    		}
+    	}
+    	
+    	//check if player picks up a powerup
+    	for(Entity entity : grid.get(dest)){
+    		if(entity instanceof Powerup){
+    			//handle powerups
+    			player.addPowerup((Powerup)entity);
     		}
     	}
     }
