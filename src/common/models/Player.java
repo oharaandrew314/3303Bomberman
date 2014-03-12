@@ -6,7 +6,7 @@ import java.util.List;
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
-	private static final long INVULNERABLE_TIME = 1000*15;
+	private static final long INVULNERABLE_TIME = 1000*10;
 	private final int START_NUM_BOMBS = 1;
 	public final int playerId;
 	
