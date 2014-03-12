@@ -86,9 +86,13 @@ public class MockClient extends PlayableClient {
 		Event result = null;
 		if (events != null){
 			for (Event event : events){
-				result = eventType.isInstance(event) ? event : null;
+				if (eventType.isInstance(event)){
+					result = event;
+					events.remove(result);
+					break;
+				}
 			}
-			events.remove(result);
+			
 		}
 		return result;
 	}

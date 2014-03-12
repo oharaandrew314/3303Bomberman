@@ -54,7 +54,7 @@ public class SystemTest {
 		assertTrue(!server.isAcceptingConnections());
 		
 		// Set player starting position
-		Player p = server.movePlayerTo(0, new Point(0, 0));
+		Player p = server.movePlayerTo(1, new Point(0, 0));
 	
 		// Move player right
 		client.pressKeyAndWait(KeyEvent.VK_D);
