@@ -125,7 +125,6 @@ public class TestGrid {
 		
 		String expectedGridString = new String(GRID_STRING).replace("D", wall.toString());
 		assertEquals(expectedGridString, grid.toString());
-		
 	}
 	
 	@SuppressWarnings("serial")
