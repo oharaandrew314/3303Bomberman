@@ -87,9 +87,8 @@ public class TestGrid {
 		expectedPoints.add(new Point(1, 1));
 		expectedPoints.add(origin);
 		expectedPoints.add(new Point(0, 0));
-		expectedPoints.add(new Point(2, 1));
 		expectedPoints.add(new Point(1, 2));
-		
+	
 		assertEquals(expectedPoints, grid.pathfind(origin, 2));
 	}
 	
@@ -101,10 +100,7 @@ public class TestGrid {
 		}
 		
 		public Set<Point> pathfind(Point origin, int range){
-			Set<Point> affectedSquares = new HashSet<>();
-			affectedSquares.add(origin);
-			addNeighbors(affectedSquares, origin, range, 1);			
-			return affectedSquares;
+			return getPointsInRadius(origin, range, true);
 		}
 		
 	}

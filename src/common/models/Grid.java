@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Grid implements Serializable {
 
@@ -106,23 +108,41 @@ public class Grid implements Serializable {
 	}
 	
 	public Set<Point> getAffectedExplosionSquares(Bomb bomb){
-		Point loc = find(bomb);
-		int range = bomb.getRange();
-		Set<Point> affectedSquares = new HashSet<>();
-		affectedSquares.add(loc);
-		addNeighbors(affectedSquares, loc, range, 1);
-		return affectedSquares;
+		return getPointsInRadius(find(bomb), bomb.getRange(), true);
+	}
+
+	protected Set<Point> getPointsInRadius(
+		Point origin, int radius, boolean includeImpassable
+	){
+		Set<Point> points = new HashSet<>();
+		points.add(origin);
+		points.addAll(getStraightPath(origin, new Point(-1, 0), radius, true));
+		points.addAll(getStraightPath(origin, new Point(1, 0), radius, true));
+		points.addAll(getStraightPath(origin, new Point(0, -1), radius, true));
+		points.addAll(getStraightPath(origin, new Point(0, 1), radius, true));
+		return points;
 	}
 	
-	protected void addNeighbors(Set<Point> points, Point loc, int range, int depth){		
-		for(Point p : getPossibleMoves(loc, true)){
-			if (!hasTypeAt(Pillar.class, p) && !points.contains(p)){
-				points.add(p);
-				if (depth < range){
-					addNeighbors(points, p, range, depth + 1);
-				}
+	private Set<Point> getStraightPath(
+		Point origin, Point delta, int length, boolean includeImpassable
+	){
+		Set<Point> points = new HashSet<>();
+		Rectangle bounds = new Rectangle(size);
+		
+		Point current = new Point(origin);
+		for (int i=0; i<length; i++){
+			current.translate(delta.x, delta.y);
+			if (
+				bounds.contains(current) &&
+				(includeImpassable || isPassable(current)) &&
+				!hasTypeAt(Pillar.class, current)
+			){
+				points.add(new Point(current));
+			} else {
+				break;
 			}
 		}
+		return points;
 	}
 	
 	public boolean hasTypeAt(Class<? extends Entity> type, Point location){
