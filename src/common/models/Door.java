@@ -13,14 +13,4 @@ public class Door extends Entity {
 	public boolean isPassable() {
 		return true;
 	}
-
-	@Override
-	public boolean isHideable() {
-		return true;
-	}
-	
-	@Override
-	public boolean isVisible(){
-		return false;
-	}
 }
