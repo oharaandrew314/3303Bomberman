@@ -4,7 +4,7 @@ package common.models;
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
-	private final BombFactory factory;
+	protected final BombFactory factory;
 	public final int playerId;
 	
 	@SuppressWarnings("unused")
@@ -36,5 +36,9 @@ public class Player extends Unit {
 	
 	public boolean hasBombs(){
 		return getNumBombs() > 0;
+	}
+	
+	public void increaseMaxBombs(){
+		factory.increaseMaxBombs();
 	}
 }

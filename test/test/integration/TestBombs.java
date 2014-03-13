@@ -142,4 +142,25 @@ public class TestBombs {
 		assertTrue(!server.getGrid().hasTypeAt(Player.class, playerLoc));
 		assertTrue(server.getPlayers().isEmpty());
 	}
+	
+	@Test
+	public void testChainReaction(){
+		// allow player to drop two bombs
+		player.increaseMaxBombs();
+		
+		// Place two bombs next to each-other
+		server.movePlayerTo(player.playerId, new Point(0, 0));
+		Bomb b1 = server.dropBombBy(player);
+		server.movePlayerTo(player.playerId, new Point(1, 0));
+		Bomb b2 = server.dropBombBy(player);
+		assertNotNull(b1);
+		assertNotNull(b2);
+		
+		// detonate
+		server.detonateBomb(b1);
+		
+		// Ensure chain reaction occured
+		assertTrue(b1.isDetonated());
+		assertTrue(b2.isDetonated());
+	}
 }

@@ -120,12 +120,21 @@ public class Server extends GameController implements SimulationListener {
 	@Override
 	public synchronized void simulationUpdate(){
 		if (isGameRunning()){
-			//TODO: Bomb logic
-			//TODO: AI logic
-			
 			send(new ViewUpdateEvent(grid));
 		}
 	}
+	
+	@Override
+    public void onTimerReset(){}
+	
+	private synchronized void killPlayer(Player player){
+    	if (player == null){
+    		throw new IllegalArgumentException("Player cannot be null.");
+    	}
+    	players.remove(player.playerId);
+		send(new PlayerDeadEvent(player));
+		grid.remove(player);
+    }
 	
 	// Event Methods
 	
@@ -219,7 +228,7 @@ public class Server extends GameController implements SimulationListener {
 		return new ConnectRejectedEvent();
     }
     
-    private void move(Player player, int dx, int dy){
+    private synchronized void move(Player player, int dx, int dy){
     	// Do nothing if game is not running
     	if (!isGameRunning()){
     		return;
@@ -262,7 +271,9 @@ public class Server extends GameController implements SimulationListener {
     	}
     }
     
-    public Bomb dropBombBy(Player player){
+    // Callback methods
+    
+    public synchronized Bomb dropBombBy(Player player){
     	Point loc = grid.find(player);
     	if (isGameRunning() && player.hasBombs() && !grid.hasTypeAt(Bomb.class, loc)){
     		Bomb bomb = player.getNextBomb();
@@ -273,20 +284,30 @@ public class Server extends GameController implements SimulationListener {
     	return null;
     }
     
-    public void detonateBomb(Bomb bomb){
+    public synchronized void detonateBomb(Bomb bomb){
     	bomb.setDetonated();
 		for (Point p : grid.getAffectedExplosionSquares(bomb)){
 			for (Entity entity : grid.get(p)){
-				if (entity.isDestructible()){
-					if (entity instanceof Player){
-						killPlayer((Player) entity);
-					} else {
-						grid.remove(entity);
-					}
+					
+				// Kill any players in blast path
+				if (entity instanceof Player){
+					killPlayer((Player) entity);
+				}
+				
+				// Detonate any bombs in blast path
+				else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
+					detonateBomb((Bomb)entity);
+				}
+				
+				// Remove any other destructible entities in blast path
+				else if (entity.isDestructible()){
+					grid.remove(entity);
 				}
 			}
 		}
     }
+    
+    // Main method
 
     public static void main(String[] args){
         Server server = new Server();
@@ -294,16 +315,4 @@ public class Server extends GameController implements SimulationListener {
         System.out.println("Server now running with initial grid of: ");
         System.out.println(server.grid.toString());
     }
-    
-    public void killPlayer(Player player){
-    	if (player == null){
-    		throw new IllegalArgumentException("Player cannot be null.");
-    	}
-    	players.remove(player.playerId);
-		send(new PlayerDeadEvent(player));
-		grid.remove(player);
-    }
-    
-    @Override
-    public void onTimerReset(){}
 }
