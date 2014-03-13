@@ -113,15 +113,21 @@ public class Grid implements Serializable {
 		Point current = new Point(origin);
 		for (int i=0; i<length; i++){
 			current.translate(delta.x, delta.y);
-			if (
-				bounds.contains(current) &&
-				(includeImpassable || isPassable(current)) &&
-				!hasTypeAt(Pillar.class, current)
-			){
-				points.add(new Point(current));
-			} else {
-				break;
-			}
+			
+			if (bounds.contains(current)){
+				// Add to path if this is an explodable square
+				if (
+					(includeImpassable || isPassable(current))
+					&& !hasTypeAt(Pillar.class, current)
+				){
+					points.add(new Point(current));
+				}
+				
+				// If an impassable object was encountered; end
+				if (!isPassable(current)){
+					break;
+				}
+			}			
 		}
 		return points;
 	}

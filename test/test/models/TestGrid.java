@@ -95,6 +95,23 @@ public class TestGrid {
 		assertEquals(expectedPoints, grid.pathfind(origin, 2));
 	}
 	
+	@Test
+	public void testPathfindingRange2WithBlockingBox(){
+		Point origin = new Point(2, 2);
+		
+		/* Put wall directly next to wall.
+		 * Explosion of range 2 should not go past it */
+		grid.set(new Wall(), new Point(1, 2));
+		
+		Set<Point> expectedPoints = new HashSet<>();
+		expectedPoints.add(new Point(1, 2));
+		expectedPoints.add(new Point(2, 1));
+		expectedPoints.add(new Point(2, 0));
+		expectedPoints.add(origin);
+		
+		assertEquals(expectedPoints, grid.pathfind(origin, 2));
+	}
+	
 	@SuppressWarnings("serial")
 	private class MockGrid extends Grid {
 
