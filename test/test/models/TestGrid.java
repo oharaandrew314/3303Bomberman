@@ -1,6 +1,7 @@
 package test.models;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -60,9 +61,11 @@ public class TestGrid {
 	
 	@Test
 	public void testGetPossibleMoves(){
-		Object[] actual = grid.getPossibleMoves(new Point(2, 1)).toArray();
-		Point[] expected = new Point[]{new Point(2, 2), new Point(1, 1)};
-		assertArrayEquals(actual, expected);
+		Set<Point> actual = grid.getPossibleMoves(new Point(2, 1));
+		Point[] expected = new Point[]{
+			new Point(2, 2), new Point(2, 1), new Point(1, 1)
+		};
+		assertArrayEquals(expected, actual.toArray());
 	}
 	
 	@Test
