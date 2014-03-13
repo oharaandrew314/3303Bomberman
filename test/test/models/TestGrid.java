@@ -19,6 +19,16 @@ import common.models.Wall;
 
 public class TestGrid {
 	
+	public static final String
+		LINE_SEP = System.getProperty("line.separator"),
+		GRID_STRING = (
+			"-----" + LINE_SEP +
+			"|  .|" + LINE_SEP +
+			"|X1 |" + LINE_SEP +
+			"|  D|" + LINE_SEP +
+			"-----"
+		);
+	
 	private MockGrid grid;
 	
 	/**
@@ -43,12 +53,7 @@ public class TestGrid {
 	//sanity test to make sure other tests are meaningful
 	@Test 
 	public void testToString(){
-		String lineSep = System.getProperty("line.separator");
-		assertEquals(
-			"-----" + lineSep + "|  .|" + lineSep +"|X1 |"
-			+ lineSep + "|  D|" + lineSep + "-----",
-			grid.toString()
-		);
+		assertEquals(GRID_STRING, grid.toString());
 	}
 	
 	@Test
@@ -110,6 +115,17 @@ public class TestGrid {
 		expectedPoints.add(origin);
 		
 		assertEquals(expectedPoints, grid.pathfind(origin, 2));
+	}
+	
+	@Test
+	public void testWallCoveringDoor(){
+		Point doorLoc = new Point(2, 2);
+		Wall wall = new Wall();
+		grid.set(wall, doorLoc);
+		
+		String expectedGridString = new String(GRID_STRING).replace("D", wall.toString());
+		assertEquals(expectedGridString, grid.toString());
+		
 	}
 	
 	@SuppressWarnings("serial")
