@@ -144,4 +144,64 @@ public class Grid implements Serializable {
 		Point loc = find(entity);
 		return getSquare(loc).remove(entity);
 	} 
+	
+	/**
+	 * Gets the shortest path from origin to destination
+	 * @param origin The starting point of the path
+	 * @param destination The destination point
+	 * @return A list containing the shortest path from origin to destination, 
+	 *  or null if none exists. Includes origin and destination.
+	 */
+	public List<Point> getShortestPath(Point origin, Point destination){
+		// This method is an implementation of Dijkstra's algorithm
+		
+		Set<Point> keySet = keySet();
+		if (!keySet.contains(origin) || !keySet.contains(destination)){
+			throw new IllegalArgumentException("Origin and/or destination not in grid");
+		}
+		
+		// this maps a point to its previous point in a shortest path to the origin
+		Map<Point, Point> previous = new HashMap<Point, Point>();
+		previous.put(origin, null);
+		
+		// these are the points added most recently to the previous map (the outer edge)
+		Set<Point> newPoints = getPossibleMoves(origin);
+		
+		// continue dijkstra's algorithm while destination not found, and points still exist to be found
+		while (!previous.containsKey(destination) && !newPoints.isEmpty()){
+			
+			Set<Point> nextPoints = new HashSet<Point>();
+			//Deviation from dijkstra's algorithm - search through all new points added
+			//since it is known they are an equal distance away from the origin anyway
+			//(each adjacency is a distance of one unit)
+			for (Point p : newPoints){
+				for (Point q : getPossibleMoves(p)){
+					if (!previous.containsKey(q)){
+						nextPoints.add(q);
+						previous.put(q, p);
+					}
+				}
+			}
+			
+			newPoints = nextPoints;
+		}
+		
+		if (!previous.containsKey(destination)) return null; //no path possible
+		
+		// retrace path backwards
+		Stack<Point> backpath = new Stack<Point>();
+		Point current = destination;
+		while (current != null){
+			backpath.push(current);
+			current = previous.get(current);
+		}
+		
+		// reverse backpath into proper forward path
+		List<Point> path = new ArrayList<Point>();
+		while (!backpath.isEmpty()){
+			path.add(backpath.pop());
+		}
+		
+		return path;
+	}
 }
