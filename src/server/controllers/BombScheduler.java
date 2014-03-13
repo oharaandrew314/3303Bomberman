@@ -1,5 +1,6 @@
 package server.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +28,8 @@ public class BombScheduler implements SimulationListener {
 	public synchronized void simulationUpdate(){
 		// Detonate bombs ready for detonation
 		long now = System.currentTimeMillis();
+		ArrayList<Bomb> toRemove = new ArrayList<>();
+		
 		for (Entry<Bomb, Long> entry : bombs.entrySet()){
 			Bomb bomb = entry.getKey();
 			long detonationTime = entry.getValue();
@@ -34,8 +37,12 @@ public class BombScheduler implements SimulationListener {
 				server.detonateBomb(bomb);
 			}
 			if (bomb.isDetonated()){
-				bombs.remove(bomb);
+				toRemove.add(bomb);
 			}
+		}
+		
+		for (Bomb bomb : toRemove){
+			bombs.remove(bomb);
 		}
 	}
 

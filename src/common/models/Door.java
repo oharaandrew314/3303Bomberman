@@ -6,7 +6,6 @@ public class Door extends Entity {
 
 	public Door() {
 		super("Door");
-		setVisible(false);
 	}
 
 	@Override
