@@ -3,6 +3,8 @@ package test.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.nio.BufferUnderflowException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,7 +49,7 @@ public class TestBombFactory {
 		assertEquals(0, factory.getNumBombs());
 	}
 	
-	@Test(expected=RuntimeException.class)
+	@Test(expected=BufferUnderflowException.class)
 	public void testCreateTooMany(){
 		for (int i=1; i<=BombFactory.INIT_MAX_BOMBS; i++){
 			factory.createBomb();

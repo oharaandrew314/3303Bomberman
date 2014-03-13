@@ -1,6 +1,7 @@
 package common.models;
 
 import java.io.Serializable;
+import java.nio.BufferUnderflowException;
 
 public class BombFactory implements Serializable {
 	
@@ -14,7 +15,7 @@ public class BombFactory implements Serializable {
 	
 	public synchronized Bomb createBomb(){
 		if (numBombs == 0){
-			throw new RuntimeException("Cannot create a bomb; out of bombs");
+			throw new BufferUnderflowException();
 		}
 		numBombs--;
 		return new Bomb(this);
