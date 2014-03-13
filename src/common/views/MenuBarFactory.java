@@ -12,7 +12,7 @@ import server.views.LevelLoaderDialog;
 
 public class MenuBarFactory {
 	
-	public static JMenuBar createClientMenuBar(View view){
+	public static JMenuBar createClientMenuBar(AbstractView view){
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -22,7 +22,7 @@ public class MenuBarFactory {
 		return menuBar;
 	}
 	
-	public static JMenuBar createServerMenuBar(Server server, View view){
+	public static JMenuBar createServerMenuBar(Server server, AbstractView view){
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -37,9 +37,9 @@ public class MenuBarFactory {
 	@SuppressWarnings("serial")
 	private static class ExitAction extends AbstractAction {
 		
-		private final View view;
+		private final AbstractView view;
 		
-		public ExitAction(View view){
+		public ExitAction(AbstractView view){
 			super("Exit");
 			this.view = view;
 		}

@@ -9,25 +9,33 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import server.controllers.Server;
+import client.controllers.PlayableClient;
+import client.controllers.Spectator;
+import client.views.ClientTextGenerator;
+import client.views.SpectatorTextGenerator;
+
 import common.controllers.GameController;
 import common.models.Grid;
 
-public abstract class JFrameTextView extends AbstractView {
+public class JFrameTextView extends AbstractView {
 	
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_TEXT_SIZE = 30;
-	
 	public static final String LINE_SEP = System.getProperty("line.separator");
-	private TextArea textArea, console;
+	
 	protected final JFrame frame;
 	private final GameController gc;
+	private TextArea textArea, console;
 	
-	public JFrameTextView(GameController gc){	
+	public JFrameTextView(GameController gc, TextGenerator textGen){
+		super(textGen);
 		gc.setView(this);
 		this.gc = gc;
 		
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
+		frame.addWindowListener(this);
 		frame.setSize(FRAME_SIZE);
 		
 		// Add Text Area
@@ -44,8 +52,10 @@ public abstract class JFrameTextView extends AbstractView {
 		frame.setVisible(true);
 	}
 	
-	public void addJMenuBar(JMenuBar menuBar){
-		frame.setJMenuBar(menuBar);
+	public void addMenuBar(JMenuBar menuBar){
+		if (menuBar != null){
+			frame.setJMenuBar(menuBar);
+		}
 	}
 	
 	protected void setTitle(String title){
@@ -62,9 +72,8 @@ public abstract class JFrameTextView extends AbstractView {
 	}
 	
 	@Override
-	public String updateView(Grid grid) {
+	public void displayGrid(Grid grid) {
 		textArea.setText(grid.toString());
-		return null;
 	}
 
 	@Override
@@ -74,7 +83,34 @@ public abstract class JFrameTextView extends AbstractView {
 		console.addKeyListener(l);
 	}
 	
+	@Override
 	public void displayMessage(String message){
 		console.append(message + LINE_SEP);
+	}
+	
+	public static JFrameTextView newClientView(){
+		PlayableClient client = new PlayableClient();
+		JFrameTextView view = new JFrameTextView(
+			client, new ClientTextGenerator()
+		);
+		view.addKeyListener(client);
+		view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
+		return view;
+	}
+	
+	public static JFrameTextView newServerView(Server server){
+		JFrameTextView view = new JFrameTextView(
+			server, new SpectatorTextGenerator()
+		);
+		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
+		return view;
+	}
+	
+	public static JFrameTextView newSpectatorView(){
+		JFrameTextView view = new JFrameTextView(
+			new Spectator(), new SpectatorTextGenerator()
+		);
+		view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
+		return view;
 	}
 }
