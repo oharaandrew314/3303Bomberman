@@ -92,6 +92,7 @@ public class ServerTest {
 		
 		Player p1 = server.movePlayerTo(1, new Point(0, 0));
 		Player p2 = server.movePlayerTo(2, new Point(2, 1));
+		assertPlayers(2);
 		
 		//Move p1
 		goRight(p1);
@@ -103,7 +104,7 @@ public class ServerTest {
 		
 		// Collide
 		goLeft(p2);
-		assertPlayers(2);
+		assertPlayers(0);
 	}
 
 	@Test
