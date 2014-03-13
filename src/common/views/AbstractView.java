@@ -1,6 +1,8 @@
 package common.views;
 
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
@@ -12,7 +14,7 @@ import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Grid;
 
-public abstract class AbstractView {
+public abstract class AbstractView extends WindowAdapter {
 	
 	private final TextGenerator textGen;
 	
@@ -52,6 +54,11 @@ public abstract class AbstractView {
 		if (message != null){
 			displayMessage(message);
 		}
+	}
+	
+	@Override
+	public void windowClosing(WindowEvent event){
+		close();
 	}
 	
 	public abstract void displayMessage(String message);

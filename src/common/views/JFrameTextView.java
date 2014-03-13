@@ -9,6 +9,12 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import server.controllers.Server;
+import client.controllers.PlayableClient;
+import client.controllers.Spectator;
+import client.views.ClientTextGenerator;
+import client.views.SpectatorTextGenerator;
+
 import common.controllers.GameController;
 import common.models.Grid;
 
@@ -29,6 +35,7 @@ public class JFrameTextView extends AbstractView {
 		
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
+		frame.addWindowListener(this);
 		frame.setSize(FRAME_SIZE);
 		
 		// Add Text Area
@@ -79,5 +86,31 @@ public class JFrameTextView extends AbstractView {
 	@Override
 	public void displayMessage(String message){
 		console.append(message + LINE_SEP);
+	}
+	
+	public static JFrameTextView newClientView(){
+		PlayableClient client = new PlayableClient();
+		JFrameTextView view = new JFrameTextView(
+			client, new ClientTextGenerator()
+		);
+		view.addKeyListener(client);
+		view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
+		return view;
+	}
+	
+	public static JFrameTextView newServerView(Server server){
+		JFrameTextView view = new JFrameTextView(
+			server, new SpectatorTextGenerator()
+		);
+		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
+		return view;
+	}
+	
+	public static JFrameTextView newSpectatorView(){
+		JFrameTextView view = new JFrameTextView(
+			new Spectator(), new SpectatorTextGenerator()
+		);
+		view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
+		return view;
 	}
 }
