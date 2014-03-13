@@ -1,9 +1,7 @@
 package test.models;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,27 +17,33 @@ public class TestBombFactory {
 	public void setUp() throws Exception {
 		factory = new BombFactory();
 	}
-
+	
 	@Test
-	public void testNormalBehaviour() {
+	public void testUseAllBombs(){
 		assertEquals(BombFactory.INIT_MAX_BOMBS, factory.getNumBombs());
-		Queue<Bomb> bombs = new ArrayDeque<>();
 		
 		// Use all bombs
 		for (int i=1; i<=BombFactory.INIT_MAX_BOMBS; i++){
-			bombs.add(factory.createBomb());
+			factory.createBomb();
 		}
 		assertEquals(0, factory.getNumBombs());
-		
-		// Detonate one bomb
-		factory.bombDetonated(bombs.remove());
-		assertEquals(1, factory.getNumBombs());
-		
-		//Increase max bombs by one; should be able to drop two
+	}
+	
+	@Test
+	public void testBombDetonation(){
+		Bomb bomb = factory.createBomb();
+		assertEquals(BombFactory.INIT_MAX_BOMBS - 1, factory.getNumBombs());
+		bomb.setDetonated();
+		assertEquals(BombFactory.INIT_MAX_BOMBS, factory.getNumBombs());
+	}
+	
+	@Test
+	public void testIncreaseMaxBombs(){
 		factory.increaseMaxBombs();
-		assertEquals(2, factory.getNumBombs());
-		bombs.add(factory.createBomb());
-		bombs.add(factory.createBomb());
+		assertEquals(BombFactory.INIT_MAX_BOMBS + 1, factory.getNumBombs());
+		for (int i=0; i<BombFactory.INIT_MAX_BOMBS + 1; i++){
+			assertNotNull(factory.createBomb());
+		}
 		assertEquals(0, factory.getNumBombs());
 	}
 	
