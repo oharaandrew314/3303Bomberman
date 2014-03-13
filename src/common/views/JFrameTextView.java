@@ -58,6 +58,7 @@ public class JFrameTextView extends AbstractView {
 		}
 	}
 	
+	@Override
 	protected void setTitle(String title){
 		frame.setTitle(title);
 	}

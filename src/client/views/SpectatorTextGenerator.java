@@ -4,6 +4,11 @@ import common.models.Player;
 import common.views.TextGenerator;
 
 public class SpectatorTextGenerator implements TextGenerator{
+	
+	@Override
+	public String getTitle() {
+		return "Spectator";
+	}
 
 	@Override
 	public String getPlayerDead(Player player) {
@@ -34,5 +39,4 @@ public class SpectatorTextGenerator implements TextGenerator{
 	public String getPlayerDisconnected(int playerId) {
 		return String.format("Player %d has disconnected.", playerId);
 	}
-
 }

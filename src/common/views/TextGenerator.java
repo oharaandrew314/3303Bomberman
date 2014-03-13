@@ -4,6 +4,7 @@ import common.models.Player;
 
 public interface TextGenerator {
 
+	public String getTitle();
 	public String getPlayerDead(Player player);
 	public String getConnectionAccepted(int playerId);
 	public String getConnectionRejected();

@@ -5,7 +5,16 @@ import common.views.TextGenerator;
 
 public class ClientTextGenerator implements TextGenerator {
 
-	private int playerId;
+	private int playerId = -1;
+	
+	@Override
+	public String getTitle() {
+		String title = "Bomberman";
+		if (playerId != -1){
+			title += ": Player " + playerId;
+		}
+		return title;
+	}
 
 	@Override
 	public String getPlayerDead(Player player) {
@@ -45,5 +54,4 @@ public class ClientTextGenerator implements TextGenerator {
 		}
 		return String.format("Player %d has disconnected.", playerId);
 	}
-
 }

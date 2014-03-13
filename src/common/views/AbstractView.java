@@ -54,6 +54,7 @@ public abstract class AbstractView extends WindowAdapter {
 		if (message != null){
 			displayMessage(message);
 		}
+		setTitle(textGen.getTitle());
 	}
 	
 	@Override
@@ -65,4 +66,5 @@ public abstract class AbstractView extends WindowAdapter {
 	public abstract void displayGrid(Grid grid);
 	public abstract void close();
 	public abstract void addKeyListener(KeyListener l);
+	protected abstract void setTitle(String string);
 }
