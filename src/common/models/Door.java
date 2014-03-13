@@ -12,4 +12,9 @@ public class Door extends Entity {
 	public boolean isPassable() {
 		return true;
 	}
+	
+	@Override
+	public boolean isDestructible(){
+		return false;
+	}
 }
