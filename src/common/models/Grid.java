@@ -85,26 +85,7 @@ public class Grid implements Serializable {
 	}
 	
 	public Set<Point> getPossibleMoves(Point point){
-		return getPossibleMoves(point, false);
-	}
-	
-	public Set<Point> getPossibleMoves(Point point, boolean includeImpassable){
-		Set<Point> adjacents = new HashSet<Point>();
-		adjacents.add(new Point(point.x - 1, point.y));
-		adjacents.add(new Point(point.x + 1, point.y));
-		adjacents.add(new Point(point.x, point.y - 1));
-		adjacents.add(new Point(point.x, point.y + 1));
-		
-		Set<Point> points = new HashSet<>();
-		for (Point p : adjacents){
-			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
-				if (includeImpassable || isPassable(p)){
-					points.add(p);
-				}
-			}
-		}
-		
-		return points;
+		return getPointsInRadius(point, 1, false);
 	}
 	
 	public Set<Point> getAffectedExplosionSquares(Bomb bomb){
@@ -116,10 +97,10 @@ public class Grid implements Serializable {
 	){
 		Set<Point> points = new HashSet<>();
 		points.add(origin);
-		points.addAll(getStraightPath(origin, new Point(-1, 0), radius, true));
-		points.addAll(getStraightPath(origin, new Point(1, 0), radius, true));
-		points.addAll(getStraightPath(origin, new Point(0, -1), radius, true));
-		points.addAll(getStraightPath(origin, new Point(0, 1), radius, true));
+		points.addAll(getStraightPath(origin, new Point(-1, 0), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(1, 0), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(0, -1), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(0, 1), radius, includeImpassable));
 		return points;
 	}
 	
