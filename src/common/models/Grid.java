@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Grid implements Serializable {
 
@@ -48,7 +50,7 @@ public class Grid implements Serializable {
 	public Point find(Entity entity){
 		Point point = search(entity);
 		if (point == null){
-			throw new IllegalArgumentException("Square not found in grid");
+			throw new IllegalArgumentException(entity.name + " not found in grid");
 		}
 		return point;
 	}
@@ -82,37 +84,61 @@ public class Grid implements Serializable {
 		return getSquare(point).isPassable();
 	}
 	
-	public boolean hasPlayer(Point point){
-		for (Entity entity: get(point)){
-			if (entity instanceof Player){
+	public Set<Point> getPossibleMoves(Point point){
+		return getPointsInRadius(point, 1, false);
+	}
+	
+	public Set<Point> getAffectedExplosionSquares(Bomb bomb){
+		return getPointsInRadius(find(bomb), bomb.getRange(), true);
+	}
+
+	protected Set<Point> getPointsInRadius(
+		Point origin, int radius, boolean includeImpassable
+	){
+		Set<Point> points = new HashSet<>();
+		points.add(origin);
+		points.addAll(getStraightPath(origin, new Point(-1, 0), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(1, 0), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(0, -1), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(0, 1), radius, includeImpassable));
+		return points;
+	}
+	
+	private Set<Point> getStraightPath(
+		Point origin, Point delta, int length, boolean includeImpassable
+	){
+		Set<Point> points = new HashSet<>();
+		Rectangle bounds = new Rectangle(size);
+		
+		Point current = new Point(origin);
+		for (int i=0; i<length; i++){
+			current.translate(delta.x, delta.y);
+			
+			if (bounds.contains(current)){
+				// Add to path if this is an explodable square
+				if (
+					(includeImpassable || isPassable(current))
+					&& !hasTypeAt(Pillar.class, current)
+				){
+					points.add(new Point(current));
+				}
+				
+				// If an impassable object was encountered; end
+				if (!isPassable(current)){
+					break;
+				}
+			}			
+		}
+		return points;
+	}
+	
+	public boolean hasTypeAt(Class<? extends Entity> type, Point location){
+		for (Entity e : get(location)){
+			if (type.isInstance(e)){
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	
-	public Set<Point> getPossibleMoves(Point point){
-		Set<Point> adjacents = new HashSet<Point>();
-		adjacents.add(new Point(point.x - 1, point.y));
-		adjacents.add(new Point(point.x + 1, point.y));
-		adjacents.add(new Point(point.x, point.y - 1));
-		adjacents.add(new Point(point.x, point.y + 1));
-		
-		Set<Point> points = new HashSet<>();
-		for (Point p : adjacents){
-			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
-				if (isPassable(p)){
-					points.add(p);
-				}
-			}
-		}
-		
-		return points;
-	}
-	
-	public Set<Point> getAffectedExplosionSquares(){
-		throw new UnsupportedOperationException(); //no bombs in milestone 1
 	}
 
 	@Override

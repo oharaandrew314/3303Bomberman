@@ -22,7 +22,4 @@ public abstract class Box extends Entity {
 	public boolean isHideable() {
 		return false;
 	}
-	
-	public abstract boolean isDestructible();
-
 }
