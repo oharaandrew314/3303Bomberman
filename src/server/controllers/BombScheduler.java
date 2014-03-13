@@ -40,7 +40,7 @@ public class BombScheduler implements SimulationListener {
 	}
 
 	@Override
-	public void onTimerReset() {
+	public synchronized void onTimerReset() {
 		bombs.clear();
 	}
 }
