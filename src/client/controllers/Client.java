@@ -43,6 +43,7 @@ public abstract class Client extends GameController {
 			endGame((WinEvent) event);
 		}
 		else if (event instanceof GameStartEvent){
+			System.out.println("Received GameStartEvent");
 			setGameStarted();
 		}
 		else if (event instanceof GameKeyEventAck){
@@ -54,7 +55,6 @@ public abstract class Client extends GameController {
 	
 	protected void setGameStarted(){
 		state = State.gameRunning;
-		System.out.println("Client: setGameStarted");
 	}
 	
 	protected void endGame(WinEvent winEvent){

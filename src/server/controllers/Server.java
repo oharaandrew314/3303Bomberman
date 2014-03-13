@@ -173,6 +173,7 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
+    		   System.out.println("received start event"); //TODO: delete
     		   startGame();
     	   }
     	   return new GameKeyEventAck(keyEvent);

@@ -4,7 +4,6 @@ package client.controllers;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import common.events.ConnectAcceptedEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
@@ -28,11 +27,6 @@ public class TestRunner extends Client implements Runnable{
 
 	
 	public void run(){
-		//while(!connected){
-			//waitForResponse(1);  //wait
-			
-		//}
-		//waitCond(1000);
 		int i = 0;
 		boolean timeOut = false;
 			
@@ -48,15 +42,10 @@ public class TestRunner extends Client implements Runnable{
 			while(currentTime - lastKeyPress < timeBeforeNextPress){
 				currentTime = System.currentTimeMillis();
 			}
-			//waitForResponse(100);
-			//waitCond(1000);
 		}
 		if(timeOut){
 			System.err.println("test client timed out waiting for Game key acknowledgment");
 		}
-		
-		//waitForResponse(500);
-		//waitCond(1000);
 		stop();
 		nwc.stopListening();
 		
@@ -66,17 +55,13 @@ public class TestRunner extends Client implements Runnable{
 	protected void processPlayerDead(PlayerDeadEvent event) {
 		dead = true;
 		nwc.stopListening();
-		//notifyCond();
 	}
 
 
 	
 	private void waitForResponse(int millis){
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		long startTime = System.currentTimeMillis();
+		while(System.currentTimeMillis() - startTime < millis){};
 	}
 	
 	

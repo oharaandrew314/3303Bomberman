@@ -60,12 +60,15 @@ public class TestCase {
 		if(!testClients.isEmpty()){
 			testClients.get(0).sendGameStartEvent();
 			timeStartWaiting = System.currentTimeMillis();
-			while(!testClients.get(0).isGameRunning()){
-				System.out.print("waiting...");
-				if(System.currentTimeMillis() - timeStartWaiting > 1000){
-					System.out.println("\nStart: Waited too long... exiting");
-					return;
-				}
+			boolean timeout = false;
+			while(!testClients.get(0).isGameRunning() && !timeout){
+				System.out.print("");
+				timeout = System.currentTimeMillis() - timeStartWaiting > 1000;
+			}
+			//System.out.println(System.currentTimeMillis() - timeStartWaiting);
+			if(timeout){
+				System.err.println("timed out, game didn't start within the alloted time");
+				return;
 			}
 		}
 		
@@ -74,8 +77,10 @@ public class TestCase {
 			server.movePlayerTo(index+1, startLocations.get(index));
 		}
 		for(int i = 0 ; i != threads.length;i++){
+			threads[i].start();
+		}
+		for(int i = 0 ; i != threads.length;i++){
 			try {
-				threads[i].start();
 				threads[i].join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -153,5 +158,6 @@ public class TestCase {
 		}
 		return events;
 	}
+	
 
 }
