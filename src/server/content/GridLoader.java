@@ -22,6 +22,7 @@ import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
 import common.models.Player;
+import common.models.RandomEnemy;
 import common.models.Wall;
 
 public class GridLoader {
@@ -119,6 +120,7 @@ public class GridLoader {
 				case "wall": return new Wall();
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
+				case "randomenemy": return new RandomEnemy();
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"
 				);
