@@ -52,12 +52,8 @@ public class NetworkController {
      * Start listening for messages on the given port.
      * @param port The port to listen on.
      */
-    private void startListeningOn(int port) {
-        try {
-            socket = new DatagramSocket(port);
-        } catch (SocketException ex) {
-            Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void startListeningOn(int port) throws SocketException {
+        socket = new DatagramSocket(port);
         
         listener = new ListenThread(this);
         listener.start();
@@ -66,7 +62,7 @@ public class NetworkController {
     /**
      * Start listening for messages on the default server port.
      */
-    public void startListeningOnServerPort() {
+    public void startListeningOnServerPort() throws SocketException {
         startListeningOn(SERVER_PORT);
     }
     
@@ -74,7 +70,11 @@ public class NetworkController {
      * Find an available port and listen on it.
      */
     public void startListeningOnAnyAvailablePort() {
-        startListeningOn(0);
+        try {
+        	startListeningOn(0);
+        } catch (SocketException ex) {
+        	Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**

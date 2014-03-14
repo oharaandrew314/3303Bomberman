@@ -10,12 +10,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import client.controllers.PlayableClient;
-import client.controllers.Spectator;
-import client.views.ClientJFrameTextView;
-import client.views.SpectatorJFrameTextView;
 import server.controllers.Server;
-import server.views.ServerJFrameTextView;
 
 public class Launcher extends WindowAdapter {
 	
@@ -41,8 +36,7 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	private void newServer(){
-		server = new Server();
-		new ServerJFrameTextView(server);
+		JFrameTextView.newServerView(server = new Server());		
 	}
 	
 	@Override
@@ -80,7 +74,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new SpectatorJFrameTextView(new Spectator());
+			JFrameTextView.newSpectatorView();
 		}
 	}
 	
@@ -93,7 +87,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new ClientJFrameTextView(new PlayableClient());
+			JFrameTextView.newClientView();
 		}
 	}
 	

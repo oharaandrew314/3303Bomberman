@@ -2,6 +2,7 @@ package server.controllers;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import common.controllers.GameController;
+import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -22,6 +26,7 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
+import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
@@ -29,22 +34,33 @@ import common.models.Player;
 import common.models.Powerup;
 import common.models.Unit;
 
-public class Server extends GameController {
+public class Server extends GameController implements SimulationListener {
 	
 	public static final int MAX_PLAYERS = 4;
-	public static enum State { stopped, idle, newGame, gameRunning };
+	public static enum State { stopped, idle, newGame, gameRunning, error };
 	
 	protected Map<Integer, Player> players;
 	private State state = State.stopped;
 	private final SimulationTimer timer;
+	private final BombScheduler bombScheduler;
 
 	public Server(){
 		players = new HashMap<>();
 		addObserver(new TestLogger());
+		 	
+		timer = new SimulationTimer();
+		timer.addListener(this);
+		timer.addListener(bombScheduler = new BombScheduler(this));
 		
-		nwc.startListeningOnServerPort();
-		timer = new SimulationTimer(this);
 		state = State.idle;
+		
+		try {
+			nwc.startListeningOnServerPort();
+			
+		} catch (SocketException e) {
+			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
+			state = State.error;
+		}
 	}
 	
 	// Accessors
@@ -79,7 +95,7 @@ public class Server extends GameController {
 			Queue<Player> queue = new ArrayDeque<>(players.values());
 			while(!queue.isEmpty()){
 				Point dest = points.get(r.nextInt(points.size() - 1));
-				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+				if (grid.isPassable(dest) && !grid.hasTypeAt(Player.class, dest)){
 					grid.set(queue.remove(), dest);
 				}
 			}
@@ -112,14 +128,24 @@ public class Server extends GameController {
 	
 	// Other methods
 	
+	@Override
 	public synchronized void simulationUpdate(){
 		if (isGameRunning()){
-			//TODO: Bomb logic
-			//TODO: AI logic
-			
 			send(new ViewUpdateEvent(grid));
 		}
 	}
+	
+	@Override
+    public void onTimerReset(){}
+	
+	private synchronized void killPlayer(Player player){
+    	if (player == null){
+    		throw new IllegalArgumentException("Player cannot be null.");
+    	}
+    	players.remove(player.playerId);
+		send(new PlayerDeadEvent(player));
+		grid.remove(player);
+    }
 	
 	// Event Methods
 	
@@ -137,7 +163,7 @@ public class Server extends GameController {
     	setChanged();
     	notifyObservers(event);
     	
-    	// Decide whethere to accept or reject connection request
+    	// Decide whether to accept or reject connection request
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
     	}
@@ -171,7 +197,7 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
 		   	   		case KeyEvent.VK_SPACE:
 		   	   		case KeyEvent.VK_F:
-		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+		   	   		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
@@ -213,7 +239,7 @@ public class Server extends GameController {
 		return new ConnectRejectedEvent();
     }
     
-    private void move(Player player, int dx, int dy){
+    private synchronized void move(Player player, int dx, int dy){
     	// Do nothing if game is not running
     	if (!isGameRunning()){
     		return;
@@ -237,16 +263,12 @@ public class Server extends GameController {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Unit && !player.equals(entity)){
     			// Kill own player
-    			players.remove(player);
-				send(new PlayerDeadEvent(player));
-				grid.remove(player);
+    			killPlayer(player);
     			
     			// If other unit was player, kill it
     			if (entity instanceof Player){
-    				Player otherPlayer = (Player) entity;
-    				players.remove(otherPlayer);
-    				send(new PlayerDeadEvent(otherPlayer));
-    				grid.remove(otherPlayer);
+    				killPlayer((Player) entity);
+    				
     			}
     		}
     	}
@@ -268,14 +290,43 @@ public class Server extends GameController {
     	}
     }
     
-    private void bomb(Player player){
-    	// Do nothing if game is not running
-    	if (!isGameRunning()){
-    		return;
+    // Callback methods
+    
+    public synchronized Bomb dropBombBy(Player player){
+    	Point loc = grid.find(player);
+    	if (isGameRunning() && player.hasBombs() && !grid.hasTypeAt(Bomb.class, loc)){
+    		Bomb bomb = player.getNextBomb();
+    		grid.set(bomb, loc);
+    		bombScheduler.scheduleBomb(bomb);
+    		return bomb;
     	}
-    	
-    	// TODO: implement
+    	return null;
     }
+    
+    public synchronized void detonateBomb(Bomb bomb){
+    	bomb.setDetonated();
+		for (Point p : grid.getAffectedExplosionSquares(bomb)){
+			for (Entity entity : grid.get(p)){
+					
+				// Kill any players in blast path
+				if (entity instanceof Player){
+					killPlayer((Player) entity);
+				}
+				
+				// Detonate any bombs in blast path
+				else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
+					detonateBomb((Bomb)entity);
+				}
+				
+				// Remove any other destructible entities in blast path
+				else if (entity.isDestructible()){
+					grid.remove(entity);
+				}
+			}
+		}
+    }
+    
+    // Main method
 
     public static void main(String[] args){
         Server server = new Server();

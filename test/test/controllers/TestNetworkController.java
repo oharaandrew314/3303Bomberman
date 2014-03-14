@@ -3,13 +3,17 @@ package test.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import test.helpers.MockNetworkController;
-
 import common.controllers.GameController;
+import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -67,6 +71,15 @@ public class TestNetworkController extends GameController {
     
     // Helpers
     
+    private void startServer(MockNetworkController server) {
+    	try {
+    		server.startListeningOnServerPort();
+    	} catch (SocketException e) {
+    		Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
+    		assertTrue(false);
+    	}
+    }
+    
     private void addServerToClient(MockNetworkController client){
     	client.startListeningOnAnyAvailablePort();
     	client.addLocalServerPeer();
@@ -81,7 +94,7 @@ public class TestNetworkController extends GameController {
 
     @Test
     public void receiveShouldBeCalledOnGameControllerWhenEventIsReceived() {
-        server.startListeningOnServerPort();
+        startServer(server);
         clientA.addLocalServerPeer();
         
         Event received = clientA.connectAndWait(server);
@@ -90,7 +103,7 @@ public class TestNetworkController extends GameController {
     
     @Test
     public void addServerPeerMethodShouldAddTheServerAddressAsAPeer() {
-        server.startListeningOnServerPort();
+    	startServer(server);
         clientA.addLocalServerPeer();
         
         Event received = clientA.sendAndWait(new GameKeyEvent(0), server);
@@ -99,7 +112,7 @@ public class TestNetworkController extends GameController {
     
     @Test
     public void newPeersShouldBeSavedWhenControllerAcceptsPeer() {
-    	server.startListeningOnServerPort();
+    	startServer(server);
     	addServerToClient(clientA);
     	addServerToClient(clientB);
         
@@ -118,7 +131,7 @@ public class TestNetworkController extends GameController {
     @Test
     public void newPeersShouldNotBeSavedWhenRejectNewPeersIsSet() {
     	isAcceptingConnections = true;
-    	server.startListeningOnServerPort();
+    	startServer(server);
     	addServerToClient(clientA);
     	addServerToClient(clientB);
         
@@ -130,7 +143,7 @@ public class TestNetworkController extends GameController {
     
     @Test
     public void receivedEventsShouldIncludePlayerIDs() {
-    	server.startListeningOnServerPort();
+    	startServer(server);
     	addServerToClient(clientA);
     	addServerToClient(clientB);
 
@@ -148,7 +161,7 @@ public class TestNetworkController extends GameController {
     
     @Test
     public void testPeerIdAssignment(){
-    	server.startListeningOnServerPort();
+    	startServer(server);
         
         MockNetworkController clientC = new MockNetworkController(this);
         MockNetworkController clientD = new MockNetworkController(this);

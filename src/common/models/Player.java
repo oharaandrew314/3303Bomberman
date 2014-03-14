@@ -1,13 +1,20 @@
 package common.models;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
+=======
+>>>>>>> dev
 
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
+<<<<<<< HEAD
 	private static final long INVULNERABLE_TIME = 1000*10;
 	private final int START_NUM_BOMBS = 1;
+=======
+	protected final BombFactory factory;
+>>>>>>> dev
 	public final int playerId;
 	
 	@SuppressWarnings("unused")
@@ -21,18 +28,21 @@ public class Player extends Unit {
 	
 	public Player(int playerId){
 		super("Player " + playerId);
-		numBombs = START_NUM_BOMBS;
 		this.playerId = playerId;
+<<<<<<< HEAD
 		
 		powerups = new ArrayList<Powerup>(); //just to keep track of powerups (not really needed)
 		addedBombs = 0;
 		addedBombRange = 0;
 		invulnerableTill = 0;
 		immuneToBombs = false;
+=======
+		factory = new BombFactory();
+>>>>>>> dev
 	}
 	
-	public void drobBomb(){
-		throw new UnsupportedOperationException(); // no bombs in milestone 1
+	public Bomb getNextBomb(){
+		return factory.createBomb();
 	}
 
 	@Override
@@ -45,6 +55,7 @@ public class Player extends Unit {
 		return String.valueOf(playerId);
 	}
 	
+<<<<<<< HEAD
 	/**
 	 * Add the powerups to the players list of powerups and change the players properties accordingly
 	 * @param powerup - powerup picked up by the player
@@ -91,4 +102,17 @@ public class Player extends Unit {
 	}
 	
 	
+=======
+	public int getNumBombs(){
+		return factory.getNumBombs();
+	}
+	
+	public boolean hasBombs(){
+		return getNumBombs() > 0;
+	}
+	
+	public void increaseMaxBombs(){
+		factory.increaseMaxBombs();
+	}
+>>>>>>> dev
 }
