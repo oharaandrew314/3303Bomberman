@@ -19,11 +19,6 @@ public class Player extends Unit {
 	public Bomb getNextBomb(){
 		return factory.createBomb();
 	}
-
-	@Override
-	public boolean isHideable() {
-		return false;
-	}
 	
 	@Override
 	public String toString(){

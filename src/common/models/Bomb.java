@@ -29,11 +29,6 @@ public class Bomb extends Entity {
 	public boolean isPassable() {
 		return true;
 	}
-
-	@Override
-	public boolean isHideable() {
-		return true;
-	}
 	
 	public int getRange(){
 		return INIT_RANGE;

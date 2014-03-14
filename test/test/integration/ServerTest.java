@@ -26,7 +26,7 @@ public class ServerTest {
 	@Before
 	public void setUp() throws Exception {
 		server = new MockServer();
-		server.newGame(GridLoader.loadGrid("grid1.json"));
+		server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
 		assertFalse(server.isGameRunning());
 	}
 	

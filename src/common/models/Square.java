@@ -34,13 +34,19 @@ public class Square implements Serializable {
 			throw new IllegalArgumentException("Cannot add null entity");
 		}
 		
-		if (!isPassable() && !entity.isHideable()){
+		else if (!isPassable() && !entity.isPassable()){
 			throw new IllegalArgumentException(
-				"Cannot place nonHidable object on impassable Square"
+				"Cannot place impassable entity on top of an impassable square"
 			);
 		}
 		
-		if (!entity.isPassable()){
+		else if (!isPassable() && entity instanceof Unit){
+			throw new IllegalArgumentException(
+				"Cannot place unit on impassable square"
+			);
+		}
+		
+		else if (!entity.isPassable()){
 			if (!isPassable()){
 				throw new IllegalArgumentException("Tried to add second impassable entity");
 			}
