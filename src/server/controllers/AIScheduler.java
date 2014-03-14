@@ -37,15 +37,24 @@ public class AIScheduler implements SimulationListener {
 	public synchronized void simulationUpdate() {
 		for (Enemy enemy : enemies.keySet()){
 			if (System.currentTimeMillis() - enemies.get(enemy) > ENEMY_MOVE_FREQ){
+				
 				Point translation;
-				if (enemy instanceof RandomEnemy){
-					translation = getRandomTranslation(enemy);
+				Point currentLocation = getCurrentLocation(enemy);
+				List<Point> possibleMoves = getPossibleMoves(enemy);
+				
+				if (possibleMoves.isEmpty()) {
+					translation = new Point(0, 0);
+				}
+				else if (enemy instanceof RandomEnemy){
+					translation = getRandomTranslation(currentLocation, possibleMoves);
 				}
 				else if (enemy instanceof LineEnemy){
-					translation = getLineTranslation((LineEnemy) enemy);
+					LineEnemy le = (LineEnemy) enemy;
+					translation = getLineTranslation(le.getDirection(), currentLocation, possibleMoves);
+					le.setDirection(translation); // save possibly new direction
 				}
 				else if (enemy instanceof PathFindingEnemy){
-					translation = getPathTranslation(enemy);
+					translation = getPathTranslation(currentLocation);
 				}
 				else throw new UnsupportedOperationException("Enemy type not supported");
 				
@@ -55,31 +64,24 @@ public class AIScheduler implements SimulationListener {
 		}
 	}
 	
-	private Point getRandomTranslation(Enemy enemy){
-		Point currentLocation = getCurrentLocation(enemy);
-		List<Point> possibleMoves = getPossibleMoves(enemy);
-		if (possibleMoves.isEmpty()) return new Point(0, 0);
-		
+	private Point getRandomTranslation(Point currentLocation, List<Point> possibleMoves){
 		Point nextMove = possibleMoves.get(rng.nextInt(possibleMoves.size()));
 		return new Point(nextMove.x - currentLocation.x, nextMove.y - currentLocation.y);
 	}
 	
-	private Point getLineTranslation(LineEnemy enemy){
-		Point currentLocation = getCurrentLocation(enemy);
-		List<Point> possibleMoves = getPossibleMoves(enemy);
-		if (possibleMoves.isEmpty()) return new Point(0, 0);
+	private Point getLineTranslation(Point currentDirection, Point currentLocation, List<Point> possibleMoves){
+		Point translation = currentDirection;
 		
-		Point translation = enemy.getDirection();
 		// if can no longer move in current direction, get new direction
 		if (!possibleMoves.contains(new Point(currentLocation.x + translation.x, currentLocation.y + translation.y))){
-			translation = getRandomTranslation(enemy);
-			enemy.setDirection(translation);
+			translation = getRandomTranslation(currentLocation, possibleMoves);
 		}
 		return translation;
 	}
 	
-	private Point getPathTranslation(Enemy enemy){
-		Point currentLocation = getCurrentLocation(enemy);
+	private Point getPathTranslation(Point currentLocation){
+		// no need for possible moves in this method, as shortest path calculation
+		// will figure that out anyways
 		Point target = server.getNearestPlayerLocation(currentLocation);
 		
 		if (target == null) return new Point(0, 0);
