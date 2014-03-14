@@ -195,7 +195,8 @@ public class Grid implements Serializable {
 		previous.put(origin, null);
 		
 		// these are the points added most recently to the previous map (the outer edge)
-		Set<Point> newPoints = getPossibleMoves(origin);
+		Set<Point> newPoints = new HashSet<Point>();
+		newPoints.add(origin);
 		
 		// continue dijkstra's algorithm while destination not found, and points still exist to be found
 		while (!previous.containsKey(destination) && !newPoints.isEmpty()){
@@ -205,7 +206,9 @@ public class Grid implements Serializable {
 			//since it is known they are an equal distance away from the origin anyway
 			//(each adjacency is a distance of one unit)
 			for (Point p : newPoints){
-				for (Point q : getPossibleMoves(p)){
+				Set<Point> possibleMoves = getPossibleMoves(p);
+				possibleMoves.remove(p);
+				for (Point q : possibleMoves){
 					if (!previous.containsKey(q)){
 						nextPoints.add(q);
 						previous.put(q, p);

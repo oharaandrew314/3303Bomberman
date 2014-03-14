@@ -20,6 +20,8 @@ import com.google.gson.JsonSyntaxException;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
+import common.models.LineEnemy;
+import common.models.PathFindingEnemy;
 import common.models.Pillar;
 import common.models.Player;
 import common.models.RandomEnemy;
@@ -121,6 +123,8 @@ public class GridLoader {
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
 				case "randomenemy": return new RandomEnemy();
+				case "lineenemy": return new LineEnemy();
+				case "pathfindingenemy": return new PathFindingEnemy();
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"
 				);

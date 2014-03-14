@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.List;
 
-import common.models.Direction;
 import common.models.Enemy;
+import common.models.PathFindingEnemy;
 import common.models.LineEnemy;
 import common.models.RandomEnemy;
 
@@ -39,9 +39,15 @@ public class AIScheduler implements SimulationListener {
 			if (System.currentTimeMillis() - enemies.get(enemy) > ENEMY_MOVE_FREQ){
 				Point translation;
 				if (enemy instanceof RandomEnemy){
-					translation = getRandomTranslation((RandomEnemy)enemy);
+					translation = getRandomTranslation(enemy);
 				}
-				else throw new UnsupportedOperationException("Other enemies not supported yet");
+				else if (enemy instanceof LineEnemy){
+					translation = getLineTranslation((LineEnemy) enemy);
+				}
+				else if (enemy instanceof PathFindingEnemy){
+					translation = getPathTranslation(enemy);
+				}
+				else throw new UnsupportedOperationException("Enemy type not supported");
 				
 				enemies.put(enemy, System.currentTimeMillis()); //register new movement time
 				server.move(enemy, translation.x, translation.y);
@@ -49,13 +55,56 @@ public class AIScheduler implements SimulationListener {
 		}
 	}
 	
-	private Point getRandomTranslation(RandomEnemy enemy){
-		Point currentLocation = server.getGrid().find(enemy);
-		List<Point> possibleMoves = new ArrayList<Point>(server.getGrid().getPossibleMoves(currentLocation));
+	private Point getRandomTranslation(Enemy enemy){
+		Point currentLocation = getCurrentLocation(enemy);
+		List<Point> possibleMoves = getPossibleMoves(enemy);
 		if (possibleMoves.isEmpty()) return new Point(0, 0);
 		
 		Point nextMove = possibleMoves.get(rng.nextInt(possibleMoves.size()));
 		return new Point(nextMove.x - currentLocation.x, nextMove.y - currentLocation.y);
+	}
+	
+	private Point getLineTranslation(LineEnemy enemy){
+		Point currentLocation = getCurrentLocation(enemy);
+		List<Point> possibleMoves = getPossibleMoves(enemy);
+		if (possibleMoves.isEmpty()) return new Point(0, 0);
+		
+		Point translation = enemy.getDirection();
+		// if can no longer move in current direction, get new direction
+		if (!possibleMoves.contains(new Point(currentLocation.x + translation.x, currentLocation.y + translation.y))){
+			translation = getRandomTranslation(enemy);
+			enemy.setDirection(translation);
+		}
+		return translation;
+	}
+	
+	private Point getPathTranslation(Enemy enemy){
+		Point currentLocation = getCurrentLocation(enemy);
+		Point target = server.getNearestPlayerLocation(currentLocation);
+		
+		if (target == null) return new Point(0, 0);
+		List<Point> path = server.getGrid().getShortestPath(currentLocation, target);
+		if (path == null || path.size() <= 1) return new Point(0, 0);
+		
+		Point nextMove = path.get(1); //current location in path, want next point
+		return new Point(nextMove.x - currentLocation.x, nextMove.y - currentLocation.y);
+	}
+	
+	/**
+	 * Gets the possible locations this enemy can move to, other than the null move
+	 * @param enemy The enemy
+	 * @return The list of points the enemy can move to. 
+	 * A list rather than a set to make random indexing easier.
+	 */
+	private List<Point> getPossibleMoves(Enemy enemy){
+		Point currentLocation = getCurrentLocation(enemy);
+		List<Point> possibleMoves = new ArrayList<Point>(server.getGrid().getPossibleMoves(currentLocation));
+		possibleMoves.remove(currentLocation);
+		return possibleMoves;
+	}
+	
+	private Point getCurrentLocation(Enemy enemy){
+		return server.getGrid().find(enemy);
 	}
 	
 	@Override

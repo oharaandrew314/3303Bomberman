@@ -289,6 +289,29 @@ public class Server extends GameController implements SimulationListener {
     
     // Callback methods
     
+    /**
+     * For use by the AIController doing pathfinding.
+     * This returns the nearest player
+     */
+    public synchronized Point getNearestPlayerLocation(Point source){
+    	if (!isGameRunning()) return null; //players aren't on the board yet!
+    	
+    	Point minPoint = null;
+    	int minPath = Integer.MAX_VALUE;
+    	
+    	for (Player player : players.values()){
+    		Point loc = grid.find(player);
+    		List<Point> path = getGrid().getShortestPath(source, loc);
+    				
+    		if (path != null && path.size() < minPath){
+    			minPath = path.size();
+    			minPoint = loc;
+    		}
+    	}
+    	
+    	return minPoint;
+    }
+    
     public synchronized Bomb dropBombBy(Player player){
     	Point loc = grid.find(player);
     	if (isGameRunning() && player.hasBombs() && !grid.hasTypeAt(Bomb.class, loc)){
