@@ -167,13 +167,8 @@ public class Server extends GameController implements SimulationListener {
     public synchronized Event receive(Event event) {
     	setChanged();
     	notifyObservers(event);
-<<<<<<< HEAD
-    	   	
-    	// Decide whethere to accept or reject connection request
-=======
-    	
+
     	// Decide whether to accept or reject connection request
->>>>>>> dev
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
     	}
@@ -333,7 +328,6 @@ public class Server extends GameController implements SimulationListener {
     	return null;
     }
     
-<<<<<<< HEAD
     public Player movePlayerTo(int playerId, Point newPos){
 		Player player = players.get(playerId);
 		if (grid.contains(player)){
@@ -342,7 +336,6 @@ public class Server extends GameController implements SimulationListener {
 		grid.set(player, newPos);
 		return player;
 	}
-=======
     public synchronized void detonateBomb(Bomb bomb){
     	bomb.setDetonated();
 		for (Point p : grid.getAffectedExplosionSquares(bomb)){
@@ -372,7 +365,6 @@ public class Server extends GameController implements SimulationListener {
     }
     
     // Main method
->>>>>>> dev
 
     public static void main(String[] args){
         Server server = new Server();
