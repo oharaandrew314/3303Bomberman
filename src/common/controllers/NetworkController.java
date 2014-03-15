@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +30,7 @@ public class NetworkController {
     private DatagramSocket socket;
     private ListenThread listener;
     protected Map<Integer, InetSocketAddress> peers;
+    private Semaphore busySem = new Semaphore(1);
     
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
@@ -46,6 +48,25 @@ public class NetworkController {
      */
     public DatagramSocket getSocket() {
         return socket;
+    }
+    
+    /**
+     * Allows the GameController to specify if network events should currently be handled.
+     */
+    public void setBusy(boolean busy) {
+    	if (busy) {
+    		busySem.acquireUninterruptibly();
+    	} else {
+    		busySem.release();
+    	}
+    }
+    
+    /**
+     * Wait until the game controller is not busy and can process incoming events.
+     */
+    private void waitUntilReady() {
+    	busySem.acquireUninterruptibly();
+    	busySem.release();
     }
     
     /**
@@ -156,6 +177,8 @@ public class NetworkController {
             
             int playerId = getPlayerIdFor(data);
             event.setPlayerID(playerId);
+            
+            waitUntilReady();
             
             Event response = gameController.receive(event);
             if (response != null){

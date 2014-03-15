@@ -137,7 +137,9 @@ public class Server extends GameController implements SimulationListener {
 	@Override
 	public synchronized void simulationUpdate(){
 		if (isGameRunning()){
+			nwc.setBusy(true);
 			send(new ViewUpdateEvent(grid));
+			nwc.setBusy(false);
 		}
 	}
 	

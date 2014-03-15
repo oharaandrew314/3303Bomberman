@@ -18,6 +18,14 @@ public class MockNetworkController extends NetworkController {
 		events = new ArrayDeque<>();
 	}
 	
+	public boolean hasHandled(Class<? extends Event> type) {
+		for(Event e : events) {
+			if (type.isInstance(e))
+				return true;
+		}
+		return false;
+	}
+	
 	public Event connectAndWait(MockNetworkController dest){
 		return sendAndWait(new ConnectEvent(false), dest);
 	}
