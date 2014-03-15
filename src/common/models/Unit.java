@@ -14,4 +14,8 @@ public abstract class Unit extends Entity {
 		// they just die when they do.
 		return true;
 	}
+	
+	public boolean canBeHurtBy(Entity e){
+		return false;
+	}
 }

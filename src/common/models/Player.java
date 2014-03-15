@@ -80,12 +80,13 @@ public class Player extends Unit {
 		factory.increaseBlastRange();
 	}
 	
-	//If invulnerable, can't die
-	//check if player can be kill by passable entities
-	//power up, door and bomb can't hurt the player (bomb that isn't detonated)
+	/**
+	 * if a the entity is a unit, and the player isn't invulnerable, they can be hurt
+	 * @param e
+	 * @return
+	 */
+	@Override
 	public boolean canBeHurtBy(Entity e){
-		if(isInvulnerable()){
-			return false;
-		} return !((e instanceof Bomb) || (e instanceof Powerup) || (e instanceof Door));
+		return (e instanceof Unit && !isInvulnerable());
 	}
 }
