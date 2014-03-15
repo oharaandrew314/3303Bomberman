@@ -236,6 +236,7 @@ public class Server extends GameController implements SimulationListener {
 		}
     	
     	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	response.setPlayerID(event.getPlayerID());
     	updateView(response);
     	return response;
     }
