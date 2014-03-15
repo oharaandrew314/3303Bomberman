@@ -2,6 +2,7 @@ package server.controllers;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import common.controllers.GameController;
+import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -22,48 +26,66 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
+import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
 import common.models.Unit;
+import common.models.Enemy;
 
-public class Server extends GameController {
+public class Server extends GameController implements SimulationListener {
 	
 	public static final int MAX_PLAYERS = 4;
-	public static enum State { stopped, idle, newGame, gameRunning };
 	
 	protected Map<Integer, Player> players;
-	private State state = State.stopped;
 	private final SimulationTimer timer;
+	private final BombScheduler bombScheduler;
+	private final AIScheduler aiScheduler;
 
 	public Server(){
 		players = new HashMap<>();
 		addObserver(new TestLogger());
+		 	
+		timer = new SimulationTimer();
+		timer.addListener(this);
+		timer.addListener(bombScheduler = new BombScheduler(this));
+		timer.addListener(aiScheduler = new AIScheduler(this));
 		
-		nwc.startListeningOnServerPort();
-		timer = new SimulationTimer(this);
-		state = State.idle;
+		state = GameState.idle;
+		
+		try {
+			nwc.startListeningOnServerPort();
+			
+		} catch (SocketException e) {
+			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
+			state = GameState.error;
+		}
 	}
 	
 	// Accessors
 	
 	@Override
-	public boolean isGameRunning() {
-		return state == State.gameRunning;
-	}
-	
-	@Override
 	public boolean isAcceptingConnections(){
-		return state == State.newGame || state == State.idle;
+		return state == GameState.newGame || state == GameState.idle;
 	}
 	
 	// State Methods
 	
 	public synchronized void newGame(Grid grid){
-		if (state == State.idle && grid != null){
+		if (state == GameState.idle && grid != null){
 			this.grid = grid;
-			state = State.newGame;
+			
+			// register enemies
+			for (Point p : grid.keySet()){
+				for (Entity e : grid.get(p)){
+					if (e instanceof Enemy){
+						aiScheduler.addEnemy((Enemy) e);
+					}
+				}
+			}
+			
+			state = GameState.newGame;
 			updateView(new ViewUpdateEvent(grid));
 		} else {
 			System.err.println("Could not create new game.");
@@ -71,19 +93,19 @@ public class Server extends GameController {
 	}
 	
 	private void startGame(){
-		if (state == State.newGame){
+		if (state == GameState.newGame){
 			// Place players
 			List<Point> points = new ArrayList<>(grid.keySet());
 			Random r = new Random();
 			Queue<Player> queue = new ArrayDeque<>(players.values());
 			while(!queue.isEmpty()){
 				Point dest = points.get(r.nextInt(points.size() - 1));
-				if (grid.isPassable(dest) && !grid.hasPlayer(dest)){
+				if (grid.get(dest).isEmpty()){ // place player on an empty spot
 					grid.set(queue.remove(), dest);
 				}
 			}
 			
-			state = State.gameRunning;
+			state = GameState.gameRunning;
 			send(new GameStartEvent());
 			timer.start();
 		} else {
@@ -92,9 +114,9 @@ public class Server extends GameController {
 	}
 	
 	public synchronized void endGame(){
-		if (state == State.gameRunning){
+		if (state == GameState.gameRunning){
 			timer.stop();
-			state = State.idle;
+			state = GameState.idle;
 			grid = null;
 		} else {
 			System.err.println("Could not end game; no game running");
@@ -106,19 +128,29 @@ public class Server extends GameController {
 			endGame();
 		}
 		super.stop();
-		state = State.stopped;
+		state = GameState.stopped;
 	}
 	
 	// Other methods
 	
+	@Override
 	public synchronized void simulationUpdate(){
 		if (isGameRunning()){
-			//TODO: Bomb logic
-			//TODO: AI logic
-			
 			send(new ViewUpdateEvent(grid));
 		}
 	}
+	
+	@Override
+    public void onTimerReset(){}
+	
+	private synchronized void killPlayer(Player player){
+    	if (player == null){
+    		throw new IllegalArgumentException("Player cannot be null.");
+    	}
+    	players.remove(player.playerId);
+		send(new PlayerDeadEvent(player));
+		grid.remove(player);
+    }
 	
 	// Event Methods
 	
@@ -135,8 +167,13 @@ public class Server extends GameController {
     public synchronized Event receive(Event event) {
     	setChanged();
     	notifyObservers(event);
+<<<<<<< HEAD
     	   	
     	// Decide whethere to accept or reject connection request
+=======
+    	
+    	// Decide whether to accept or reject connection request
+>>>>>>> dev
     	if (event instanceof ConnectEvent){
     		return handleConnectionRequest((ConnectEvent) event);
     	}
@@ -170,7 +207,7 @@ public class Server extends GameController {
 		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
 		   	   		case KeyEvent.VK_SPACE:
 		   	   		case KeyEvent.VK_F:
-		   	   		case KeyEvent.VK_SEMICOLON: bomb(player); break;
+		   	   		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   System.out.println("received start event"); //TODO: delete
@@ -198,6 +235,7 @@ public class Server extends GameController {
 		}
     	
     	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	response.setPlayerID(event.getPlayerID());
     	updateView(response);
     	return response;
     }
@@ -213,62 +251,89 @@ public class Server extends GameController {
 		return new ConnectRejectedEvent();
     }
     
-    private void move(Player player, int dx, int dy){
-    	// Do nothing if game is not running
-    	if (!isGameRunning()){
+    public synchronized void move(Unit unit, int dx, int dy){
+    	// Do nothing if game is not running or player does not exist
+    	if (!isGameRunning() || !grid.contains(unit)){
     		return;
     	}
     	
-    	Point origin = grid.find(player);
+    	Point origin = grid.find(unit);
     	
     	// Get destination point
     	Point dest = new Point(origin);
     	dest.translate(dx, dy);
     	
-    	// Do not continue if player cannot move here
+    	// Do not continue if unit cannot move here
     	if (!grid.getPossibleMoves(origin).contains(dest)){
     		return;
     	}
     	
-    	// Move player
-    	grid.set(player, dest);
+    	// Move unit
+    	grid.set(unit, dest);
     	
     	// Check for collisions
     	for (Entity entity : grid.get(dest)){
-    		if (entity instanceof Unit && !player.equals(entity)){
+    		if (entity instanceof Unit && !unit.equals(entity)){
     			// Kill own player
-    			players.remove(player);
-				send(new PlayerDeadEvent(player));
-				grid.remove(player);
+    			if (unit instanceof Player) {
+    				killPlayer((Player) unit);
+    			}
     			
     			// If other unit was player, kill it
     			if (entity instanceof Player){
-    				Player otherPlayer = (Player) entity;
-    				players.remove(otherPlayer);
-    				send(new PlayerDeadEvent(otherPlayer));
-    				grid.remove(otherPlayer);
+    				killPlayer((Player) entity);	
     			}
     		}
     	}
     	
     	// Check if player wins and notify views
-    	for (Entity entity : grid.get(dest)){
-    		if (entity instanceof Door){
-    			send(new WinEvent(player, grid));
-    			endGame();
+    	if (unit instanceof Player){
+	    	for (Entity entity : grid.get(dest)){
+	    		if (entity instanceof Door){
+	    			send(new WinEvent((Player)unit, grid));
+	    			endGame();
+	    		}
+	    	}
+    	}
+    }
+    
+    // Callback methods
+    
+    /**
+     * For use by the AIController doing pathfinding.
+     * This returns the nearest player
+     */
+    public synchronized Point getNearestPlayerLocation(Point source){
+    	if (!isGameRunning()) return null; //players aren't on the board yet!
+    	
+    	Point minPoint = null;
+    	int minPath = Integer.MAX_VALUE;
+    	
+    	for (Player player : players.values()){
+    		Point loc = grid.find(player);
+    		List<Point> path = getGrid().getShortestPath(source, loc);
+    				
+    		if (path != null && path.size() < minPath){
+    			minPath = path.size();
+    			minPoint = loc;
     		}
     	}
-    }
-    
-    private void bomb(Player player){
-    	// Do nothing if game is not running
-    	if (!isGameRunning()){
-    		return;
-    	}
     	
-    	// TODO: implement
+    	return minPoint;
     }
     
+    public synchronized Bomb dropBombBy(Player player){
+    	Point loc = grid.find(player);
+    	if (isGameRunning() && player.hasBombs() && !grid.hasTypeAt(Bomb.class, loc)){
+    		Bomb bomb = player.getNextBomb();
+    		grid.set(bomb, loc);
+    		bombScheduler.scheduleBomb(bomb);
+    		return bomb;
+    	}
+    	return null;
+    }
+    
+<<<<<<< HEAD
     public Player movePlayerTo(int playerId, Point newPos){
 		Player player = players.get(playerId);
 		if (grid.contains(player)){
@@ -277,6 +342,37 @@ public class Server extends GameController {
 		grid.set(player, newPos);
 		return player;
 	}
+=======
+    public synchronized void detonateBomb(Bomb bomb){
+    	bomb.setDetonated();
+		for (Point p : grid.getAffectedExplosionSquares(bomb)){
+			for (Entity entity : grid.get(p)){
+					
+				// Kill any players in blast path
+				if (entity instanceof Player){
+					killPlayer((Player) entity);
+				}
+				
+				// Detonate any bombs in blast path
+				else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
+					detonateBomb((Bomb)entity);
+				}
+				
+				else if (entity instanceof Enemy){
+					aiScheduler.removeEnemy((Enemy) entity);
+					grid.remove(entity);
+				}
+				
+				// Remove any other destructible entities in blast path
+				else if (entity.isDestructible()){
+					grid.remove(entity);
+				}
+			}
+		}
+    }
+    
+    // Main method
+>>>>>>> dev
 
     public static void main(String[] args){
         Server server = new Server();

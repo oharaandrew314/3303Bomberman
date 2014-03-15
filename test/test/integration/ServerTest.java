@@ -26,7 +26,7 @@ public class ServerTest {
 	@Before
 	public void setUp() throws Exception {
 		server = new MockServer();
-		server.newGame(GridLoader.loadGrid("grid1.json"));
+		server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
 		assertFalse(server.isGameRunning());
 	}
 	
@@ -84,14 +84,15 @@ public class ServerTest {
 	
 	@Test
 	public void testTwoPlayers(){
-		// Connect one player
+		// Connect two players
 		send(1, new ConnectEvent(false));
 		send(2, new ConnectEvent(false));
 		
-		start(1);
+		start(1); // start the game
 		
 		Player p1 = server.movePlayerTo(1, new Point(0, 0));
 		Player p2 = server.movePlayerTo(2, new Point(2, 1));
+		assertPlayers(2);
 		
 		//Move p1
 		goRight(p1);
@@ -103,7 +104,7 @@ public class ServerTest {
 		
 		// Collide
 		goLeft(p2);
-		assertPlayers(2);
+		assertPlayers(0);
 	}
 
 	@Test
@@ -122,6 +123,27 @@ public class ServerTest {
 		start(1);
 		assertPlayers(2);
 	}
+	
+	@Test
+	public void testPlayerCollision(){
+		// Connect two players
+		send(1, new ConnectEvent(false));
+		send(2, new ConnectEvent(false));
+		
+		start(1); // Start the game
+		
+		// set initial positions besides each other
+		Player p1 = server.movePlayerTo(1, new Point(0, 0));
+		Player p2 = server.movePlayerTo(2, new Point(1, 0));
+		
+		// Try to move both players past each other; should ignore second command
+		goRight(p1);
+		goLeft(p2);
+		
+		assertPlayers(0); // Both players should be dead
+	}
+	
+	// Helpers
 	
 	private void send(int playerId, Event event){
 		event.setPlayerID(playerId);

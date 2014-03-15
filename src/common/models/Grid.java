@@ -4,7 +4,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Stack;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Grid implements Serializable {
 
@@ -48,7 +54,7 @@ public class Grid implements Serializable {
 	public Point find(Entity entity){
 		Point point = search(entity);
 		if (point == null){
-			throw new IllegalArgumentException("Square not found in grid");
+			throw new IllegalArgumentException(entity.name + " not found in grid");
 		}
 		return point;
 	}
@@ -82,37 +88,61 @@ public class Grid implements Serializable {
 		return getSquare(point).isPassable();
 	}
 	
-	public boolean hasPlayer(Point point){
-		for (Entity entity: get(point)){
-			if (entity instanceof Player){
+	public Set<Point> getPossibleMoves(Point point){
+		return getPointsInRadius(point, 1, false);
+	}
+	
+	public Set<Point> getAffectedExplosionSquares(Bomb bomb){
+		return getPointsInRadius(find(bomb), bomb.getRange(), true);
+	}
+
+	protected Set<Point> getPointsInRadius(
+		Point origin, int radius, boolean includeImpassable
+	){
+		Set<Point> points = new HashSet<>();
+		points.add(origin);
+		points.addAll(getStraightPath(origin, new Point(-1, 0), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(1, 0), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(0, -1), radius, includeImpassable));
+		points.addAll(getStraightPath(origin, new Point(0, 1), radius, includeImpassable));
+		return points;
+	}
+	
+	private Set<Point> getStraightPath(
+		Point origin, Point delta, int length, boolean includeImpassable
+	){
+		Set<Point> points = new HashSet<>();
+		Rectangle bounds = new Rectangle(size);
+		
+		Point current = new Point(origin);
+		for (int i=0; i<length; i++){
+			current.translate(delta.x, delta.y);
+			
+			if (bounds.contains(current)){
+				// Add to path if this is an explodable square
+				if (
+					(includeImpassable || isPassable(current))
+					&& !hasTypeAt(Pillar.class, current)
+				){
+					points.add(new Point(current));
+				}
+				
+				// If an impassable object was encountered; end
+				if (!isPassable(current)){
+					break;
+				}
+			}			
+		}
+		return points;
+	}
+	
+	public boolean hasTypeAt(Class<? extends Entity> type, Point location){
+		for (Entity e : get(location)){
+			if (type.isInstance(e)){
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	
-	public Set<Point> getPossibleMoves(Point point){
-		Set<Point> adjacents = new HashSet<Point>();
-		adjacents.add(new Point(point.x - 1, point.y));
-		adjacents.add(new Point(point.x + 1, point.y));
-		adjacents.add(new Point(point.x, point.y - 1));
-		adjacents.add(new Point(point.x, point.y + 1));
-		
-		Set<Point> points = new HashSet<>();
-		for (Point p : adjacents){
-			if (new Rectangle(0, 0, size.width, size.height).contains(p)){
-				if (isPassable(p)){
-					points.add(p);
-				}
-			}
-		}
-		
-		return points;
-	}
-	
-	public Set<Point> getAffectedExplosionSquares(){
-		throw new UnsupportedOperationException(); //no bombs in milestone 1
 	}
 
 	@Override
@@ -144,4 +174,67 @@ public class Grid implements Serializable {
 		Point loc = find(entity);
 		return getSquare(loc).remove(entity);
 	} 
+	
+	/**
+	 * Gets the shortest path from origin to destination
+	 * @param origin The starting point of the path
+	 * @param destination The destination point
+	 * @return A list containing the shortest path from origin to destination, 
+	 *  or null if none exists. Includes origin and destination.
+	 */
+	public List<Point> getShortestPath(Point origin, Point destination){
+		// This method is an implementation of Dijkstra's algorithm
+		
+		Set<Point> keySet = keySet();
+		if (!keySet.contains(origin) || !keySet.contains(destination)){
+			throw new IllegalArgumentException("Origin and/or destination not in grid");
+		}
+		
+		// this maps a point to its previous point in a shortest path to the origin
+		Map<Point, Point> previous = new HashMap<Point, Point>();
+		previous.put(origin, null);
+		
+		// these are the points added most recently to the previous map (the outer edge)
+		Set<Point> newPoints = new HashSet<Point>();
+		newPoints.add(origin);
+		
+		// continue dijkstra's algorithm while destination not found, and points still exist to be found
+		while (!previous.containsKey(destination) && !newPoints.isEmpty()){
+			
+			Set<Point> nextPoints = new HashSet<Point>();
+			//Deviation from dijkstra's algorithm - search through all new points added
+			//since it is known they are an equal distance away from the origin anyway
+			//(each adjacency is a distance of one unit)
+			for (Point p : newPoints){
+				Set<Point> possibleMoves = getPossibleMoves(p);
+				possibleMoves.remove(p);
+				for (Point q : possibleMoves){
+					if (!previous.containsKey(q)){
+						nextPoints.add(q);
+						previous.put(q, p);
+					}
+				}
+			}
+			
+			newPoints = nextPoints;
+		}
+		
+		if (!previous.containsKey(destination)) return null; //no path possible
+		
+		// retrace path backwards
+		Stack<Point> backpath = new Stack<Point>();
+		Point current = destination;
+		while (current != null){
+			backpath.push(current);
+			current = previous.get(current);
+		}
+		
+		// reverse backpath into proper forward path
+		List<Point> path = new ArrayList<Point>();
+		while (!backpath.isEmpty()){
+			path.add(backpath.pop());
+		}
+		
+		return path;
+	}
 }

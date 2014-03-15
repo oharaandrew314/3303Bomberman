@@ -17,12 +17,4 @@ public abstract class Box extends Entity {
 	public String toString(){
 		return isDestructible() ? "." : "X";
 	}
-
-	@Override
-	public boolean isHideable() {
-		return false;
-	}
-	
-	public abstract boolean isDestructible();
-
 }

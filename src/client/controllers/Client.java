@@ -14,9 +14,6 @@ import common.events.PlayerDeadEvent;
 import common.events.WinEvent;
 
 public abstract class Client extends GameController {
-	
-	public static enum State {stopped, idle, gameRunning, stopping };
-	private State state = State.stopped;
 
 	public Client() {
 		this(NetworkController.LOCALHOST);
@@ -25,7 +22,7 @@ public abstract class Client extends GameController {
 	public Client(String serverAddress){
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		nwc.send(new ConnectEvent(isSpectator()));
+		send(new ConnectEvent(isSpectator()));
 	}
 
 	@Override
@@ -54,34 +51,25 @@ public abstract class Client extends GameController {
 	}
 	
 	protected void setGameStarted(){
-		state = State.gameRunning;
+		state = GameState.gameRunning;
 	}
 	
 	protected void endGame(WinEvent winEvent){
-		state = State.idle;
+		state = GameState.idle;
 	}
 	
 	protected void processPlayerDead(PlayerDeadEvent event){
-		state = State.idle;
-	}
-	
-	@Override
-	public boolean isGameRunning(){
-		return state == State.gameRunning;
+		state = GameState.idle;
 	}
 	
 	public boolean isAcceptingConnections(){
 		return false;
 	}
 	
-	public State getState(){
-		return state;
-	}
-	
 	@Override
 	public void stop(){
-		if (state != State.stopped){
-			state = State.stopping;
+		if (state != GameState.stopped){
+			state = GameState.stopping;
 			send(new DisconnectEvent());
 		} else {
 			super.stop();
@@ -89,11 +77,11 @@ public abstract class Client extends GameController {
 	}
 	
 	protected  void processConnectionAccepted() {
-		state = State.idle;
+		state = GameState.idle;
 	}
 	
 	protected void processConnectionRejected() {
-		state = State.stopped;
+		state = GameState.stopped;
 		stop();
 	}
 	

@@ -19,11 +19,6 @@ public abstract class Entity implements Serializable {
 	}
 	abstract public boolean isPassable();
 	
-	/**
-	 * @return Whether an imPassable object can be placed on top of this entity
-	 */
-	public abstract boolean isHideable();
-	
 	@Override
 	public String toString(){
 		return name.substring(0, 1);
@@ -43,5 +38,9 @@ public abstract class Entity implements Serializable {
 	
 	public void setVisible(boolean visible){
 		this.visible = visible;
+	}
+	
+	public boolean isDestructible(){
+		return true;
 	}
 }

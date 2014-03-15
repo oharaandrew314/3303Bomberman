@@ -6,21 +6,15 @@ public class Door extends Entity {
 
 	public Door() {
 		super("Door");
-		setVisible(false);
 	}
 
 	@Override
 	public boolean isPassable() {
 		return true;
 	}
-
-	@Override
-	public boolean isHideable() {
-		return true;
-	}
 	
 	@Override
-	public boolean isVisible(){
+	public boolean isDestructible(){
 		return false;
 	}
 }
