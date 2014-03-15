@@ -277,14 +277,14 @@ public class Server extends GameController implements SimulationListener {
     		if (entity instanceof Unit && !unit.equals(entity)){
     			// Kill own player
     			if (unit instanceof Player) {
-    				if(!((Player) unit).isInvulnerable()){
+    				if(((Player) unit).canBeHurtBy(entity)){
     					killPlayer((Player) unit);
     				}
     			}
     			
     			// If other unit was player, kill it
     			if (entity instanceof Player){
-    				if(!((Player) unit).isInvulnerable()){
+    				if(((Player) entity).canBeHurtBy(unit)){
     					killPlayer((Player) entity);	
     				}
     			}
@@ -356,7 +356,7 @@ public class Server extends GameController implements SimulationListener {
 					
 				// Kill any players in blast path
 				if (entity instanceof Player){
-					if(!((Player) entity).isInvulnerable() && !((Player) entity).isImmuneToBombs()){
+					if(!((Player) entity).isImmuneToBombs()){
 						killPlayer((Player) entity);
 					}
 				}

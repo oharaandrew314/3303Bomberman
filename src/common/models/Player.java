@@ -11,15 +11,11 @@ public class Player extends Unit {
 	
 	private long invulnerableTill;
 	private long immuneToBombsTill;
-	private int addedBombs;
-	private int addedBombRange;
 	
 	public Player(int playerId){
 		super("Player " + playerId);
 		this.playerId = playerId;
-		
-		addedBombs = 0;
-		addedBombRange = 0;
+
 		invulnerableTill = 0;
 		immuneToBombsTill = 0;
 		factory = new BombFactory();
@@ -40,10 +36,8 @@ public class Player extends Unit {
 	 */
 	public void addPowerup(Powerup powerup){
 		if(powerup instanceof BombPlusOnePowerup){
-			addedBombs++;
 			increaseMaxBombs();
 		} else if(powerup instanceof BombRangePowerup){
-			addedBombRange++;
 			increaseBombRange();
 		} else if(powerup instanceof MysteryPowerup){
 			invulnerableTill = System.currentTimeMillis() + ((MysteryPowerup) powerup).getDuration();
@@ -63,7 +57,7 @@ public class Player extends Unit {
 	 * @return true if player picked up a flamePass powerup, false otherwise
 	 */
 	public boolean isImmuneToBombs(){
-		return System.currentTimeMillis() < immuneToBombsTill;
+		return (System.currentTimeMillis() < immuneToBombsTill || isInvulnerable());
 	}
 	
 	public int getNumBombs(){
@@ -84,5 +78,14 @@ public class Player extends Unit {
 	
 	private void increaseBombRange(){
 		factory.increaseBlastRange();
+	}
+	
+	//If invulnerable, can't die
+	//check if player can be kill by passable entities
+	//power up, door and bomb can't hurt the player (bomb that isn't detonated)
+	public boolean canBeHurtBy(Entity e){
+		if(isInvulnerable()){
+			return false;
+		} return !((e instanceof Bomb) || (e instanceof Powerup) || (e instanceof Door));
 	}
 }
