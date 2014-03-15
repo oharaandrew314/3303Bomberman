@@ -224,11 +224,11 @@ public class Server extends GameController implements SimulationListener {
 		else if (isAcceptingConnections()){
 			if (players.size() < MAX_PLAYERS){
     			players.put(playerId, new Player(playerId));
-    		}
-			accept = true;
+    			accept = true;
+    		}		
 		}
     	
-    	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	Event response = accept ? new ConnectAcceptedEvent(playerId) : new ConnectRejectedEvent();
     	response.setPlayerID(event.getPlayerID());
     	updateView(response);
     	return response;

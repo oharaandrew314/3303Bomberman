@@ -15,8 +15,11 @@ import common.events.WinEvent;
 
 public abstract class Client extends GameController {
 
+	protected int playerId;
+	
 	public Client() {
 		this(NetworkController.LOCALHOST);
+		playerId = -1; // no Id until given by server
 	}
 	
 	public Client(String serverAddress){
@@ -31,7 +34,7 @@ public abstract class Client extends GameController {
 			processPlayerDead((PlayerDeadEvent) event);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
-			processConnectionAccepted();
+			processConnectionAccepted((ConnectAcceptedEvent) event);
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
@@ -47,6 +50,18 @@ public abstract class Client extends GameController {
 		}
 		updateView(event);
 		return null;
+	}
+	
+	@Override
+	protected void updateView(Event event){
+		if (view != null){
+			event.setPlayerID(playerId); //little hack, substitute local playerId
+			view.handleEvent(state, event);
+		}
+	}
+	
+	public int getPlayerId(){
+		return playerId;
 	}
 	
 	protected void setGameStarted(){
@@ -75,8 +90,9 @@ public abstract class Client extends GameController {
 		}
 	}
 	
-	protected  void processConnectionAccepted() {
+	protected void processConnectionAccepted(ConnectAcceptedEvent event) {
 		state = GameState.idle;
+		playerId = event.getAssignedPlayerId();
 	}
 	
 	protected void processConnectionRejected() {
