@@ -22,4 +22,8 @@ public abstract class Unit extends Entity {
 	public boolean isInvulnerable(){
 		return false;
 	}
+	
+	public boolean isImmuneToBombs(){
+		return false;
+	}
 }

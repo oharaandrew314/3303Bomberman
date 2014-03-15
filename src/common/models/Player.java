@@ -57,6 +57,7 @@ public class Player extends Unit {
 	/**
 	 * @return true if player picked up a flamePass powerup, false otherwise
 	 */
+	@Override
 	public boolean isImmuneToBombs(){
 		return (System.currentTimeMillis() < immuneToBombsTill || isInvulnerable());
 	}
