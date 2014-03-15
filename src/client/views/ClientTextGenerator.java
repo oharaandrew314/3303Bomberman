@@ -1,11 +1,21 @@
 package client.views;
 
+import common.controllers.GameController.GameState;
 import common.models.Player;
 import common.views.TextGenerator;
 
 public class ClientTextGenerator implements TextGenerator {
 
-	private int playerId;
+	private int playerId = -1;
+	
+	@Override
+	public String getTitle(GameState state) {
+		String title = String.format("Bomberman - %s", state);
+		if (playerId != -1){
+			title += ": Player " + playerId;
+		}
+		return title;
+	}
 
 	@Override
 	public String getPlayerDead(Player player) {
@@ -45,5 +55,4 @@ public class ClientTextGenerator implements TextGenerator {
 		}
 		return String.format("Player %d has disconnected.", playerId);
 	}
-
 }

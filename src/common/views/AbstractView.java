@@ -4,6 +4,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import common.controllers.GameController.GameState;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
@@ -22,7 +23,7 @@ public abstract class AbstractView extends WindowAdapter {
 		this.textGen = textGen;
 	}
 	
-	public void handleEvent(Event event){
+	public void handleEvent(GameState state, Event event){
 		String message = null;
 		
 		if (event instanceof ViewUpdateEvent){
@@ -54,6 +55,7 @@ public abstract class AbstractView extends WindowAdapter {
 		if (message != null){
 			displayMessage(message);
 		}
+		setTitle(textGen.getTitle(state));
 	}
 	
 	@Override
@@ -65,4 +67,5 @@ public abstract class AbstractView extends WindowAdapter {
 	public abstract void displayGrid(Grid grid);
 	public abstract void close();
 	public abstract void addKeyListener(KeyListener l);
+	protected abstract void setTitle(String string);
 }

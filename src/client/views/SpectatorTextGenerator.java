@@ -1,9 +1,15 @@
 package client.views;
 
+import common.controllers.GameController.GameState;
 import common.models.Player;
 import common.views.TextGenerator;
 
 public class SpectatorTextGenerator implements TextGenerator{
+	
+	@Override
+	public String getTitle(GameState state) {
+		return String.format("Bomberman (Spectator) - %s", state);
+	}
 
 	@Override
 	public String getPlayerDead(Player player) {
@@ -34,5 +40,4 @@ public class SpectatorTextGenerator implements TextGenerator{
 	public String getPlayerDisconnected(int playerId) {
 		return String.format("Player %d has disconnected.", playerId);
 	}
-
 }
