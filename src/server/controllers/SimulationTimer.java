@@ -26,16 +26,15 @@ public class SimulationTimer {
 		}
 	}
 	
-	public synchronized void start(){
+	public void start(){
 		timer = new Timer();
 		timer.scheduleAtFixedRate(
 			new TimerTask() {
 				@Override
 				public void run() {
-					synchronized(listeners){
-						for (SimulationListener l : listeners){
-							l.simulationUpdate();
-						}
+					
+					for (SimulationListener l : getListeners()){
+						l.simulationUpdate();
 					}
 				}
 			},
@@ -44,14 +43,25 @@ public class SimulationTimer {
 		);
 	}
 	
-	public synchronized void stop(){
+	public void stop(){
 		if (timer != null){
 			timer.cancel();
 		}
-		synchronized(listeners){
-			for (SimulationListener l : listeners){
-				l.onTimerReset();
-			}
+		for (SimulationListener l : getListeners()){
+			l.onTimerReset();
 		}
+	}
+	
+	/**
+	 * Make copy of listeners to give up lock quickly
+	 * @return copy of current SimulationListeners
+	 */
+	private List<SimulationListener> getListeners(){
+		List<SimulationListener> copy;
+		synchronized(listeners){
+			copy = new ArrayList<>(listeners);
+		}
+		return copy;
+		
 	}
 }
