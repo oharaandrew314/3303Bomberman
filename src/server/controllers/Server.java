@@ -252,8 +252,8 @@ public class Server extends GameController implements SimulationListener {
     }
     
     public synchronized void move(Unit unit, int dx, int dy){
-    	// Do nothing if game is not running
-    	if (!isGameRunning()){
+    	// Do nothing if game is not running or player does not exist
+    	if (!isGameRunning() || !grid.contains(unit)){
     		return;
     	}
     	
