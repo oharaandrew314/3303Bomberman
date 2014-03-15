@@ -277,12 +277,16 @@ public class Server extends GameController implements SimulationListener {
     		if (entity instanceof Unit && !unit.equals(entity)){
     			// Kill own player
     			if (unit instanceof Player) {
-    				killPlayer((Player) unit);
+    				if(!((Player) unit).isInvulnerable()){
+    					killPlayer((Player) unit);
+    				}
     			}
     			
     			// If other unit was player, kill it
     			if (entity instanceof Player){
-    				killPlayer((Player) entity);	
+    				if(!((Player) unit).isInvulnerable()){
+    					killPlayer((Player) entity);	
+    				}
     			}
     		}
     	}
