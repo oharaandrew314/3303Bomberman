@@ -16,6 +16,10 @@ public abstract class Unit extends Entity {
 	}
 	
 	public boolean canBeHurtBy(Entity e){
+		return (e instanceof Unit && !isInvulnerable());
+	}
+	
+	public boolean isInvulnerable(){
 		return false;
 	}
 }

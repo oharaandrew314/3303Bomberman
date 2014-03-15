@@ -49,6 +49,7 @@ public class Player extends Unit {
 	/**
 	 * @return true if currentTime is less than the time when Invulnerability ends
 	 */
+	@Override
 	public boolean isInvulnerable(){
 		return System.currentTimeMillis() < invulnerableTill;
 	}
@@ -78,15 +79,5 @@ public class Player extends Unit {
 	
 	private void increaseBombRange(){
 		factory.increaseBlastRange();
-	}
-	
-	/**
-	 * if a the entity is a unit, and the player isn't invulnerable, they can be hurt
-	 * @param e
-	 * @return
-	 */
-	@Override
-	public boolean canBeHurtBy(Entity e){
-		return (e instanceof Unit && !isInvulnerable());
 	}
 }
