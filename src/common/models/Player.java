@@ -1,34 +1,27 @@
 package common.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
-	public static final long INVULNERABLE_TIME = 1000*10;
-	private final int START_NUM_BOMBS = 1;
 	protected final BombFactory factory;
 	public final int playerId;
 	
 	@SuppressWarnings("unused")
 	private int numBombs; // no bombs in milestone 1
 	
-	private List<Powerup> powerups;
 	private long invulnerableTill;
+	private long immuneToBombsTill;
 	private int addedBombs;
 	private int addedBombRange;
-	private boolean immuneToBombs;
 	
 	public Player(int playerId){
 		super("Player " + playerId);
 		this.playerId = playerId;
 		
-		powerups = new ArrayList<Powerup>(); //just to keep track of powerups (not really needed)
 		addedBombs = 0;
 		addedBombRange = 0;
 		invulnerableTill = 0;
-		immuneToBombs = false;
+		immuneToBombsTill = 0;
 		factory = new BombFactory();
 	}
 	
@@ -46,7 +39,6 @@ public class Player extends Unit {
 	 * @param powerup - powerup picked up by the player
 	 */
 	public void addPowerup(Powerup powerup){
-		powerups.add(powerup);
 		if(powerup instanceof BombPlusOnePowerup){
 			addedBombs++;
 			increaseMaxBombs();
@@ -54,24 +46,10 @@ public class Player extends Unit {
 			addedBombRange++;
 			increaseBombRange();
 		} else if(powerup instanceof MysteryPowerup){
-			invulnerableTill = System.currentTimeMillis() + INVULNERABLE_TIME;
+			invulnerableTill = System.currentTimeMillis() + ((MysteryPowerup) powerup).getDuration();
 		} else if(powerup instanceof FlamePassPowerup){
-			immuneToBombs = true;
+			immuneToBombsTill = System.currentTimeMillis() + ((FlamePassPowerup) powerup).getDuration();
 		}
-	}
-	
-	/**
-	 * @return the number of BombRange powerups picked up
-	 */
-	public int getAddedBombRange(){
-		return addedBombRange;
-	}
-	
-	/**
-	 * @return the number of BombPlusOnePowerups picked up
-	 */
-	public int getAddedBombs(){
-		return addedBombs;
 	}
 	
 	/**
@@ -85,7 +63,7 @@ public class Player extends Unit {
 	 * @return true if player picked up a flamePass powerup, false otherwise
 	 */
 	public boolean isImmuneToBombs(){
-		return immuneToBombs;
+		return System.currentTimeMillis() < immuneToBombsTill;
 	}
 	
 	public int getNumBombs(){
@@ -104,7 +82,7 @@ public class Player extends Unit {
 		factory.increaseMaxBombs();
 	}
 	
-	public void increaseBombRange(){
+	private void increaseBombRange(){
 		factory.increaseBlastRange();
 	}
 }

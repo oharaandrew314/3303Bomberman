@@ -62,37 +62,50 @@ public class TestPowerups {
 	public void testPickUpPowerup(){
 		placePowerup(new BombPlusOnePowerup(), new Point(1,0));
 		placePowerup(new BombRangePowerup(), new Point(2,0));
-		placePowerup(new FlamePassPowerup(), new Point(3,0));
+		placePowerup(new FlamePassPowerup(10000), new Point(3,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
-		assertEquals(1, player.getAddedBombs());
 		assertEquals(2, player.getNumBombs());
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
-		assertEquals(1, player.getAddedBombRange());
 		assertEquals(2, player.getBombRange());
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isImmuneToBombs());
-		placePowerup(new MysteryPowerup(), new Point(2,0));
+		placePowerup(new MysteryPowerup(10000), new Point(2,0));
 		client.pressKeyAndWait(KeyEvent.VK_LEFT);
 		assertTrue(player.isInvulnerable());
 	}
 	
 	@Test
 	public void testInvulerabilityTimeout(){
-		placePowerup(new MysteryPowerup(), new Point(1,0));
+		MysteryPowerup invulnerability = new MysteryPowerup(5000);
+		placePowerup(invulnerability, new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isInvulnerable());
 		// Wait for bomb to detonate
 		try {
-			Thread.sleep((long) (Player.INVULNERABLE_TIME + 1));
+			Thread.sleep((long) (invulnerability.getDuration() + 1));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		assertFalse(player.isInvulnerable());
 	}
 	
+	@Test 
+	public void testFlamePassTimeout(){
+		FlamePassPowerup flamePass = new FlamePassPowerup(5000);
+		placePowerup(flamePass, new Point(1,0));
+		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
+		assertTrue(player.isImmuneToBombs());
+		try{
+			Thread.sleep(flamePass.getDuration() + 1);
+		} catch (InterruptedException e){
+			e.printStackTrace();
+		}
+		assertFalse(player.isImmuneToBombs());
+	}
+	
 	@Test
 	public void testBombImmunity(){
-		placePowerup(new FlamePassPowerup(), new Point(1,0));
+		placePowerup(new FlamePassPowerup(5000), new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isImmuneToBombs());
 		Bomb bomb = server.dropBombBy(player);
@@ -111,7 +124,7 @@ public class TestPowerups {
 	
 	@Test
 	public void testInvulnerability(){
-		placePowerup(new MysteryPowerup(), new Point(1,0));
+		placePowerup(new MysteryPowerup(5000), new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isInvulnerable());
 		Bomb bomb = server.dropBombBy(player);

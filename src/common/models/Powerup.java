@@ -17,9 +17,4 @@ public class Powerup extends Entity{
 		return true;
 	}
 
-	@Override
-	public boolean isHideable() {
-		return true;
-	}
-
 }

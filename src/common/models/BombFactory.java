@@ -6,13 +6,13 @@ import java.nio.BufferUnderflowException;
 public class BombFactory implements Serializable {
 	
 	private static final long serialVersionUID = -5483632574557742377L;
-	public static final int INIT_MAX_BOMBS = 1, INIT_BOMB_DETONATION_RANGE = 1;
+	public static final int INIT_MAX_BOMBS = 1;
 	private int numBombs;
 	private int blastRange;
 
 	public BombFactory() {
 		numBombs = INIT_MAX_BOMBS;
-		blastRange = INIT_BOMB_DETONATION_RANGE;
+		blastRange = Bomb.INIT_RANGE;
 	}
 	
 	public synchronized Bomb createBomb(){

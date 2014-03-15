@@ -298,13 +298,15 @@ public class Server extends GameController implements SimulationListener {
     	}
     	
     	//check if player picks up a powerup
-    	for(Entity entity : grid.get(dest)){
-    		if(entity instanceof Powerup){
-    			//handle powerups
-    			player.addPowerup((Powerup)entity);
-    			grid.remove(entity);
-    		}
-    	}
+    	if(unit instanceof Player){
+    		for(Entity entity : grid.get(dest)){
+        		if(entity instanceof Powerup){
+        			//handle powerups
+        			((Player) unit).addPowerup((Powerup)entity);
+        			grid.remove(entity);
+        		}
+        	}
+    	}  	
     }
     
     // Callback methods
