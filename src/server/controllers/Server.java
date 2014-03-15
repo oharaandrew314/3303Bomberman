@@ -144,13 +144,26 @@ public class Server extends GameController implements SimulationListener {
 	@Override
     public void onTimerReset(){}
 	
-	private synchronized void killPlayer(Player player){
+/*	private synchronized void killPlayer(Player player){
     	if (player == null){
     		throw new IllegalArgumentException("Player cannot be null.");
     	}
     	players.remove(player.playerId);
 		send(new PlayerDeadEvent(player));
 		grid.remove(player);
+    }*/
+	
+	private synchronized void killUnit(Unit unit){
+    	if (unit == null){
+    		throw new IllegalArgumentException("Player cannot be null.");
+    	}
+    	if(unit instanceof Player){
+    		players.remove(((Player) unit).playerId);
+    		send(new PlayerDeadEvent((Player) unit));
+    	} else{
+    		aiScheduler.removeEnemy((Enemy) unit);
+    	}
+    	grid.remove(unit);
     }
 	
 	// Event Methods
@@ -270,16 +283,15 @@ public class Server extends GameController implements SimulationListener {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Unit && !unit.equals(entity)){
     			// Kill own player
-    			if (unit instanceof Player) {
-    				if(unit.canBeHurtBy(entity)){
-    					killPlayer((Player) unit);
-    				}
+    			if(unit.canBeHurtBy(entity)){
+    				killUnit(unit);
     			}
     			
+    			
     			// If other unit was player, kill it
-    			if (entity instanceof Player){
-    				if(((Player) entity).canBeHurtBy(unit)){
-    					killPlayer((Player) entity);	
+    			if (entity instanceof Unit){
+    				if(((Unit) entity).canBeHurtBy(unit)){
+    					killUnit((Unit) entity);	
     				}
     			}
     		}
@@ -349,20 +361,15 @@ public class Server extends GameController implements SimulationListener {
 			for (Entity entity : grid.get(p)){
 					
 				// Kill any players in blast path
-				if (entity instanceof Player){
-					if(!((Player) entity).isImmuneToBombs()){
-						killPlayer((Player) entity);
+				if (entity instanceof Unit){
+					if(!((Unit) entity).isImmuneToBombs()){
+						killUnit((Unit) entity);
 					}
 				}
 				
 				// Detonate any bombs in blast path
 				else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
 					detonateBomb((Bomb)entity);
-				}
-				
-				else if (entity instanceof Enemy){
-					aiScheduler.removeEnemy((Enemy) entity);
-					grid.remove(entity);
 				}
 				
 				// Remove any other destructible entities in blast path
