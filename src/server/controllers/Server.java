@@ -37,10 +37,8 @@ import common.models.Enemy;
 public class Server extends GameController implements SimulationListener {
 	
 	public static final int MAX_PLAYERS = 4;
-	public static enum State { stopped, idle, newGame, gameRunning, error };
 	
 	protected Map<Integer, Player> players;
-	private State state = State.stopped;
 	private final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
@@ -54,33 +52,28 @@ public class Server extends GameController implements SimulationListener {
 		timer.addListener(bombScheduler = new BombScheduler(this));
 		timer.addListener(aiScheduler = new AIScheduler(this));
 		
-		state = State.idle;
+		state = GameState.idle;
 		
 		try {
 			nwc.startListeningOnServerPort();
 			
 		} catch (SocketException e) {
 			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-			state = State.error;
+			state = GameState.error;
 		}
 	}
 	
 	// Accessors
 	
 	@Override
-	public boolean isGameRunning() {
-		return state == State.gameRunning;
-	}
-	
-	@Override
 	public boolean isAcceptingConnections(){
-		return state == State.newGame || state == State.idle;
+		return state == GameState.newGame || state == GameState.idle;
 	}
 	
 	// State Methods
 	
 	public synchronized void newGame(Grid grid){
-		if (state == State.idle && grid != null){
+		if (state == GameState.idle && grid != null){
 			this.grid = grid;
 			
 			// register enemies
@@ -92,7 +85,7 @@ public class Server extends GameController implements SimulationListener {
 				}
 			}
 			
-			state = State.newGame;
+			state = GameState.newGame;
 			updateView(new ViewUpdateEvent(grid));
 		} else {
 			System.err.println("Could not create new game.");
@@ -100,7 +93,7 @@ public class Server extends GameController implements SimulationListener {
 	}
 	
 	private void startGame(){
-		if (state == State.newGame){
+		if (state == GameState.newGame){
 			// Place players
 			List<Point> points = new ArrayList<>(grid.keySet());
 			Random r = new Random();
@@ -112,7 +105,7 @@ public class Server extends GameController implements SimulationListener {
 				}
 			}
 			
-			state = State.gameRunning;
+			state = GameState.gameRunning;
 			send(new GameStartEvent());
 			timer.start();
 		} else {
@@ -121,9 +114,9 @@ public class Server extends GameController implements SimulationListener {
 	}
 	
 	public synchronized void endGame(){
-		if (state == State.gameRunning){
+		if (state == GameState.gameRunning){
 			timer.stop();
-			state = State.idle;
+			state = GameState.idle;
 			grid = null;
 		} else {
 			System.err.println("Could not end game; no game running");
@@ -135,7 +128,7 @@ public class Server extends GameController implements SimulationListener {
 			endGame();
 		}
 		super.stop();
-		state = State.stopped;
+		state = GameState.stopped;
 	}
 	
 	// Other methods
