@@ -14,4 +14,9 @@ public abstract class Unit extends Entity {
 		// they just die when they do.
 		return true;
 	}
+	
+	@Override
+	public boolean isHideable() {
+		return false;
+	}
 }
