@@ -135,7 +135,7 @@ public class Server extends GameController implements SimulationListener {
 	// Other methods
 	
 	@Override
-	public synchronized void simulationUpdate(){
+	public synchronized void simulationUpdate(long now){
 		if (isGameRunning()){
 			send(new ViewUpdateEvent(grid));
 		}

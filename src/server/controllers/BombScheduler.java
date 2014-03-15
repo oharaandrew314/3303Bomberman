@@ -25,9 +25,8 @@ public class BombScheduler implements SimulationListener {
 	}
 	
 	@Override
-	public synchronized void simulationUpdate(){
+	public synchronized void simulationUpdate(long now){
 		// Detonate bombs ready for detonation
-		long now = System.currentTimeMillis();
 		ArrayList<Bomb> toRemove = new ArrayList<>();
 		
 		for (Entry<Bomb, Long> entry : bombs.entrySet()){

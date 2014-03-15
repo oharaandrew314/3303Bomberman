@@ -34,9 +34,9 @@ public class AIScheduler implements SimulationListener {
 	}
 	
 	@Override
-	public synchronized void simulationUpdate() {
+	public synchronized void simulationUpdate(long now) {
 		for (Enemy enemy : enemies.keySet()){
-			if (System.currentTimeMillis() - enemies.get(enemy) > ENEMY_MOVE_FREQ){
+			if (now - enemies.get(enemy) > ENEMY_MOVE_FREQ){
 				
 				Point translation;
 				Point currentLocation = getCurrentLocation(enemy);

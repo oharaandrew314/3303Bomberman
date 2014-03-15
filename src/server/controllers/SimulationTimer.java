@@ -32,9 +32,9 @@ public class SimulationTimer {
 			new TimerTask() {
 				@Override
 				public void run() {
-					
+					long now = System.currentTimeMillis();
 					for (SimulationListener l : getListeners()){
-						l.simulationUpdate();
+						l.simulationUpdate(now);
 					}
 				}
 			},
