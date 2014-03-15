@@ -30,7 +30,9 @@ public class NetworkController {
     private DatagramSocket socket;
     private ListenThread listener;
     protected Map<Integer, InetSocketAddress> peers;
-    private Semaphore busySem = new Semaphore(1);
+    
+    private boolean busy = false;
+    private Object busyLock = new Object();
     
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
@@ -54,10 +56,11 @@ public class NetworkController {
      * Allows the GameController to specify if network events should currently be handled.
      */
     public void setBusy(boolean busy) {
-    	if (busy) {
-    		busySem.acquireUninterruptibly();
-    	} else {
-    		busySem.release();
+    	this.busy = busy;
+    	if (!busy) {
+    		synchronized(busyLock) {
+    			busyLock.notify();
+    		}
     	}
     }
     
@@ -65,8 +68,15 @@ public class NetworkController {
      * Wait until the game controller is not busy and can process incoming events.
      */
     private void waitUntilReady() {
-    	busySem.acquireUninterruptibly();
-    	busySem.release();
+    	synchronized(busyLock) {
+	    	while (busy) {
+	    		try {
+					busyLock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+	    	}
+    	}
     }
     
     /**
