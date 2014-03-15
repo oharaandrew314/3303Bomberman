@@ -4,7 +4,11 @@ package client.controllers;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+<<<<<<< HEAD
 import common.events.Event;
+=======
+import common.events.ConnectAcceptedEvent;
+>>>>>>> dev
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.PlayerDeadEvent;
@@ -20,9 +24,14 @@ public class TestRunner extends Client implements Runnable{
 	}
 
 	@Override
+<<<<<<< HEAD
 	protected void processConnectionAccepted() {
 		super.processConnectionAccepted();
+=======
+	protected void processConnectionAccepted(ConnectAcceptedEvent event) {
+>>>>>>> dev
 		connected = true;
+		playerId = event.getAssignedPlayerId();
 	}
 
 	

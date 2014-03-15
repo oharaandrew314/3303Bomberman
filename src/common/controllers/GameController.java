@@ -13,7 +13,7 @@ public abstract class GameController extends Observable{
 	};
 	
 	protected final NetworkController nwc;
-	private AbstractView view;
+	protected AbstractView view;
 	protected Grid grid;
 	protected GameState state = GameState.stopped;
 

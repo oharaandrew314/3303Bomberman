@@ -31,6 +31,7 @@ import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Player;
+import common.models.Powerup;
 import common.models.Unit;
 import common.models.Enemy;
 
@@ -143,13 +144,17 @@ public class Server extends GameController implements SimulationListener {
 	@Override
     public void onTimerReset(){}
 	
-	private synchronized void killPlayer(Player player){
-    	if (player == null){
+	private synchronized void killUnit(Unit unit){
+    	if (unit == null){
     		throw new IllegalArgumentException("Player cannot be null.");
     	}
-    	players.remove(player.playerId);
-		send(new PlayerDeadEvent(player));
-		grid.remove(player);
+    	if(unit instanceof Player){
+    		players.remove(((Player) unit).playerId);
+    		send(new PlayerDeadEvent((Player) unit));
+    	} else{
+    		aiScheduler.removeEnemy((Enemy) unit);
+    	}
+    	grid.remove(unit);
     }
 	
 	// Event Methods
@@ -225,11 +230,11 @@ public class Server extends GameController implements SimulationListener {
 		else if (isAcceptingConnections()){
 			if (players.size() < MAX_PLAYERS){
     			players.put(playerId, new Player(playerId));
-    		}
-			accept = true;
+    			accept = true;
+    		}		
 		}
     	
-    	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	Event response = accept ? new ConnectAcceptedEvent(playerId) : new ConnectRejectedEvent();
     	response.setPlayerID(event.getPlayerID());
     	updateView(response);
     	return response;
@@ -270,16 +275,30 @@ public class Server extends GameController implements SimulationListener {
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Unit && !unit.equals(entity)){
     			// Kill own player
-    			if (unit instanceof Player) {
-    				killPlayer((Player) unit);
+    			if(unit.canBeHurtBy(entity)){
+    				killUnit(unit);
     			}
     			
+    			
     			// If other unit was player, kill it
-    			if (entity instanceof Player){
-    				killPlayer((Player) entity);	
+    			if (entity instanceof Unit){
+    				if(((Unit) entity).canBeHurtBy(unit)){
+    					killUnit((Unit) entity);	
+    				}
     			}
     		}
     	}
+    	
+    	//check if player picks up a powerup
+    	if(unit instanceof Player){
+    		for(Entity entity : grid.get(dest)){
+        		if(entity instanceof Powerup){
+        			//handle powerups
+        			((Player) unit).addPowerup((Powerup)entity);
+        			grid.remove(entity);
+        		}
+        	}
+    	} 
     	
     	// Check if player wins and notify views
     	if (unit instanceof Player){
@@ -289,7 +308,7 @@ public class Server extends GameController implements SimulationListener {
 	    			endGame();
 	    		}
 	    	}
-    	}
+    	} 	
     }
     
     // Callback methods
@@ -342,18 +361,15 @@ public class Server extends GameController implements SimulationListener {
 			for (Entity entity : grid.get(p)){
 					
 				// Kill any players in blast path
-				if (entity instanceof Player){
-					killPlayer((Player) entity);
+				if (entity instanceof Unit){
+					if(!((Unit) entity).isImmuneToBombs()){
+						killUnit((Unit) entity);
+					}
 				}
 				
 				// Detonate any bombs in blast path
 				else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
 					detonateBomb((Bomb)entity);
-				}
-				
-				else if (entity instanceof Enemy){
-					aiScheduler.removeEnemy((Enemy) entity);
-					grid.remove(entity);
 				}
 				
 				// Remove any other destructible entities in blast path
