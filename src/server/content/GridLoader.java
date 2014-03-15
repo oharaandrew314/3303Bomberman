@@ -123,10 +123,10 @@ public class GridLoader {
 				case "wall": return new Wall();
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
-				case "bombrange": return new BombRangePowerup("R");
-				case "flamepass": return new FlamePassPowerup("F");
-				case "mystery": return new MysteryPowerup("M");
-				case "bombplus": return new BombPlusOnePowerup("B");
+				case "bombrange": return new BombRangePowerup();
+				case "flamepass": return new FlamePassPowerup();
+				case "mystery": return new MysteryPowerup();
+				case "bombplus": return new BombPlusOnePowerup();
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"
 				);

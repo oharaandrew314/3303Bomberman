@@ -1,20 +1,14 @@
 package common.models;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
-=======
->>>>>>> dev
 
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
-<<<<<<< HEAD
-	private static final long INVULNERABLE_TIME = 1000*10;
+	public static final long INVULNERABLE_TIME = 1000*10;
 	private final int START_NUM_BOMBS = 1;
-=======
 	protected final BombFactory factory;
->>>>>>> dev
 	public final int playerId;
 	
 	@SuppressWarnings("unused")
@@ -29,16 +23,13 @@ public class Player extends Unit {
 	public Player(int playerId){
 		super("Player " + playerId);
 		this.playerId = playerId;
-<<<<<<< HEAD
 		
 		powerups = new ArrayList<Powerup>(); //just to keep track of powerups (not really needed)
 		addedBombs = 0;
 		addedBombRange = 0;
 		invulnerableTill = 0;
 		immuneToBombs = false;
-=======
 		factory = new BombFactory();
->>>>>>> dev
 	}
 	
 	public Bomb getNextBomb(){
@@ -55,7 +46,6 @@ public class Player extends Unit {
 		return String.valueOf(playerId);
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Add the powerups to the players list of powerups and change the players properties accordingly
 	 * @param powerup - powerup picked up by the player
@@ -64,8 +54,10 @@ public class Player extends Unit {
 		powerups.add(powerup);
 		if(powerup instanceof BombPlusOnePowerup){
 			addedBombs++;
+			increaseMaxBombs();
 		} else if(powerup instanceof BombRangePowerup){
 			addedBombRange++;
+			increaseBombRange();
 		} else if(powerup instanceof MysteryPowerup){
 			invulnerableTill = System.currentTimeMillis() + INVULNERABLE_TIME;
 		} else if(powerup instanceof FlamePassPowerup){
@@ -101,10 +93,12 @@ public class Player extends Unit {
 		return immuneToBombs;
 	}
 	
-	
-=======
 	public int getNumBombs(){
 		return factory.getNumBombs();
+	}
+	
+	public int getBombRange(){
+		return factory.getBlastRange();
 	}
 	
 	public boolean hasBombs(){
@@ -114,5 +108,8 @@ public class Player extends Unit {
 	public void increaseMaxBombs(){
 		factory.increaseMaxBombs();
 	}
->>>>>>> dev
+	
+	public void increaseBombRange(){
+		factory.increaseBlastRange();
+	}
 }

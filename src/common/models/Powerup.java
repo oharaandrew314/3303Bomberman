@@ -7,6 +7,10 @@ public class Powerup extends Entity{
 	public Powerup(String name) {
 		super(name);
 	}
+	
+	public Powerup(){
+		super("P");
+	}
 
 	@Override
 	public boolean isPassable() {

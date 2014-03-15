@@ -286,6 +286,7 @@ public class Server extends GameController implements SimulationListener {
     		if(entity instanceof Powerup){
     			//handle powerups
     			player.addPowerup((Powerup)entity);
+    			grid.remove(entity);
     		}
     	}
     }
@@ -310,7 +311,9 @@ public class Server extends GameController implements SimulationListener {
 					
 				// Kill any players in blast path
 				if (entity instanceof Player){
-					killPlayer((Player) entity);
+					if(!((Player) entity).isInvulnerable() && !((Player) entity).isImmuneToBombs()){
+						killPlayer((Player) entity);
+					}
 				}
 				
 				// Detonate any bombs in blast path

@@ -19,47 +19,47 @@ public class TestPlayer {
 	
 	@Test
 	public void testBombPlusOnePowerup(){
-		p.addPowerup(new BombPlusOnePowerup("B"));
+		p.addPowerup(new BombPlusOnePowerup());
 		assertEquals(1, p.getAddedBombs());
 	}
 	
 	@Test
 	public void testMultipleBombCapacityPowerup(){
-		p.addPowerup(new BombPlusOnePowerup("B"));
+		p.addPowerup(new BombPlusOnePowerup());
 		assertEquals(1, p.getAddedBombs());
-		p.addPowerup(new BombPlusOnePowerup("B"));
+		p.addPowerup(new BombPlusOnePowerup());
 		assertEquals(2, p.getAddedBombs());
 	}
 	
 	@Test
 	public void testBombRangePowerup(){
-		p.addPowerup(new BombRangePowerup("R"));
+		p.addPowerup(new BombRangePowerup());
 		assertEquals(1, p.getAddedBombRange());
 	}
 	
 	@Test
 	public void testMultipleBombRangePowerup(){
-		p.addPowerup(new BombRangePowerup("R"));
+		p.addPowerup(new BombRangePowerup());
 		assertEquals(1, p.getAddedBombRange());
-		p.addPowerup(new BombRangePowerup("R"));
+		p.addPowerup(new BombRangePowerup());
 		assertEquals(2, p.getAddedBombRange());
 	}
 	
 	@Test
 	public void testBombImmunity(){
-		p.addPowerup(new FlamePassPowerup("F"));
+		p.addPowerup(new FlamePassPowerup());
 		assertTrue(p.isImmuneToBombs());
 	}
 	
 	@Test
 	public void testInvulnerability(){
-		p.addPowerup(new MysteryPowerup("M"));
+		p.addPowerup(new MysteryPowerup());
 		assertTrue(p.isInvulnerable());
 	}
 	
 	@Test
 	public void testInvulnerabilityTimeOut(){
-		p.addPowerup(new MysteryPowerup("M"));
+		p.addPowerup(new MysteryPowerup());
 		long currentTime = System.currentTimeMillis();
 		long endTime = currentTime + (1000*10);
 		while(currentTime < endTime){
@@ -70,7 +70,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testInvulnerabilityAfter5Seconds(){
-		p.addPowerup(new MysteryPowerup("M"));
+		p.addPowerup(new MysteryPowerup());
 		long currentTime = System.currentTimeMillis();
 		long endTime = currentTime + (1000*5);
 		while(currentTime < endTime){
