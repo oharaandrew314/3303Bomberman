@@ -144,15 +144,6 @@ public class Server extends GameController implements SimulationListener {
 	@Override
     public void onTimerReset(){}
 	
-/*	private synchronized void killPlayer(Player player){
-    	if (player == null){
-    		throw new IllegalArgumentException("Player cannot be null.");
-    	}
-    	players.remove(player.playerId);
-		send(new PlayerDeadEvent(player));
-		grid.remove(player);
-    }*/
-	
 	private synchronized void killUnit(Unit unit){
     	if (unit == null){
     		throw new IllegalArgumentException("Player cannot be null.");
