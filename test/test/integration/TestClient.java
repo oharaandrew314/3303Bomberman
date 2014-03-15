@@ -11,8 +11,7 @@ import org.junit.Test;
 
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
-import client.controllers.Client.State;
-
+import common.controllers.GameController.GameState;
 import common.events.ConnectRejectedEvent;
 
 public class TestClient {
@@ -36,7 +35,7 @@ public class TestClient {
 
 	@Test
 	public void testConnect() {
-		assertEquals(State.idle, client.getState());
+		assertEquals(GameState.idle, client.getState());
 		assertEquals(1, server.getPlayers().size());
 	}
 	
@@ -44,7 +43,7 @@ public class TestClient {
 	public void testDisconnect(){
 		client.stop();
 		client.waitFor(ConnectRejectedEvent.class);
-		assertEquals(State.stopped, client.getState());
+		assertEquals(GameState.stopped, client.getState());
 		assertEquals(0, server.getPlayers().size());
 	}
 	
@@ -52,7 +51,7 @@ public class TestClient {
 	public void testDisconnectByKey(){
 		client.pressKey(KeyEvent.VK_ESCAPE);
 		client.waitFor(ConnectRejectedEvent.class);
-		assertEquals(State.stopped, client.getState());
+		assertEquals(GameState.stopped, client.getState());
 		assertEquals(0, server.getPlayers().size());
 	}
 	
@@ -79,7 +78,7 @@ public class TestClient {
 		
 		client2.stop();
 		client2.waitFor(ConnectRejectedEvent.class);
-		assertEquals(State.idle, client.getState());
+		assertEquals(GameState.idle, client.getState());
 		assertEquals(1, server.getPlayers().size());
 		
 		testDisconnect();

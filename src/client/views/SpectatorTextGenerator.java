@@ -1,13 +1,14 @@
 package client.views;
 
+import common.controllers.GameController.GameState;
 import common.models.Player;
 import common.views.TextGenerator;
 
 public class SpectatorTextGenerator implements TextGenerator{
 	
 	@Override
-	public String getTitle() {
-		return "Spectator";
+	public String getTitle(GameState state) {
+		return String.format("Bomberman (Spectator) - %s", state);
 	}
 
 	@Override

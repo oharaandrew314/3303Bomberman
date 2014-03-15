@@ -1,5 +1,6 @@
 package client.views;
 
+import common.controllers.GameController.GameState;
 import common.models.Player;
 import common.views.TextGenerator;
 
@@ -8,8 +9,8 @@ public class ClientTextGenerator implements TextGenerator {
 	private int playerId = -1;
 	
 	@Override
-	public String getTitle() {
-		String title = "Bomberman";
+	public String getTitle(GameState state) {
+		String title = String.format("Bomberman - %s", state);
 		if (playerId != -1){
 			title += ": Player " + playerId;
 		}

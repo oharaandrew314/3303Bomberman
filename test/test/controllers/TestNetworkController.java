@@ -57,11 +57,6 @@ public class TestNetworkController extends GameController {
     }
     
     @Override
-	public boolean isGameRunning() {
-		return true;
-	}
-    
-    @Override
 	public boolean isAcceptingConnections() {
 		return isAcceptingConnections;
 	}
