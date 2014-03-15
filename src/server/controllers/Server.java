@@ -2,6 +2,7 @@ package server.controllers;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import common.controllers.GameController;
+import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -32,7 +36,7 @@ import common.models.Unit;
 public class Server extends GameController implements SimulationListener {
 	
 	public static final int MAX_PLAYERS = 4;
-	public static enum State { stopped, idle, newGame, gameRunning };
+	public static enum State { stopped, idle, newGame, gameRunning, error };
 	
 	protected Map<Integer, Player> players;
 	private State state = State.stopped;
@@ -42,14 +46,20 @@ public class Server extends GameController implements SimulationListener {
 	public Server(){
 		players = new HashMap<>();
 		addObserver(new TestLogger());
-		
-		nwc.startListeningOnServerPort();
-		
+		 	
 		timer = new SimulationTimer();
 		timer.addListener(this);
 		timer.addListener(bombScheduler = new BombScheduler(this));
 		
 		state = State.idle;
+		
+		try {
+			nwc.startListeningOnServerPort();
+			
+		} catch (SocketException e) {
+			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
+			state = State.error;
+		}
 	}
 	
 	// Accessors
