@@ -20,7 +20,7 @@ public class BombScheduler implements SimulationListener {
 	public synchronized void scheduleBomb(Bomb bomb){
 		bombs.put(
 			bomb,
-			System.currentTimeMillis() + Bomb.FUSE_TIME
+			SimulationTimer.currentTimeMillis() + Bomb.FUSE_TIME
 		);
 	}
 	

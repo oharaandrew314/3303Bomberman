@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import server.controllers.SimulationTimer;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
 import common.models.Bomb;
@@ -80,12 +81,9 @@ public class TestPowerups {
 		placePowerup(invulnerability, new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isInvulnerable());
-		// Wait for bomb to detonate
-		try {
-			Thread.sleep((long) (invulnerability.getDuration() + 1));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		// Wait for invulnerability to expire
+		SimulationTimer.setTimeMultiplier(10);
+		while(player.isInvulnerable());
 		assertFalse(player.isInvulnerable());
 	}
 	
@@ -95,11 +93,10 @@ public class TestPowerups {
 		placePowerup(flamePass, new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isImmuneToBombs());
-		try{
-			Thread.sleep(flamePass.getDuration() + 1);
-		} catch (InterruptedException e){
-			e.printStackTrace();
-		}
+
+		// wait for flamepass to expire
+		SimulationTimer.setTimeMultiplier(10);
+		while(player.isImmuneToBombs());
 		assertFalse(player.isImmuneToBombs());
 	}
 	
@@ -112,11 +109,8 @@ public class TestPowerups {
 		Point playerLoc = server.getGrid().find(player);
 		
 		// Wait for bomb to detonate
-		try {
-			Thread.sleep((long) (Bomb.FUSE_TIME * 1.5));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		SimulationTimer.setTimeMultiplier(10);
+		server.waitForDetonation(bomb);
 		
 		assertTrue(bomb.isDetonated());
 		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	
@@ -131,11 +125,8 @@ public class TestPowerups {
 		Point playerLoc = server.getGrid().find(player);
 		
 		// Wait for bomb to detonate
-		try {
-			Thread.sleep((long) (Bomb.FUSE_TIME * 1.5));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		SimulationTimer.setTimeMultiplier(10);
+		server.waitForDetonation(bomb);
 		
 		assertTrue(bomb.isDetonated());
 		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	

@@ -16,7 +16,7 @@ public class SimulationTimer {
 	
 	private final List<SimulationListener> listeners;
 	private Timer timer;
-	private double timeMultiplier = DEFAULT_TIME_MULTIPLIER;
+	private static double TIME_MULTIPLIER = DEFAULT_TIME_MULTIPLIER;
 
 	public SimulationTimer(){
 		listeners = new ArrayList<>();
@@ -34,7 +34,7 @@ public class SimulationTimer {
 			new TimerTask() {
 				@Override
 				public void run() {
-					long now = (long) (System.currentTimeMillis() * timeMultiplier);
+					long now = currentTimeMillis();
 					for (SimulationListener l : getListeners()){
 						l.simulationUpdate(now);
 					}
@@ -54,14 +54,6 @@ public class SimulationTimer {
 		}
 	}
 	
-	public void setTimeMultiplier(double multiplier){
-		if (multiplier > 0){
-			timeMultiplier = multiplier;
-		} else {
-			System.err.printf("Invlid time multiplier of: %g", multiplier);
-		}
-	}
-	
 	/**
 	 * Make copy of listeners to give up lock quickly
 	 * @return copy of current SimulationListeners
@@ -74,4 +66,17 @@ public class SimulationTimer {
 		return copy;
 		
 	}
+	
+	public static void setTimeMultiplier(double multiplier){
+		if (multiplier > 0){
+			TIME_MULTIPLIER = multiplier;
+		} else {
+			System.err.printf("Invlid time multiplier of: %g", multiplier);
+		}
+	}
+	
+	public static long currentTimeMillis(){
+		return (long) (System.currentTimeMillis() * TIME_MULTIPLIER);
+	}
+	
 }

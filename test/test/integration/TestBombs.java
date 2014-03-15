@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import server.controllers.SimulationTimer;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
 import common.models.Bomb;
@@ -98,7 +99,7 @@ public class TestBombs {
 		assertTrue(server.getGrid().hasTypeAt(Bomb.class, playerLoc));
 		
 		// Wait for bomb to detonate
-		server.setTimeCompression(true);
+		SimulationTimer.setTimeMultiplier(10);
 		server.waitForDetonation(bomb);
 		
 		assertTrue(!server.getGrid().hasTypeAt(Bomb.class, playerLoc));

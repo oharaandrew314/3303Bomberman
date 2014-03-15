@@ -58,7 +58,7 @@ public class AIScheduler implements SimulationListener {
 				}
 				else throw new UnsupportedOperationException("Enemy type not supported");
 				
-				enemies.put(enemy, System.currentTimeMillis()); //register new movement time
+				enemies.put(enemy, now); //register new movement time
 				server.move(enemy, translation.x, translation.y);
 			}
 		}
