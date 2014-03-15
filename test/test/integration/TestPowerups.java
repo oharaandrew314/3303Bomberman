@@ -110,7 +110,7 @@ public class TestPowerups {
 		
 		// Wait for bomb to detonate
 		SimulationTimer.setTimeMultiplier(10);
-		server.waitForDetonation(bomb);
+		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
 		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	
@@ -126,7 +126,7 @@ public class TestPowerups {
 		
 		// Wait for bomb to detonate
 		SimulationTimer.setTimeMultiplier(10);
-		server.waitForDetonation(bomb);
+		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
 		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	

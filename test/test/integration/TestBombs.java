@@ -100,7 +100,7 @@ public class TestBombs {
 		
 		// Wait for bomb to detonate
 		SimulationTimer.setTimeMultiplier(10);
-		server.waitForDetonation(bomb);
+		while(!bomb.isDetonated());
 		
 		assertTrue(!server.getGrid().hasTypeAt(Bomb.class, playerLoc));
 		assertTrue(bomb.isDetonated());
