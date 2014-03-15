@@ -288,16 +288,6 @@ public class Server extends GameController implements SimulationListener {
     		}
     	}
     	
-    	// Check if player wins and notify views
-    	if (unit instanceof Player){
-	    	for (Entity entity : grid.get(dest)){
-	    		if (entity instanceof Door){
-	    			send(new WinEvent((Player)unit, grid));
-	    			endGame();
-	    		}
-	    	}
-    	}
-    	
     	//check if player picks up a powerup
     	if(unit instanceof Player){
     		for(Entity entity : grid.get(dest)){
@@ -307,7 +297,17 @@ public class Server extends GameController implements SimulationListener {
         			grid.remove(entity);
         		}
         	}
-    	}  	
+    	} 
+    	
+    	// Check if player wins and notify views
+    	if (unit instanceof Player){
+	    	for (Entity entity : grid.get(dest)){
+	    		if (entity instanceof Door){
+	    			send(new WinEvent((Player)unit, grid));
+	    			endGame();
+	    		}
+	    	}
+    	} 	
     }
     
     // Callback methods
