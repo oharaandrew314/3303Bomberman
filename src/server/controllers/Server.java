@@ -40,7 +40,7 @@ public class Server extends GameController implements SimulationListener {
 	public static final int MAX_PLAYERS = 4;
 	
 	protected Map<Integer, Player> players;
-	private final SimulationTimer timer;
+	protected final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
 

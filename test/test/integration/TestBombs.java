@@ -98,11 +98,8 @@ public class TestBombs {
 		assertTrue(server.getGrid().hasTypeAt(Bomb.class, playerLoc));
 		
 		// Wait for bomb to detonate
-		try {
-			Thread.sleep((long) (Bomb.FUSE_TIME * 1.5));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		server.setTimeCompression(true);
+		server.waitForDetonation(bomb);
 		
 		assertTrue(!server.getGrid().hasTypeAt(Bomb.class, playerLoc));
 		assertTrue(bomb.isDetonated());

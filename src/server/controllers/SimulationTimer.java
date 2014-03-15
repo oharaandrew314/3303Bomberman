@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 public class SimulationTimer {
 	
+	public static final double DEFAULT_TIME_MULTIPLIER = 1.0;
 	public static final int
 		MS_IN_S = 1000, 
 		UPDATE_FREQ = 10,
@@ -15,6 +16,7 @@ public class SimulationTimer {
 	
 	private final List<SimulationListener> listeners;
 	private Timer timer;
+	private double timeMultiplier = DEFAULT_TIME_MULTIPLIER;
 
 	public SimulationTimer(){
 		listeners = new ArrayList<>();
@@ -32,7 +34,7 @@ public class SimulationTimer {
 			new TimerTask() {
 				@Override
 				public void run() {
-					long now = System.currentTimeMillis();
+					long now = (long) (System.currentTimeMillis() * timeMultiplier);
 					for (SimulationListener l : getListeners()){
 						l.simulationUpdate(now);
 					}
@@ -49,6 +51,14 @@ public class SimulationTimer {
 		}
 		for (SimulationListener l : getListeners()){
 			l.onTimerReset();
+		}
+	}
+	
+	public void setTimeMultiplier(double multiplier){
+		if (multiplier > 0){
+			timeMultiplier = multiplier;
+		} else {
+			System.err.printf("Invlid time multiplier of: %g", multiplier);
 		}
 	}
 	

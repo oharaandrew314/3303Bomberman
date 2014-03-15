@@ -181,14 +181,14 @@ public class NetworkController {
      * @return the player ID from which the packet came. If this is a new peer,
      * the next ID is given.
      */
-    private int getPlayerIdFor(DatagramPacket packet) {
+    private synchronized int getPlayerIdFor(DatagramPacket packet) {
     	InetSocketAddress peer = new InetSocketAddress(
     		packet.getAddress().getHostAddress(), packet.getPort()
     	);
     	return getPlayerIdFor(peer);
     }
     
-    private int getPlayerIdFor(InetSocketAddress address){
+    private synchronized int getPlayerIdFor(InetSocketAddress address){
     	int nextId = 1;
     	
     	// Search for existing peer
