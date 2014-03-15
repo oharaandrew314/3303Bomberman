@@ -6,11 +6,17 @@ public class Bomb extends Entity {
 	private static final long serialVersionUID = 5546213627619819574L;
 	private final BombFactory factory;
 	private boolean detonated;
+	private int blastRange;
 
 	public Bomb(BombFactory factory) {
+		this(factory, INIT_RANGE);
+	}
+	
+	public Bomb(BombFactory factory, int range){
 		super("Bomb");
 		this.factory = factory;
 		detonated = false;
+		blastRange = range;
 	}
 	
 	public void setDetonated(){
@@ -31,7 +37,7 @@ public class Bomb extends Entity {
 	}
 	
 	public int getRange(){
-		return INIT_RANGE;
+		return blastRange;
 	}
 
 }

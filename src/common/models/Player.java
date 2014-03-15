@@ -1,6 +1,5 @@
 package common.models;
 
-
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
@@ -10,9 +9,15 @@ public class Player extends Unit {
 	@SuppressWarnings("unused")
 	private int numBombs; // no bombs in milestone 1
 	
+	private long invulnerableTill;
+	private long immuneToBombsTill;
+	
 	public Player(int playerId){
 		super("Player " + playerId);
 		this.playerId = playerId;
+
+		invulnerableTill = 0;
+		immuneToBombsTill = 0;
 		factory = new BombFactory();
 	}
 	
@@ -25,8 +30,44 @@ public class Player extends Unit {
 		return String.valueOf(playerId);
 	}
 	
+	/**
+	 * Add the powerups to the players list of powerups and change the players properties accordingly
+	 * @param powerup - powerup picked up by the player
+	 */
+	public void addPowerup(Powerup powerup){
+		if(powerup instanceof BombPlusOnePowerup){
+			increaseMaxBombs();
+		} else if(powerup instanceof BombRangePowerup){
+			increaseBombRange();
+		} else if(powerup instanceof MysteryPowerup){
+			invulnerableTill = System.currentTimeMillis() + ((MysteryPowerup) powerup).getDuration();
+		} else if(powerup instanceof FlamePassPowerup){
+			immuneToBombsTill = System.currentTimeMillis() + ((FlamePassPowerup) powerup).getDuration();
+		}
+	}
+	
+	/**
+	 * @return true if currentTime is less than the time when Invulnerability ends
+	 */
+	@Override
+	public boolean isInvulnerable(){
+		return System.currentTimeMillis() < invulnerableTill;
+	}
+	
+	/**
+	 * @return true if player picked up a flamePass powerup, false otherwise
+	 */
+	@Override
+	public boolean isImmuneToBombs(){
+		return (System.currentTimeMillis() < immuneToBombsTill || isInvulnerable());
+	}
+	
 	public int getNumBombs(){
 		return factory.getNumBombs();
+	}
+	
+	public int getBombRange(){
+		return factory.getBlastRange();
 	}
 	
 	public boolean hasBombs(){
@@ -35,5 +76,9 @@ public class Player extends Unit {
 	
 	public void increaseMaxBombs(){
 		factory.increaseMaxBombs();
+	}
+	
+	private void increaseBombRange(){
+		factory.increaseBlastRange();
 	}
 }

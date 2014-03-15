@@ -17,9 +17,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import common.models.BombPlusOnePowerup;
+import common.models.BombRangePowerup;
 import common.models.Door;
 import common.models.Entity;
+import common.models.FlamePassPowerup;
 import common.models.Grid;
+import common.models.MysteryPowerup;
 import common.models.LineEnemy;
 import common.models.PathFindingEnemy;
 import common.models.Pillar;
@@ -122,6 +126,10 @@ public class GridLoader {
 				case "wall": return new Wall();
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
+				case "bombrange": return new BombRangePowerup();
+				case "flamepass": return new FlamePassPowerup(10000);
+				case "mystery": return new MysteryPowerup(10000);
+				case "bombplusone": return new BombPlusOnePowerup();
 				case "randomenemy": return new RandomEnemy();
 				case "lineenemy": return new LineEnemy();
 				case "pathfindingenemy": return new PathFindingEnemy();
