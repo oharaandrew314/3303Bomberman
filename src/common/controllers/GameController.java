@@ -43,7 +43,7 @@ public abstract class GameController extends Observable{
 	
 	protected void updateView(Event event){
 		if (view != null){
-			view.handleEvent(this, event);
+			view.handleEvent(state, event);
 		}
 	}
 	
