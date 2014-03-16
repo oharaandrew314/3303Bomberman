@@ -120,6 +120,7 @@ public class Server extends GameController implements SimulationListener {
 			timer.stop();
 			state = GameState.idle;
 			grid = null;
+			updateView(null);
 		} else {
 			System.err.println("Could not end game; no game running");
 		}
@@ -248,6 +249,11 @@ public class Server extends GameController implements SimulationListener {
     	Event notice = new DisconnectEvent();
     	notice.setPlayerID(event.getPlayerID());
     	send(notice); // Notify players of disconnect
+    	
+    	//if no players in game, end game
+    	if (players.isEmpty()){
+    		endGame();
+    	}
     	
     	// Acknowledge disconnect
 		return new ConnectRejectedEvent();
