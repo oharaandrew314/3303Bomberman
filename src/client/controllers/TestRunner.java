@@ -34,10 +34,7 @@ public class TestRunner extends PlayableClient implements Runnable{
 	public void run(){
 		int i = 0;
 			
-		while (!events.isEmpty() && i != events.size() && !dead&& isGameRunning()) {
-			GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
-			pressKeyAndWait(keyEvent.getKeyCode());
-			
+		while (!events.isEmpty() && i != events.size()) {
 			
 			//wait for an amount of time specified next to the command in the test file
 			//if none specified, it will be DEFAULT_WAIT_BETWEEN_ACTIONS
@@ -46,25 +43,27 @@ public class TestRunner extends PlayableClient implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			//need to check if test player is dead or the game stopped here because of the waiting
+			//game state might have changed while waiting
+			if(!dead&& isGameRunning()){
+				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
+				pressKeyAndWait(keyEvent.getKeyCode());
+			} else{
+				stop();
+				break;
+			}
 			i++;
 		}
+		stop();
 	}
 
 	@Override
 	protected void processPlayerDead(PlayerDeadEvent event) {
 		if(event.player.playerId == this.playerId){
 			dead = true;
-			stop();
-			nwc.stopListening();
 			super.processPlayerDead(event);
 		}
-	}
-
-	@Override
-	protected void endGame(WinEvent winEvent){
-		stop();
-		nwc.stopListening();
-		super.endGame(winEvent);
 	}
 	
 	@Override
@@ -92,7 +91,6 @@ public class TestRunner extends PlayableClient implements Runnable{
 		GameKeyEventAck response = null;
 		boolean found = false;
 		while(!found){
-			//System.out.println("waiting in PressKeyAndWait at waitFod(GameKeyEventAck.class");
 			response = (GameKeyEventAck) waitFor(GameKeyEventAck.class);
 			
 			if(response == null) return; //occurs when it times out (one case being the player died before receiving

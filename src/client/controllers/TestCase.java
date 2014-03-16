@@ -116,7 +116,7 @@ public class TestCase {
 	}
 	
 	public String getGridFileName(){
-		return gridFileName;
+		return "test/" + gridFileName+".json";
 	}
 
 
