@@ -34,9 +34,9 @@ public class AIScheduler implements SimulationListener {
 	}
 	
 	@Override
-	public synchronized void simulationUpdate() {
+	public synchronized void simulationUpdate(long now) {
 		for (Enemy enemy : enemies.keySet()){
-			if (System.currentTimeMillis() - enemies.get(enemy) > ENEMY_MOVE_FREQ){
+			if (now - enemies.get(enemy) > ENEMY_MOVE_FREQ){
 				
 				Point translation;
 				Point currentLocation = getCurrentLocation(enemy);
@@ -58,7 +58,7 @@ public class AIScheduler implements SimulationListener {
 				}
 				else throw new UnsupportedOperationException("Enemy type not supported");
 				
-				enemies.put(enemy, System.currentTimeMillis()); //register new movement time
+				enemies.put(enemy, now); //register new movement time
 				server.move(enemy, translation.x, translation.y);
 			}
 		}

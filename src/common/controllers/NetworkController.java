@@ -30,6 +30,9 @@ public class NetworkController {
     private ListenThread listener;
     protected Map<Integer, InetSocketAddress> peers;
     
+    private boolean busy = false;
+    private Object busyLock = new Object();
+    
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
         this.peers = new HashMap<>();
@@ -46,6 +49,33 @@ public class NetworkController {
      */
     public DatagramSocket getSocket() {
         return socket;
+    }
+    
+    /**
+     * Allows the GameController to specify if network events should currently be handled.
+     */
+    public void setBusy(boolean busy) {
+    	this.busy = busy;
+    	if (!busy) {
+    		synchronized(busyLock) {
+    			busyLock.notify();
+    		}
+    	}
+    }
+    
+    /**
+     * Wait until the game controller is not busy and can process incoming events.
+     */
+    private void waitUntilReady() {
+    	synchronized(busyLock) {
+	    	while (busy) {
+	    		try {
+					busyLock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+	    	}
+    	}
     }
     
     /**
@@ -157,6 +187,8 @@ public class NetworkController {
             int playerId = getPlayerIdFor(data);
             event.setPlayerID(playerId);
             
+            waitUntilReady();
+            
             Event response = gameController.receive(event);
             if (response != null){
             	InetSocketAddress peer = new InetSocketAddress(
@@ -181,14 +213,14 @@ public class NetworkController {
      * @return the player ID from which the packet came. If this is a new peer,
      * the next ID is given.
      */
-    private int getPlayerIdFor(DatagramPacket packet) {
+    private synchronized int getPlayerIdFor(DatagramPacket packet) {
     	InetSocketAddress peer = new InetSocketAddress(
     		packet.getAddress().getHostAddress(), packet.getPort()
     	);
     	return getPlayerIdFor(peer);
     }
     
-    private int getPlayerIdFor(InetSocketAddress address){
+    private synchronized int getPlayerIdFor(InetSocketAddress address){
     	int nextId = 1;
     	
     	// Search for existing peer

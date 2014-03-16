@@ -48,7 +48,7 @@ public class TestSimulationTimer {
 		}
 		
 		@Override
-		public void simulationUpdate(){
+		public void simulationUpdate(long now){
 			condition.notifyCond();
 		}
 		
