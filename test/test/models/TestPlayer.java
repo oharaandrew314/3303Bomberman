@@ -52,7 +52,7 @@ public class TestPlayer {
 		assertTrue(p.isImmuneToBombs());
 		
 		// Test timeout
-		SimulationTimer.setTimeMultiplier(10);
+		SimulationTimer.setTimeCompression(true);
 		while(p.isImmuneToBombs());
 		assertFalse(p.isImmuneToBombs());
 	}
@@ -63,7 +63,7 @@ public class TestPlayer {
 		assertTrue(p.isInvulnerable());
 		
 		// Test timeout
-		SimulationTimer.setTimeMultiplier(10);
+		SimulationTimer.setTimeCompression(true);
 		while (p.isInvulnerable());
 		assertFalse(p.isInvulnerable());
 	}

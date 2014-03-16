@@ -8,15 +8,20 @@ import java.util.TimerTask;
 
 public class SimulationTimer {
 	
-	public static final double DEFAULT_TIME_MULTIPLIER = 1.0;
+	public static final double
+		DEFAULT_TIME_MULTIPLIER = 1.0,
+		ACCELERATED_TIME_MULTIPLIER = 50.0;
 	public static final int
 		MS_IN_S = 1000, 
 		UPDATE_FREQ = 10,
 		UPDATE_DELAY = MS_IN_S / UPDATE_FREQ;
+	private static double
+		TIME_MULTIPLIER = DEFAULT_TIME_MULTIPLIER,
+		RECORDED_TIME;
 	
 	private final List<SimulationListener> listeners;
 	private Timer timer;
-	private static double TIME_MULTIPLIER = DEFAULT_TIME_MULTIPLIER;
+	
 
 	public SimulationTimer(){
 		listeners = new ArrayList<>();
@@ -67,16 +72,21 @@ public class SimulationTimer {
 		
 	}
 	
-	public static void setTimeMultiplier(double multiplier){
-		if (multiplier > 0){
-			TIME_MULTIPLIER = multiplier;
+	public static void setTimeCompression(boolean enabled){
+		if(enabled){
+			TIME_MULTIPLIER = ACCELERATED_TIME_MULTIPLIER;
+			RECORDED_TIME = System.currentTimeMillis();
 		} else {
-			System.err.printf("Invlid time multiplier of: %g", multiplier);
+			TIME_MULTIPLIER = DEFAULT_TIME_MULTIPLIER;
 		}
 	}
 	
 	public static long currentTimeMillis(){
-		return (long) (System.currentTimeMillis() * TIME_MULTIPLIER);
+		if (TIME_MULTIPLIER == DEFAULT_TIME_MULTIPLIER){
+			return System.currentTimeMillis();
+		} else {
+			return (long) (RECORDED_TIME + (System.currentTimeMillis() - RECORDED_TIME) * TIME_MULTIPLIER);
+		}
 	}
 	
 }

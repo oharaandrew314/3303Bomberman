@@ -82,7 +82,7 @@ public class TestPowerups {
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isInvulnerable());
 		// Wait for invulnerability to expire
-		SimulationTimer.setTimeMultiplier(10);
+		SimulationTimer.setTimeCompression(true);
 		while(player.isInvulnerable());
 		assertFalse(player.isInvulnerable());
 	}
@@ -95,7 +95,7 @@ public class TestPowerups {
 		assertTrue(player.isImmuneToBombs());
 
 		// wait for flamepass to expire
-		SimulationTimer.setTimeMultiplier(10);
+		SimulationTimer.setTimeCompression(true);
 		while(player.isImmuneToBombs());
 		assertFalse(player.isImmuneToBombs());
 	}
@@ -109,7 +109,7 @@ public class TestPowerups {
 		Point playerLoc = server.getGrid().find(player);
 		
 		// Wait for bomb to detonate
-		SimulationTimer.setTimeMultiplier(10);
+		SimulationTimer.setTimeCompression(true);
 		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
@@ -125,7 +125,7 @@ public class TestPowerups {
 		Point playerLoc = server.getGrid().find(player);
 		
 		// Wait for bomb to detonate
-		SimulationTimer.setTimeMultiplier(10);
+		SimulationTimer.setTimeCompression(true);
 		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
