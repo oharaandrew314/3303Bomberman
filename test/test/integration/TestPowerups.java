@@ -113,6 +113,7 @@ public class TestPowerups {
 		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
+		client.waitForViewUpdate(); // avert state synchronization error
 		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	
 	}
 	
