@@ -89,7 +89,7 @@ public class JFrameTextView extends AbstractView {
 		console.append(message + LINE_SEP);
 	}
 	
-	public Component asComponent(){
+	public Component getComponent(){
 		return frame;
 	}
 	

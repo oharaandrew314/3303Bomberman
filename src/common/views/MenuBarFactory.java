@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -21,7 +22,7 @@ public class MenuBarFactory {
 		fileMenu.add(new ExitAction(view));
 		
 		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(new ControlsAction(view.asComponent()));
+		helpMenu.add(new ControlsAction(view.getComponent()));
 		
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
@@ -32,8 +33,8 @@ public class MenuBarFactory {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
-		fileMenu.add(new LoadGridAction(server));
-		fileMenu.add(new GenerateGridAction(server));
+		fileMenu.add(new LoadGridAction(view.getComponent(), server));
+		fileMenu.add(new GenerateGridAction(view.getComponent(), server));
 		fileMenu.add(new ExitAction(view));
 		
 		menuBar.add(fileMenu);
@@ -69,32 +70,36 @@ JMenuBar menuBar = new JMenuBar();
 	@SuppressWarnings("serial")
 	private static class LoadGridAction extends AbstractAction {
 		
+		private final Component parent;
 		private final Server server;
 		
-		public LoadGridAction(Server server){
+		public LoadGridAction(Component parent, Server server){
 			super("Load Grid");
 			this.server = server;
+			this.parent = parent;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new LevelLoaderDialog(server);
+			new LevelLoaderDialog(parent, server);
 		}
 	}
 	
 	@SuppressWarnings("serial")
 	private static class GenerateGridAction extends AbstractAction {
 		
+		private final Component parent;
 		private final Server server;
 		
-		public GenerateGridAction(Server server){
+		public GenerateGridAction(Component parent, Server server){
 			super("Generate Grid");
 			this.server = server;
+			this.parent = parent;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new LevelGeneratorDialog(server);
+			new LevelGeneratorDialog(parent, server);
 		}
 	}
 	
