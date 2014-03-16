@@ -35,7 +35,9 @@ public class LevelGeneratorDialog extends JDialog {
 		add(new JLabel("Seed:"));
 		add(seed = new JTextField());
 		
-		add(new JButton(new GenerateAction(this)));
+		JButton submitButton = new JButton(new GenerateAction(this));
+		getRootPane().setDefaultButton(submitButton);
+		add(submitButton);
 		
 		pack();
 		setVisible(true);
