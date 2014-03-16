@@ -1,13 +1,12 @@
 package common.models;
 
+import server.controllers.SimulationTimer;
+
 public class Player extends Unit {
 
 	private static final long serialVersionUID = 7322528472259511719L;
 	protected final BombFactory factory;
 	public final int playerId;
-	
-	@SuppressWarnings("unused")
-	private int numBombs; // no bombs in milestone 1
 	
 	private long invulnerableTill;
 	private long immuneToBombsTill;
@@ -38,11 +37,11 @@ public class Player extends Unit {
 		if(powerup instanceof BombPlusOnePowerup){
 			increaseMaxBombs();
 		} else if(powerup instanceof BombRangePowerup){
-			increaseBombRange();
+			factory.increaseBlastRange();
 		} else if(powerup instanceof MysteryPowerup){
-			invulnerableTill = System.currentTimeMillis() + ((MysteryPowerup) powerup).getDuration();
+			invulnerableTill = SimulationTimer.currentTimeMillis() + ((MysteryPowerup) powerup).getDuration();
 		} else if(powerup instanceof FlamePassPowerup){
-			immuneToBombsTill = System.currentTimeMillis() + ((FlamePassPowerup) powerup).getDuration();
+			immuneToBombsTill = SimulationTimer.currentTimeMillis() + ((FlamePassPowerup) powerup).getDuration();
 		}
 	}
 	
@@ -51,7 +50,7 @@ public class Player extends Unit {
 	 */
 	@Override
 	public boolean isInvulnerable(){
-		return System.currentTimeMillis() < invulnerableTill;
+		return SimulationTimer.currentTimeMillis() < invulnerableTill;
 	}
 	
 	/**
@@ -59,7 +58,7 @@ public class Player extends Unit {
 	 */
 	@Override
 	public boolean isImmuneToBombs(){
-		return (System.currentTimeMillis() < immuneToBombsTill || isInvulnerable());
+		return (SimulationTimer.currentTimeMillis() < immuneToBombsTill || isInvulnerable());
 	}
 	
 	public int getNumBombs(){
@@ -76,9 +75,5 @@ public class Player extends Unit {
 	
 	public void increaseMaxBombs(){
 		factory.increaseMaxBombs();
-	}
-	
-	private void increaseBombRange(){
-		factory.increaseBlastRange();
 	}
 }

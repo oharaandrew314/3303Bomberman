@@ -1,6 +1,7 @@
 package test.models;
 import org.junit.*;
 
+import server.controllers.SimulationTimer;
 import static org.junit.Assert.*;
 import common.models.BombPlusOnePowerup;
 import common.models.BombRangePowerup;
@@ -49,56 +50,21 @@ public class TestPlayer {
 	public void testBombImmunity(){
 		p.addPowerup(new FlamePassPowerup(10000));
 		assertTrue(p.isImmuneToBombs());
+		
+		// Test timeout
+		SimulationTimer.setTimeCompression(true);
+		while(p.isImmuneToBombs());
+		assertFalse(p.isImmuneToBombs());
 	}
 	
 	@Test
 	public void testInvulnerability(){
 		p.addPowerup(new MysteryPowerup(10000));
 		assertTrue(p.isInvulnerable());
-	}
-	
-	@Test
-	public void testInvulnerabilityTimeOut(){
-		p.addPowerup(new MysteryPowerup(10000));
-		long currentTime = System.currentTimeMillis();
-		long endTime = currentTime + (10000);
-		while(currentTime < endTime){
-			currentTime = System.currentTimeMillis();
-		}
+		
+		// Test timeout
+		SimulationTimer.setTimeCompression(true);
+		while (p.isInvulnerable());
 		assertFalse(p.isInvulnerable());
 	}
-	
-	@Test
-	public void testInvulnerabilityAfter5Seconds(){
-		p.addPowerup(new MysteryPowerup(10000));
-		long currentTime = System.currentTimeMillis();
-		long endTime = currentTime + (5000);
-		while(currentTime < endTime){
-			currentTime = System.currentTimeMillis();
-		}
-		assertTrue(p.isInvulnerable());
-	}
-	
-	@Test
-	public void testFlamePassTimeOut(){
-		p.addPowerup(new FlamePassPowerup(10000));
-		long currentTime = System.currentTimeMillis();
-		long endTime = currentTime + (10000);
-		while(currentTime < endTime){
-			currentTime = System.currentTimeMillis();
-		}
-		assertFalse(p.isImmuneToBombs());
-	}
-	
-	@Test
-	public void testFlamePassAfter5Seconds(){
-		p.addPowerup(new FlamePassPowerup(10000));
-		long currentTime = System.currentTimeMillis();
-		long endTime = currentTime + (5000);
-		while(currentTime < endTime){
-			currentTime = System.currentTimeMillis();
-		}
-		assertTrue(p.isImmuneToBombs());
-	}
-	
 }
