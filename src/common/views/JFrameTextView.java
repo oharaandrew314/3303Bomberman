@@ -108,6 +108,7 @@ public class JFrameTextView extends AbstractView {
 			server, new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
+		view.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		return view;
 	}
 	
