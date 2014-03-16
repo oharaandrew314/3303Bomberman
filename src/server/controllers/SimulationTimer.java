@@ -85,7 +85,10 @@ public class SimulationTimer {
 		if (TIME_MULTIPLIER == DEFAULT_TIME_MULTIPLIER){
 			return System.currentTimeMillis();
 		} else {
-			return (long) (RECORDED_TIME + (System.currentTimeMillis() - RECORDED_TIME) * TIME_MULTIPLIER);
+			return (long) (
+				RECORDED_TIME + 
+				(System.currentTimeMillis() - RECORDED_TIME) * TIME_MULTIPLIER
+			);
 		}
 	}
 	
