@@ -201,7 +201,7 @@ public class TestNetworkController extends GameController {
     }
     
     @Test
-    public void testBusySemaphore() {
+    public void testNetworkControllerIsBlockedWhenGameControllerIsBusy() {
     	startServer(server);
     	addServerToClient(clientA);
     	server.setBusy(true);
