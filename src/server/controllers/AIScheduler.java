@@ -15,7 +15,6 @@ import common.models.RandomEnemy;
 
 public class AIScheduler implements SimulationListener {
 
-	public static final int ENEMY_MOVE_FREQ = 1200;
 	private Random rng;
 	private Collection<Enemy> enemies;
 	private Server server;
