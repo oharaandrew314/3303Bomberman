@@ -4,8 +4,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import common.controllers.GameController.GameState;
-import common.events.ConnectRejectedEvent;
 import common.events.Event;
 import common.events.ConnectAcceptedEvent;
 import common.events.GameKeyEvent;
