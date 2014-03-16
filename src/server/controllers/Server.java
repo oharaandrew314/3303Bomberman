@@ -26,7 +26,7 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
+import common.events.EndGameEvent;
 import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
@@ -58,7 +58,6 @@ public class Server extends GameController implements SimulationListener {
 		
 		try {
 			nwc.startListeningOnServerPort();
-			
 		} catch (SocketException e) {
 			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
 			state = GameState.error;
@@ -115,20 +114,18 @@ public class Server extends GameController implements SimulationListener {
 		}
 	}
 	
-	public synchronized void endGame(){
+	public synchronized void endGame(Player winner){
 		if (state == GameState.gameRunning){
 			timer.stop();
 			state = GameState.idle;
+			send(new EndGameEvent(winner, grid));
 			grid = null;
-			updateView(null);
-		} else {
-			System.err.println("Could not end game; no game running");
 		}
 	}
 	
 	public synchronized void stop(){
 		if (isGameRunning()){
-			endGame();
+			endGame(null);
 		}
 		super.stop();
 		state = GameState.stopped;
@@ -177,53 +174,65 @@ public class Server extends GameController implements SimulationListener {
     	setChanged();
     	notifyObservers(event);
     	
-    	// Decide whether to accept or reject connection request
+    	Event response = null;
+    	
+    	// Handle events
     	if (event instanceof ConnectEvent){
-    		return handleConnectionRequest((ConnectEvent) event);
+    		response =  handleConnectionRequest((ConnectEvent) event);
+    	} else if (event instanceof GameKeyEvent){
+    	   response = handleGameKeyEvent((GameKeyEvent) event);
+       } else if (event instanceof DisconnectEvent){
+    	   response = disconnectPlayer(event);
+       }
+    	
+    	// Check if game-over
+    	if (players.isEmpty()){
+    		endGame(null);
     	}
     	
-    	/*
-    	 * Interpret GameKeyEvent.
-    	 * 3 different key profiles: n00b, Righty, Southpaw
-    	 */
-    	else if (event instanceof GameKeyEvent){
-    	   Player player = players.get(event.getPlayerID());
-    	   GameKeyEvent keyEvent = (GameKeyEvent) event;
-    	   int keyCode = keyEvent.getKeyCode();
-    	   
-    	   // Handle DisconnectEvent at all states
-    	   if (keyCode == KeyEvent.VK_ESCAPE){
-    		   return disconnectPlayer(event);
-    	   } 
-    	   else if (isGameRunning()){
-    		   switch(keyCode){
-		   	   		case KeyEvent.VK_UP:
-		   	   		case KeyEvent.VK_W:
-		   	   		case KeyEvent.VK_I: move(player, 0, -1); break;
-		   	   		case KeyEvent.VK_LEFT:
-		   	   		case KeyEvent.VK_A:
-		   	   		case KeyEvent.VK_J: move(player, -1, 0); break;
-		   	   		case KeyEvent.VK_DOWN:
-		   	   		case KeyEvent.VK_S:
-		   	   		case KeyEvent.VK_K: move(player, 0, 1); break;
-		   	   		case KeyEvent.VK_RIGHT:
-		   	   		case KeyEvent.VK_D:
-		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
-		   	   		case KeyEvent.VK_SPACE:
-		   	   		case KeyEvent.VK_F:
-		   	   		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
-		   	   }
-    	   } else if (keyCode == KeyEvent.VK_ENTER){
-    		   startGame();
-    	   }
-    	   return new GameKeyEventAck(keyEvent);
-       } else if (event instanceof DisconnectEvent){
-    	   return disconnectPlayer(event);
-       }
-    	return null;
+    	return response;
     }
     
-    private Event handleConnectionRequest(ConnectEvent event){
+    private final Event handleGameKeyEvent(GameKeyEvent event){
+    	Player player = players.get(event.getPlayerID());
+    	int keyCode = event.getKeyCode();
+
+    	// Handle disconnect event
+    	if (keyCode == KeyEvent.VK_ESCAPE){
+    		return disconnectPlayer(event);
+    	}
+    	
+    	// Handle start game event
+    	else if (keyCode == KeyEvent.VK_ENTER && !isGameRunning()){
+    		startGame();
+    	}
+    	
+    	// Handle all other key events if game is running
+    	else if (isGameRunning()){
+    		switch(keyCode){
+    		case KeyEvent.VK_UP:
+    		case KeyEvent.VK_W:
+    		case KeyEvent.VK_I: move(player, 0, -1); break;
+    		case KeyEvent.VK_LEFT:
+    		case KeyEvent.VK_A:
+    		case KeyEvent.VK_J: move(player, -1, 0); break;
+    		case KeyEvent.VK_DOWN:
+    		case KeyEvent.VK_S:
+    		case KeyEvent.VK_K: move(player, 0, 1); break;
+    		case KeyEvent.VK_RIGHT:
+    		case KeyEvent.VK_D:
+    		case KeyEvent.VK_L: move(player, 1, 0); break;
+    		case KeyEvent.VK_SPACE:
+    		case KeyEvent.VK_F:
+    		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
+    		}
+    	} 
+    	
+    	// Acknowledge key event
+    	return new GameKeyEventAck(event);
+    }
+    
+    private final Event handleConnectionRequest(ConnectEvent event){
     	int playerId = event.getPlayerID();
     	boolean accept = false;
     	
@@ -243,7 +252,7 @@ public class Server extends GameController implements SimulationListener {
     	return response;
     }
     
-    private Event disconnectPlayer(Event event){
+    private final Event disconnectPlayer(Event event){
     	players.remove(event.getPlayerID()); // remove player from game
     	
     	Event notice = new DisconnectEvent();
@@ -252,14 +261,14 @@ public class Server extends GameController implements SimulationListener {
     	
     	//if no players in game, end game
     	if (players.isEmpty()){
-    		endGame();
+    		endGame(null);
     	}
     	
     	// Acknowledge disconnect
 		return new ConnectRejectedEvent();
     }
     
-    public synchronized void move(Unit unit, int dx, int dy){    	
+    public final void move(Unit unit, int dx, int dy){    	
     	// Do nothing if game is not running or player does not exist
     	if (!isGameRunning() || !grid.contains(unit)){
     		return;
@@ -311,12 +320,11 @@ public class Server extends GameController implements SimulationListener {
         	}
     	} 
     	
-    	// Check if player wins and notify views
+    	// Check if player landed on door and won the game
     	if (unit instanceof Player){
 	    	for (Entity entity : grid.get(dest)){
 	    		if (entity instanceof Door){
-	    			send(new WinEvent((Player)unit, grid));
-	    			endGame();
+	    			endGame((Player) unit);
 	    		}
 	    	}
     	}

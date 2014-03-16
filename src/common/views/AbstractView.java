@@ -13,7 +13,7 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
-import common.events.WinEvent;
+import common.events.EndGameEvent;
 import common.models.Grid;
 
 public abstract class AbstractView extends WindowAdapter {
@@ -41,8 +41,8 @@ public abstract class AbstractView extends WindowAdapter {
 		else if (event instanceof ConnectRejectedEvent){
 			message = textGen.getConnectionRejected();
 		}
-		else if (event instanceof WinEvent){
-			WinEvent winEvent = (WinEvent) event;
+		else if (event instanceof EndGameEvent){
+			EndGameEvent winEvent = (EndGameEvent) event;
 			message = textGen.getEndGame(winEvent.player);
 			displayGrid(winEvent.grid);
 		}
