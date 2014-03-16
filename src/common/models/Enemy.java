@@ -1,10 +1,11 @@
 package common.models;
 
+import server.controllers.AIScheduler;
+
 public class Enemy extends Unit {
 
 	private static final long serialVersionUID = 7031350047918428917L;
 	
-	private final long movementPeriod = 1200;
 	private long lastMovement;
 	
 	public Enemy(String name) {
@@ -12,7 +13,7 @@ public class Enemy extends Unit {
 	}
 	
 	public boolean isTimeToMove(long now){
-		if (now - lastMovement > movementPeriod){
+		if (now - lastMovement > AIScheduler.ENEMY_MOVE_FREQ){
 			lastMovement = now;
 			return true;
 		}
