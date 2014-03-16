@@ -15,11 +15,13 @@ public class TestCase {
 	public static final String DOWN = "DOWN";
 	public static final String RIGHT = "RIGHT";
 	public static final String LEFT = "LEFT";
+	public static final String SPACE = "SPACE";
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
 	private ArrayList<ArrayList<Long>> timings;
 	private ArrayList<Point> startLocations;
 	private String filename;
+	private String gridFileName;
 
 	public TestCase(String filename){
 
@@ -40,6 +42,8 @@ public class TestCase {
 
 		ArrayList<TestRunner> testClients = new ArrayList<TestRunner>();
 		Thread[] threads = new Thread[events.size()];
+		
+		//create the threads
 		for(int i = 0 ; i != events.size();i++){
 			testClients.add(new TestRunner(events.get(i), timings.get(i)));
 			threads[i] = new Thread(testClients.get(i));
@@ -67,30 +71,42 @@ public class TestCase {
 				System.out.print("");
 				timeout = System.currentTimeMillis() - timeStartWaiting > 1000;
 			}
-			//System.out.println(System.currentTimeMillis() - timeStartWaiting);
 			if(timeout){
 				System.err.println("timed out, game didn't start within the alloted time");
 				return;
 			}
 		}
 		
+		//move the players to their start locations
 		for(TestRunner t : testClients){
 			int index = testClients.indexOf(t);
 			server.movePlayerTo(index+1, startLocations.get(index));
 		}
+		
+		//start the threads
 		for(int i = 0 ; i != threads.length;i++){
 			threads[i].start();
 		}
+		
+		//wait for threads to finish - needs to be a seperate loop from starting the threads
+		//otherwise they will run one at a time
 		for(int i = 0 ; i != threads.length;i++){
 			try {
 				threads[i].join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 		}
 		System.out.println("Done");
+	}
+	
+	private void setGridFileName(String gridFileName){
+		this.gridFileName = gridFileName;
+	}
+	
+	public String getGridFileName(){
+		return gridFileName;
 	}
 
 
@@ -130,7 +146,9 @@ public class TestCase {
 						Point point = new Point(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
 						startLocations.set(id-1, point);
 					}
-
+					
+					String gridFile = lineSegment[2].trim().split("=")[1].trim();
+					setGridFileName(gridFile);
 
 				}
 
@@ -139,7 +157,14 @@ public class TestCase {
 		        	String[] sections = str.split(":");
 		        	int player = Integer.parseInt(sections[0].trim());
 		        	String command = sections[1].trim();
-		        	String timing = sections[2].trim();
+		        	
+		        	//get and set the timing between events
+		        	if(sections.length == 3){
+		        		String timing = sections[2].trim();
+		        		timings.get(player-1).add(Long.parseLong(timing));
+		        	} else{
+		        		timings.get(player-1).add(TestRunner.DEFAULT_WAIT_BETWEEN_ACTIONS);
+		        	}
 
 		        	switch(command){
 			        	case UP:  events.get(player-1).add(VK_UP);
@@ -150,10 +175,10 @@ public class TestCase {
 			        		break;
 			        	case RIGHT:  events.get(player-1).add(VK_RIGHT);
 		                	break;
+			        	case SPACE: events.get(player-1).add(VK_SPACE);
 		                default:
 		                	break;
 		        	}
-		        	timings.get(player-1).add(Long.parseLong(timing));
 		        }               
 		    }
 		}

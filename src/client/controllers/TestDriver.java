@@ -22,7 +22,7 @@ public class TestDriver {
 	public void runAll(Server server){
 		for(TestCase test: testcases){
 			try {
-				server.newGame(GridLoader.loadGrid("test/testGrid2.json"));
+				server.newGame(GridLoader.loadGrid(test.getGridFileName()));
 			} catch (CreateGridException e) {
 				e.printStackTrace();
 			}
@@ -46,7 +46,8 @@ public class TestDriver {
 	
 	public static void main(String[] args){		
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {"test1", "test2", "test3" };
+		//String[] testfiles = {"playerWin", "twoPlayerWin", "playerCollision" };
+		String[] testfiles = {"testUpgradedBombsChainReaction"};
 		driver.readTestCases(testfiles);
 		driver.runAll(new Server());
 	}

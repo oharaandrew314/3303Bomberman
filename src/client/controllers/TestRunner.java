@@ -13,6 +13,7 @@ import common.events.WinEvent;
 
 
 public class TestRunner extends PlayableClient implements Runnable{
+	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 100;
 	private Collection<Event> receivedEvents;
 	private ArrayList<Integer> events;
 	private ArrayList<Long> timings;
@@ -46,18 +47,16 @@ public class TestRunner extends PlayableClient implements Runnable{
 			}
 			i++;
 		}
-		//if(!dead){
-		//	stop();
-		//	nwc.stopListening();
-		//}
 	}
 
 	@Override
 	protected void processPlayerDead(PlayerDeadEvent event) {
-		dead = true;
-		stop();
-		nwc.stopListening();
-		super.processPlayerDead(event);
+		if(event.player.playerId == this.playerId){
+			dead = true;
+			stop();
+			nwc.stopListening();
+			super.processPlayerDead(event);
+		}
 	}
 
 	@Override
@@ -95,10 +94,11 @@ public class TestRunner extends PlayableClient implements Runnable{
 			//System.out.println("waiting in PressKeyAndWait at waitFod(GameKeyEventAck.class");
 			response = (GameKeyEventAck) waitFor(GameKeyEventAck.class);
 			
-			// If wrong event; add back to events
-			if(response == null) return;
+			if(response == null) {
+				//System.err.println("Client did not receive GameKeyEvebtAck");
+				return;
+			}
 			if (response.getKeyCode() != keyCode){
-				//System.out.println("found: " + response.getKeyCode() + " - expected: " + keyCode);
 				wrongKeys.add(response);
 			} else {
 				found = true;

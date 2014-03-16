@@ -1,0 +1,6 @@
+Players = 2; Location=[1->0,0:2->2,2] ; Grid=test/testGrid2.json
+1:SPACE
+1:RIGHT:2100
+2:UP:2200
+2:RIGHT:100
+2:LEFT:100

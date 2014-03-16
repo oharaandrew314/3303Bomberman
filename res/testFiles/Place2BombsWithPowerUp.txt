@@ -1,0 +1,7 @@
+Players = 1; Location=[1->0,0] ; Grid=test/testGrid2WithBombPlusOne.json
+1:RIGHT
+1:SPACE
+1:RIGHT
+1:SPACE
+1:RIGHT
+1:DOWN
