@@ -20,6 +20,7 @@ public class TestDriver {
 	 * runs all the testCases specified by the filenames final value
 	 */
 	public void runAll(Server server){
+		System.out.println("Number of tests: " + testcases.size());
 		for(TestCase test: testcases){
 			try {
 				server.newGame(GridLoader.loadGrid(test.getGridFileName()));
@@ -46,7 +47,7 @@ public class TestDriver {
 	
 	public static void main(String[] args){		
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {"breakWallWithBomb", "killPlayerWithBomb", "Place2BombsWithPowerUp", "playerCollision", "playerWin", "testBombRangePlusOne", "testFlamePass", "testInvulnerability", "testUpgradedBombsChainReaction", "tryAndPlaceMultipleBombs", "twoPlayerWin", "testPlayerEnemyCollision", "testHiddenDoor" };
+		String[] testfiles = {"breakWallWithBomb", "killPlayerWithBomb", "place2BombsWithPowerUp", "playerCollision", "playerWin", "testBombRangePlusOne", "testFlamePass", "testInvulnerability", "testUpgradedBombsChainReaction", "tryAndPlaceMultipleBombs", "twoPlayerWin", "testPlayerEnemyCollision", "testHiddenDoor" };
 		//String[] testfiles = {"testHiddenDoor"};
 		driver.readTestCases(testfiles);
 		driver.runAll(new Server());
