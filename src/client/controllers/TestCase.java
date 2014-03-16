@@ -17,12 +17,14 @@ public class TestCase {
 	public static final String LEFT = "LEFT";
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
+	private ArrayList<ArrayList<Long>> timings;
 	private ArrayList<Point> startLocations;
 	private String filename;
 
 	public TestCase(String filename){
 
 		startLocations = new ArrayList<Point>();
+		timings = new ArrayList<ArrayList<Long>>();
 		events = readEvents(filename);
 		this.filename = filename;
 
@@ -39,7 +41,7 @@ public class TestCase {
 		ArrayList<TestRunner> testClients = new ArrayList<TestRunner>();
 		Thread[] threads = new Thread[events.size()];
 		for(int i = 0 ; i != events.size();i++){
-			testClients.add(new TestRunner(events.get(i)));
+			testClients.add(new TestRunner(events.get(i), timings.get(i)));
 			threads[i] = new Thread(testClients.get(i));
 		}
 		boolean ready = false;
@@ -118,6 +120,7 @@ public class TestCase {
 					String[] locSplit = loc.split(":");
 					for(int i = 0 ; i != players ; i++){
 						events.add(new ArrayList<Integer>());
+						timings.add(new ArrayList<Long>());
 						startLocations.add(null);
 					}
 					for(int i = 0 ; i != locSplit.length ; i++){
@@ -136,20 +139,21 @@ public class TestCase {
 		        	String[] sections = str.split(":");
 		        	int player = Integer.parseInt(sections[0].trim());
 		        	String command = sections[1].trim();
+		        	String timing = sections[2].trim();
 
-		        		switch(command){
-			        		case UP:  events.get(player-1).add(VK_UP);
-		                    	break;
-			        		case DOWN:  events.get(player-1).add(VK_DOWN);
-		                		break;
-			        		case LEFT:  events.get(player-1).add(VK_LEFT);
-			        			break;
-			        		case RIGHT:  events.get(player-1).add(VK_RIGHT);
-		                		break;
-		                	default:
-		                		break;
-		        		}
-
+		        	switch(command){
+			        	case UP:  events.get(player-1).add(VK_UP);
+		                   	break;
+			        	case DOWN:  events.get(player-1).add(VK_DOWN);
+		                	break;
+			        	case LEFT:  events.get(player-1).add(VK_LEFT);
+			        		break;
+			        	case RIGHT:  events.get(player-1).add(VK_RIGHT);
+		                	break;
+		                default:
+		                	break;
+		        	}
+		        	timings.get(player-1).add(Long.parseLong(timing));
 		        }               
 		    }
 		}

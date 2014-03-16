@@ -210,7 +210,6 @@ public class Server extends GameController implements SimulationListener {
 		   	   		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
 		   	   }
     	   } else if (keyCode == KeyEvent.VK_ENTER){
-    		   System.out.println("received start event"); //TODO: delete
     		   startGame();
     	   }
     	   return new GameKeyEventAck(keyEvent);

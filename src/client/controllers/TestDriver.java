@@ -27,8 +27,11 @@ public class TestDriver {
 				e.printStackTrace();
 			}
 			test.run(server);
-			server.endGame();
+			if(server.isGameRunning()){
+				server.endGame();
+			}
 		}
+		System.out.println("Stopping the server");
 		server.stop();
 	}
 	
