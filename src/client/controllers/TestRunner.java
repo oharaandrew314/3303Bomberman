@@ -40,6 +40,7 @@ public class TestRunner extends PlayableClient implements Runnable{
 			
 			
 			//wait for an amount of time specified next to the command in the test file
+			//if none specified, it will be DEFAULT_WAIT_BETWEEN_ACTIONS
 			try {
 				Thread.sleep(timings.get(i));
 			} catch (InterruptedException e) {
@@ -94,10 +95,8 @@ public class TestRunner extends PlayableClient implements Runnable{
 			//System.out.println("waiting in PressKeyAndWait at waitFod(GameKeyEventAck.class");
 			response = (GameKeyEventAck) waitFor(GameKeyEventAck.class);
 			
-			if(response == null) {
-				//System.err.println("Client did not receive GameKeyEvebtAck");
-				return;
-			}
+			if(response == null) return; //occurs when it times out (one case being the player died before receiving
+										//the ack
 			if (response.getKeyCode() != keyCode){
 				wrongKeys.add(response);
 			} else {

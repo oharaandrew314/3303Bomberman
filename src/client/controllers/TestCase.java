@@ -48,6 +48,8 @@ public class TestCase {
 			testClients.add(new TestRunner(events.get(i), timings.get(i)));
 			threads[i] = new Thread(testClients.get(i));
 		}
+		
+		//Wait for everyone to connect
 		boolean ready = false;
 		long timeStartWaiting = System.currentTimeMillis();
 		while(!ready){
@@ -63,17 +65,25 @@ public class TestCase {
 			}
 			ready = allConnected;
 		}
+		
+		//Start the game
 		if(!testClients.isEmpty()){
 			testClients.get(0).sendGameStartEvent();
 			timeStartWaiting = System.currentTimeMillis();
-			boolean timeout = false;
-			while(!testClients.get(0).isGameRunning() && !timeout){
-				System.out.print("");
-				timeout = System.currentTimeMillis() - timeStartWaiting > 1000;
-			}
-			if(timeout){
-				System.err.println("timed out, game didn't start within the alloted time");
-				return;
+			
+			boolean startedForEveryone = false;
+			while(!startedForEveryone){
+				if(System.currentTimeMillis() - timeStartWaiting > 1000){
+					System.out.println("gameStart: Waited too long... exiting");
+					return;
+				}
+				boolean allStarted = true;
+				for(TestRunner r : testClients){
+					if(!r.isGameRunning()){
+						allStarted = false;
+					}
+				}
+				startedForEveryone = allStarted;
 			}
 		}
 		
