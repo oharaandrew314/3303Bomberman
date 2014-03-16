@@ -7,8 +7,7 @@ import java.util.List;
 import server.content.CreateGridException;
 import server.content.GridLoader;
 import server.controllers.Server;
-
-import common.models.Player;
+import common.models.units.Player;
 
 public class MockServer extends Server {
 	

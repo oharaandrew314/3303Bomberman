@@ -1,5 +1,12 @@
-package common.models;
+package common.models.units;
 
+import common.models.Bomb;
+import common.models.BombFactory;
+import common.models.powerups.BombPlusOnePowerup;
+import common.models.powerups.BombRangePowerup;
+import common.models.powerups.FlamePassPowerup;
+import common.models.powerups.MysteryPowerup;
+import common.models.powerups.Powerup;
 import server.controllers.SimulationTimer;
 
 public class Player extends Unit {

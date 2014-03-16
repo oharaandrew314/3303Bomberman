@@ -11,6 +11,7 @@ import common.events.DisconnectEvent;
 import common.events.Event;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
+import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Grid;
@@ -25,6 +26,7 @@ public abstract class AbstractView extends WindowAdapter {
 	
 	public void handleEvent(GameState state, Event event){
 		String message = null;
+		int playerId = event.getPlayerID();
 		
 		if (event instanceof ViewUpdateEvent){
 			ViewUpdateEvent viewEvent = (ViewUpdateEvent) event;
@@ -35,7 +37,7 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getPlayerDead(deadEvent.player);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
-			message = textGen.getConnectionAccepted(event.getPlayerID());
+			message = textGen.getConnectionAccepted(playerId);
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			message = textGen.getConnectionRejected();
@@ -49,7 +51,10 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getStartGame();
 		}
 		else if (event instanceof DisconnectEvent){
-			message = textGen.getPlayerDisconnected(event.getPlayerID());
+			message = textGen.getPlayerDisconnected(playerId);
+		} else if (event instanceof PowerupReceivedEvent){
+			PowerupReceivedEvent pEvent = (PowerupReceivedEvent) event;
+			message = textGen.getPowerupMessage(pEvent.player, pEvent.powerup);
 		}
 		
 		if (message != null){

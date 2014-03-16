@@ -14,8 +14,8 @@ import org.junit.Test;
 import common.models.Door;
 import common.models.Grid;
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Wall;
+import common.models.units.Player;
 
 public class TestGrid {
 	

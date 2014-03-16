@@ -1,5 +1,6 @@
 package server.views;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
@@ -20,7 +21,8 @@ public class LevelLoaderDialog extends JDialog {
 	private final Server server;
 	private final JTextField gridName;
 
-	public LevelLoaderDialog(Server server) {
+	public LevelLoaderDialog(Component parent, Server server) {
+		this.setLocationRelativeTo(parent);
 		this.server = server;
 		
 		setLayout(new GridLayout(3, 1));

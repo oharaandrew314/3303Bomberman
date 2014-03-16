@@ -1,7 +1,8 @@
 package common.views;
 
 import common.controllers.GameController.GameState;
-import common.models.Player;
+import common.models.powerups.Powerup;
+import common.models.units.Player;
 
 public interface TextGenerator {
 
@@ -12,4 +13,5 @@ public interface TextGenerator {
 	public String getEndGame(Player player);
 	public String getStartGame();
 	public String getPlayerDisconnected(int playerId);
+	public String getPowerupMessage(Player player, Powerup powerup);
 }

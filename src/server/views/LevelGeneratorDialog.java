@@ -1,5 +1,6 @@
 package server.views;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import common.models.Grid;
-
 import server.content.GridGenerator;
 import server.controllers.Server;
 
@@ -21,7 +21,8 @@ public class LevelGeneratorDialog extends JDialog {
 	private final JTextField width, height, seed;
 	private final Server server;
 
-	public LevelGeneratorDialog(Server server) {
+	public LevelGeneratorDialog(Component parent, Server server) {
+		this.setLocationRelativeTo(parent);
 		this.server = server;
 		setLayout(new GridLayout(5, 2));
 		

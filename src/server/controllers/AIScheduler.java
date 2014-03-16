@@ -3,31 +3,30 @@ package server.controllers;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
-import common.models.Enemy;
-import common.models.PathFindingEnemy;
-import common.models.LineEnemy;
-import common.models.RandomEnemy;
+import common.models.units.Enemy;
+import common.models.units.LineEnemy;
+import common.models.units.PathFindingEnemy;
+import common.models.units.RandomEnemy;
 
 public class AIScheduler implements SimulationListener {
 
-	public static final int ENEMY_MOVE_FREQ = 1200;
 	private Random rng;
-	private Map<Enemy, Long> enemies;
+	private Collection<Enemy> enemies;
 	private Server server;
 	
 	public AIScheduler(Server server){
 		rng = new Random();
-		enemies = new HashMap<Enemy, Long>();
+		enemies = new LinkedList<Enemy>();
 		this.server = server;
 	}
 	
 	public synchronized void addEnemy(Enemy enemy){
-		enemies.put(enemy, 0L);
+		enemies.add(enemy);
 	}
 	public synchronized void removeEnemy(Enemy enemy){
 		enemies.remove(enemy);
@@ -35,8 +34,8 @@ public class AIScheduler implements SimulationListener {
 	
 	@Override
 	public synchronized void simulationUpdate(long now) {
-		for (Enemy enemy : enemies.keySet()){
-			if (now - enemies.get(enemy) > ENEMY_MOVE_FREQ){
+		for (Enemy enemy : enemies){
+			if (enemy.isTimeToMove(now)){
 				
 				Point translation;
 				Point currentLocation = getCurrentLocation(enemy);
@@ -58,7 +57,6 @@ public class AIScheduler implements SimulationListener {
 				}
 				else throw new UnsupportedOperationException("Enemy type not supported");
 				
-				enemies.put(enemy, now); //register new movement time
 				server.move(enemy, translation.x, translation.y);
 			}
 		}
@@ -110,7 +108,7 @@ public class AIScheduler implements SimulationListener {
 	}
 	
 	@Override
-	public void onTimerReset() {
+	public synchronized void onTimerReset() {
 		enemies.clear();
 	}
 	

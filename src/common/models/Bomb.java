@@ -19,7 +19,7 @@ public class Bomb extends Entity {
 		blastRange = range;
 	}
 	
-	public void setDetonated(){
+	public synchronized void setDetonated(){
 		if (detonated){
 			throw new RuntimeException("Cannot detonate a bomb more than once.");
 		}
@@ -27,7 +27,7 @@ public class Bomb extends Entity {
 		factory.bombDetonated(this);
 	}
 	
-	public boolean isDetonated(){
+	public synchronized boolean isDetonated(){
 		return detonated;
 	}
 

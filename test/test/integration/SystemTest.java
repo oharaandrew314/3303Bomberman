@@ -13,7 +13,7 @@ import org.junit.Test;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
 import common.models.Grid;
-import common.models.Player;
+import common.models.units.Player;
 
 public class SystemTest {
 	
