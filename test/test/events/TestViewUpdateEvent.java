@@ -20,8 +20,8 @@ import common.events.ViewUpdateEvent;
 import common.models.Door;
 import common.models.Grid;
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Wall;
+import common.models.units.Player;
 
 public class TestViewUpdateEvent {
     private ViewUpdateEvent viewUpdateEvent;

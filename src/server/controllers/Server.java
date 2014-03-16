@@ -24,16 +24,17 @@ import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
+import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
-import common.models.Player;
-import common.models.Powerup;
-import common.models.Unit;
-import common.models.Enemy;
+import common.models.powerups.Powerup;
+import common.models.units.Enemy;
+import common.models.units.Player;
+import common.models.units.Unit;
 
 public class Server extends GameController implements SimulationListener {
 	
@@ -252,7 +253,7 @@ public class Server extends GameController implements SimulationListener {
 		return new ConnectRejectedEvent();
     }
     
-    public synchronized void move(Unit unit, int dx, int dy){
+    public synchronized void move(Unit unit, int dx, int dy){    	
     	// Do nothing if game is not running or player does not exist
     	if (!isGameRunning() || !grid.contains(unit)){
     		return;
@@ -275,13 +276,13 @@ public class Server extends GameController implements SimulationListener {
     	// Check for collisions
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Unit && !unit.equals(entity)){
-    			// Kill own player
+    			// Kill own unit
     			if(unit.canBeHurtBy(entity)){
     				killUnit(unit);
     			}
     			
     			
-    			// If other unit was player, kill it
+    			// If other unit was unit, kill it
     			if (entity instanceof Unit){
     				if(((Unit) entity).canBeHurtBy(unit)){
     					killUnit((Unit) entity);	
@@ -295,8 +296,11 @@ public class Server extends GameController implements SimulationListener {
     		for(Entity entity : grid.get(dest)){
         		if(entity instanceof Powerup){
         			//handle powerups
-        			((Player) unit).addPowerup((Powerup)entity);
+        			Player player = (Player) unit;
+        			Powerup powerup = (Powerup) entity;
+        			player.addPowerup(powerup);
         			grid.remove(entity);
+        			send(new PowerupReceivedEvent(player, powerup));
         		}
         	}
     	} 
@@ -309,7 +313,7 @@ public class Server extends GameController implements SimulationListener {
 	    			endGame();
 	    		}
 	    	}
-    	} 	
+    	}
     }
     
     // Callback methods

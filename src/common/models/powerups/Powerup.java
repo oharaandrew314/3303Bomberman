@@ -1,4 +1,6 @@
-package common.models;
+package common.models.powerups;
+
+import common.models.Entity;
 
 public class Powerup extends Entity{
 
@@ -7,14 +9,19 @@ public class Powerup extends Entity{
 	public Powerup(String name) {
 		super(name);
 	}
-	
-	public Powerup(){
-		super("P");
-	}
 
 	@Override
 	public boolean isPassable() {
 		return true;
 	}
-
+	
+	@Override
+	public boolean isDestructible(){
+		return false;
+	}
+	
+	@Override
+	public String toString(){
+		return "P";
+	}
 }

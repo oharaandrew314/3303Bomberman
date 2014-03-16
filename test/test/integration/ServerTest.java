@@ -17,7 +17,7 @@ import test.integration.helpers.MockServer;
 import common.events.ConnectEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
-import common.models.Player;
+import common.models.units.Player;
 
 public class ServerTest {
 	

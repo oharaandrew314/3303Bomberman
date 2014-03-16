@@ -1,4 +1,4 @@
-package common.models;
+package common.models.units;
 
 public class RandomEnemy extends Enemy {
 	

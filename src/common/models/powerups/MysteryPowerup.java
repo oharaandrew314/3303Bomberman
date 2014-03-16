@@ -1,4 +1,5 @@
-package common.models;
+package common.models.powerups;
+
 
 public class MysteryPowerup extends Powerup{
 
@@ -6,7 +7,7 @@ public class MysteryPowerup extends Powerup{
 	private long invulnerabilityDuration;
 	
 	public MysteryPowerup(long duration){
-		super();
+		super("Mystery");
 		invulnerabilityDuration = duration;
 	}
 	
