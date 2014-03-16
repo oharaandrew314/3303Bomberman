@@ -198,16 +198,16 @@ public class Server extends GameController implements SimulationListener {
     		   switch(keyCode){
 		   	   		case KeyEvent.VK_UP:
 		   	   		case KeyEvent.VK_W:
-		   	   		case KeyEvent.VK_I: return move(player, 0, -1);
+		   	   		case KeyEvent.VK_I: move(player, 0, -1); break;
 		   	   		case KeyEvent.VK_LEFT:
 		   	   		case KeyEvent.VK_A:
-		   	   		case KeyEvent.VK_J: return move(player, -1, 0);
+		   	   		case KeyEvent.VK_J: move(player, -1, 0); break;
 		   	   		case KeyEvent.VK_DOWN:
 		   	   		case KeyEvent.VK_S:
-		   	   		case KeyEvent.VK_K: return move(player, 0, 1);
+		   	   		case KeyEvent.VK_K: move(player, 0, 1); break;
 		   	   		case KeyEvent.VK_RIGHT:
 		   	   		case KeyEvent.VK_D:
-		   	   		case KeyEvent.VK_L: return move(player, 1, 0);
+		   	   		case KeyEvent.VK_L: move(player, 1, 0); break;
 		   	   		case KeyEvent.VK_SPACE:
 		   	   		case KeyEvent.VK_F:
 		   	   		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
@@ -253,12 +253,10 @@ public class Server extends GameController implements SimulationListener {
 		return new ConnectRejectedEvent();
     }
     
-    public synchronized Event move(Unit unit, int dx, int dy){
-    	Event response = null;
-    	
+    public synchronized void move(Unit unit, int dx, int dy){    	
     	// Do nothing if game is not running or player does not exist
     	if (!isGameRunning() || !grid.contains(unit)){
-    		return response;
+    		return;
     	}
     	
     	Point origin = grid.find(unit);
@@ -269,7 +267,7 @@ public class Server extends GameController implements SimulationListener {
     	
     	// Do not continue if unit cannot move here
     	if (!grid.getPossibleMoves(origin).contains(dest)){
-    		return response;
+    		return;
     	}
     	
     	// Move unit
@@ -278,13 +276,13 @@ public class Server extends GameController implements SimulationListener {
     	// Check for collisions
     	for (Entity entity : grid.get(dest)){
     		if (entity instanceof Unit && !unit.equals(entity)){
-    			// Kill own player
+    			// Kill own unit
     			if(unit.canBeHurtBy(entity)){
     				killUnit(unit);
     			}
     			
     			
-    			// If other unit was player, kill it
+    			// If other unit was unit, kill it
     			if (entity instanceof Unit){
     				if(((Unit) entity).canBeHurtBy(unit)){
     					killUnit((Unit) entity);	
@@ -316,7 +314,6 @@ public class Server extends GameController implements SimulationListener {
 	    		}
 	    	}
     	}
-    	return response;
     }
     
     // Callback methods
