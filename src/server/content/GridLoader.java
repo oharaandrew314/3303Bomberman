@@ -20,16 +20,16 @@ import com.google.gson.JsonSyntaxException;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
-import common.models.LineEnemy;
-import common.models.PathFindingEnemy;
 import common.models.Pillar;
-import common.models.Player;
-import common.models.RandomEnemy;
 import common.models.Wall;
 import common.models.powerups.BombPlusOnePowerup;
 import common.models.powerups.BombRangePowerup;
 import common.models.powerups.FlamePassPowerup;
 import common.models.powerups.MysteryPowerup;
+import common.models.units.LineEnemy;
+import common.models.units.PathFindingEnemy;
+import common.models.units.Player;
+import common.models.units.RandomEnemy;
 
 public class GridLoader {
 	

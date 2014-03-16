@@ -8,10 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import common.models.Enemy;
-import common.models.LineEnemy;
-import common.models.PathFindingEnemy;
-import common.models.RandomEnemy;
+import common.models.units.Enemy;
+import common.models.units.LineEnemy;
+import common.models.units.PathFindingEnemy;
+import common.models.units.RandomEnemy;
 
 public class AIScheduler implements SimulationListener {
 

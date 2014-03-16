@@ -1,4 +1,6 @@
-package common.models;
+package common.models.units;
+
+import common.models.Entity;
 
 public abstract class Unit extends Entity {
 

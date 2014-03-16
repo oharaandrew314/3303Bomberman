@@ -1,8 +1,8 @@
 package common.views;
 
 import common.controllers.GameController.GameState;
-import common.models.Player;
 import common.models.powerups.Powerup;
+import common.models.units.Player;
 
 public interface TextGenerator {
 

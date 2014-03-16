@@ -31,10 +31,10 @@ import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
-import common.models.Player;
-import common.models.Unit;
-import common.models.Enemy;
 import common.models.powerups.Powerup;
+import common.models.units.Enemy;
+import common.models.units.Player;
+import common.models.units.Unit;
 
 public class Server extends GameController implements SimulationListener {
 	

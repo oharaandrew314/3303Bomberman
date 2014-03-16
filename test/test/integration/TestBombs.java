@@ -16,8 +16,8 @@ import test.integration.helpers.MockServer;
 import common.models.Bomb;
 import common.models.BombFactory;
 import common.models.Grid;
-import common.models.Player;
 import common.models.Wall;
+import common.models.units.Player;
 
 public class TestBombs {
 	

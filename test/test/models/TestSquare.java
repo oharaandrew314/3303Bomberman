@@ -3,10 +3,9 @@ package test.models;
 import org.junit.*;
 
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Square;
 import common.models.Wall;
-
+import common.models.units.Player;
 import static org.junit.Assert.*;
 
 public class TestSquare {

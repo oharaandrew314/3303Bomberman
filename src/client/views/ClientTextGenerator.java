@@ -1,8 +1,8 @@
 package client.views;
 
 import common.controllers.GameController.GameState;
-import common.models.Player;
 import common.models.powerups.Powerup;
+import common.models.units.Player;
 import common.views.TextGenerator;
 
 public class ClientTextGenerator implements TextGenerator {

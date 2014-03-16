@@ -1,7 +1,7 @@
 package common.events;
 
 import common.models.Grid;
-import common.models.Player;
+import common.models.units.Player;
 
 public class WinEvent extends Event {
 

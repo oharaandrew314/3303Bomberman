@@ -1,4 +1,4 @@
-package common.models;
+package common.models.units;
 
 import java.awt.Point;
 import java.util.HashSet;

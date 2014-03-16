@@ -1,7 +1,7 @@
 package common.events;
 
-import common.models.Player;
 import common.models.powerups.Powerup;
+import common.models.units.Player;
 
 public class PowerupReceivedEvent extends Event {
 	
