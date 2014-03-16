@@ -2,6 +2,7 @@ package client.views;
 
 import common.controllers.GameController.GameState;
 import common.models.Player;
+import common.models.powerups.Powerup;
 import common.views.TextGenerator;
 
 public class SpectatorTextGenerator implements TextGenerator{
@@ -39,5 +40,12 @@ public class SpectatorTextGenerator implements TextGenerator{
 	@Override
 	public String getPlayerDisconnected(int playerId) {
 		return String.format("Player %d has disconnected.", playerId);
+	}
+
+	@Override
+	public String getPowerupMessage(Player player, Powerup powerup) {
+		return String.format(
+			"%s has received the %s powerup.", player, powerup.name
+		);
 	}
 }

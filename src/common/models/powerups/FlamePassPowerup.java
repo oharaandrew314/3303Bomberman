@@ -1,4 +1,5 @@
-package common.models;
+package common.models.powerups;
+
 
 public class FlamePassPowerup extends Powerup{
 
@@ -6,7 +7,7 @@ public class FlamePassPowerup extends Powerup{
 	private long duration;
 	
 	public FlamePassPowerup(long duration){
-		super();
+		super("Flamepass");
 		this.duration = duration;
 	}
 	

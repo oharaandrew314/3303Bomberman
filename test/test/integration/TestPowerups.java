@@ -14,12 +14,12 @@ import server.controllers.SimulationTimer;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
 import common.models.Bomb;
-import common.models.BombPlusOnePowerup;
-import common.models.BombRangePowerup;
-import common.models.FlamePassPowerup;
-import common.models.MysteryPowerup;
 import common.models.Player;
-import common.models.Powerup;
+import common.models.powerups.BombPlusOnePowerup;
+import common.models.powerups.BombRangePowerup;
+import common.models.powerups.FlamePassPowerup;
+import common.models.powerups.MysteryPowerup;
+import common.models.powerups.Powerup;
 
 public class TestPowerups {
 	

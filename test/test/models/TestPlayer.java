@@ -3,11 +3,11 @@ import org.junit.*;
 
 import server.controllers.SimulationTimer;
 import static org.junit.Assert.*;
-import common.models.BombPlusOnePowerup;
-import common.models.BombRangePowerup;
-import common.models.FlamePassPowerup;
-import common.models.MysteryPowerup;
 import common.models.Player;
+import common.models.powerups.BombPlusOnePowerup;
+import common.models.powerups.BombRangePowerup;
+import common.models.powerups.FlamePassPowerup;
+import common.models.powerups.MysteryPowerup;
 
 public class TestPlayer {
 
