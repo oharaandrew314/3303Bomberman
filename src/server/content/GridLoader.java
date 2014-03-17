@@ -21,8 +21,15 @@ import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Wall;
+import common.models.powerups.BombPlusOnePowerup;
+import common.models.powerups.BombRangePowerup;
+import common.models.powerups.FlamePassPowerup;
+import common.models.powerups.MysteryPowerup;
+import common.models.units.LineEnemy;
+import common.models.units.PathFindingEnemy;
+import common.models.units.Player;
+import common.models.units.RandomEnemy;
 
 public class GridLoader {
 	
@@ -119,6 +126,13 @@ public class GridLoader {
 				case "wall": return new Wall();
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
+				case "bombrange": return new BombRangePowerup();
+				case "flamepass": return new FlamePassPowerup(10000);
+				case "mystery": return new MysteryPowerup(10000);
+				case "bombplusone": return new BombPlusOnePowerup();
+				case "randomenemy": return new RandomEnemy();
+				case "lineenemy": return new LineEnemy();
+				case "pathfindingenemy": return new PathFindingEnemy();
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"
 				);

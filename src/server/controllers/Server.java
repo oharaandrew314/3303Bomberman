@@ -24,24 +24,26 @@ import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
+import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
-import common.models.Player;
-import common.models.Unit;
+import common.models.powerups.Powerup;
+import common.models.units.Enemy;
+import common.models.units.Player;
+import common.models.units.Unit;
 
 public class Server extends GameController implements SimulationListener {
 	
 	public static final int MAX_PLAYERS = 4;
-	public static enum State { stopped, idle, newGame, gameRunning, error };
 	
 	protected Map<Integer, Player> players;
-	private State state = State.stopped;
 	private final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
+	private final AIScheduler aiScheduler;
 
 	public Server(){
 		players = new HashMap<>();
@@ -50,36 +52,42 @@ public class Server extends GameController implements SimulationListener {
 		timer = new SimulationTimer();
 		timer.addListener(this);
 		timer.addListener(bombScheduler = new BombScheduler(this));
+		timer.addListener(aiScheduler = new AIScheduler(this));
 		
-		state = State.idle;
+		state = GameState.idle;
 		
 		try {
 			nwc.startListeningOnServerPort();
 			
 		} catch (SocketException e) {
 			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-			state = State.error;
+			state = GameState.error;
 		}
 	}
 	
 	// Accessors
 	
 	@Override
-	public boolean isGameRunning() {
-		return state == State.gameRunning;
-	}
-	
-	@Override
 	public boolean isAcceptingConnections(){
-		return state == State.newGame || state == State.idle;
+		return state == GameState.newGame || state == GameState.idle;
 	}
 	
 	// State Methods
 	
 	public synchronized void newGame(Grid grid){
-		if (state == State.idle && grid != null){
+		if (state == GameState.idle && grid != null){
 			this.grid = grid;
-			state = State.newGame;
+			
+			// register enemies
+			for (Point p : grid.keySet()){
+				for (Entity e : grid.get(p)){
+					if (e instanceof Enemy){
+						aiScheduler.addEnemy((Enemy) e);
+					}
+				}
+			}
+			
+			state = GameState.newGame;
 			updateView(new ViewUpdateEvent(grid));
 		} else {
 			System.err.println("Could not create new game.");
@@ -87,19 +95,19 @@ public class Server extends GameController implements SimulationListener {
 	}
 	
 	private void startGame(){
-		if (state == State.newGame){
+		if (state == GameState.newGame){
 			// Place players
 			List<Point> points = new ArrayList<>(grid.keySet());
 			Random r = new Random();
 			Queue<Player> queue = new ArrayDeque<>(players.values());
 			while(!queue.isEmpty()){
 				Point dest = points.get(r.nextInt(points.size() - 1));
-				if (grid.isPassable(dest) && !grid.hasTypeAt(Player.class, dest)){
+				if (grid.get(dest).isEmpty()){ // place player on an empty spot
 					grid.set(queue.remove(), dest);
 				}
 			}
 			
-			state = State.gameRunning;
+			state = GameState.gameRunning;
 			send(new GameStartEvent());
 			timer.start();
 		} else {
@@ -108,9 +116,9 @@ public class Server extends GameController implements SimulationListener {
 	}
 	
 	public synchronized void endGame(){
-		if (state == State.gameRunning){
+		if (state == GameState.gameRunning){
 			timer.stop();
-			state = State.idle;
+			state = GameState.idle;
 			grid = null;
 		} else {
 			System.err.println("Could not end game; no game running");
@@ -122,28 +130,34 @@ public class Server extends GameController implements SimulationListener {
 			endGame();
 		}
 		super.stop();
-		state = State.stopped;
+		state = GameState.stopped;
 	}
 	
 	// Other methods
 	
 	@Override
-	public synchronized void simulationUpdate(){
+	public synchronized void simulationUpdate(long now){
 		if (isGameRunning()){
+			nwc.setBusy(true);
 			send(new ViewUpdateEvent(grid));
+			nwc.setBusy(false);
 		}
 	}
 	
 	@Override
     public void onTimerReset(){}
 	
-	private synchronized void killPlayer(Player player){
-    	if (player == null){
+	private synchronized void killUnit(Unit unit){
+    	if (unit == null){
     		throw new IllegalArgumentException("Player cannot be null.");
     	}
-    	players.remove(player.playerId);
-		send(new PlayerDeadEvent(player));
-		grid.remove(player);
+    	if(unit instanceof Player){
+    		players.remove(((Player) unit).playerId);
+    		send(new PlayerDeadEvent((Player) unit));
+    	} else{
+    		aiScheduler.removeEnemy((Enemy) unit);
+    	}
+    	grid.remove(unit);
     }
 	
 	// Event Methods
@@ -218,11 +232,12 @@ public class Server extends GameController implements SimulationListener {
 		else if (isAcceptingConnections()){
 			if (players.size() < MAX_PLAYERS){
     			players.put(playerId, new Player(playerId));
-    		}
-			accept = true;
+    			accept = true;
+    		}		
 		}
     	
-    	Event response = accept ? new ConnectAcceptedEvent() : new ConnectRejectedEvent();
+    	Event response = accept ? new ConnectAcceptedEvent(playerId) : new ConnectRejectedEvent();
+    	response.setPlayerID(event.getPlayerID());
     	updateView(response);
     	return response;
     }
@@ -238,50 +253,93 @@ public class Server extends GameController implements SimulationListener {
 		return new ConnectRejectedEvent();
     }
     
-    private synchronized void move(Player player, int dx, int dy){
-    	// Do nothing if game is not running
-    	if (!isGameRunning()){
+    public synchronized void move(Unit unit, int dx, int dy){    	
+    	// Do nothing if game is not running or player does not exist
+    	if (!isGameRunning() || !grid.contains(unit)){
     		return;
     	}
     	
-    	Point origin = grid.find(player);
+    	Point origin = grid.find(unit);
     	
     	// Get destination point
     	Point dest = new Point(origin);
     	dest.translate(dx, dy);
     	
-    	// Do not continue if player cannot move here
+    	// Do not continue if unit cannot move here
     	if (!grid.getPossibleMoves(origin).contains(dest)){
     		return;
     	}
     	
-    	// Move player
-    	grid.set(player, dest);
+    	// Move unit
+    	grid.set(unit, dest);
     	
     	// Check for collisions
     	for (Entity entity : grid.get(dest)){
-    		if (entity instanceof Unit && !player.equals(entity)){
-    			// Kill own player
-    			killPlayer(player);
+    		if (entity instanceof Unit && !unit.equals(entity)){
+    			// Kill own unit
+    			if(unit.canBeHurtBy(entity)){
+    				killUnit(unit);
+    			}
     			
-    			// If other unit was player, kill it
-    			if (entity instanceof Player){
-    				killPlayer((Player) entity);
-    				
+    			
+    			// If other unit was unit, kill it
+    			if (entity instanceof Unit){
+    				if(((Unit) entity).canBeHurtBy(unit)){
+    					killUnit((Unit) entity);	
+    				}
     			}
     		}
     	}
     	
+    	//check if player picks up a powerup
+    	if(unit instanceof Player){
+    		for(Entity entity : grid.get(dest)){
+        		if(entity instanceof Powerup){
+        			//handle powerups
+        			Player player = (Player) unit;
+        			Powerup powerup = (Powerup) entity;
+        			player.addPowerup(powerup);
+        			grid.remove(entity);
+        			send(new PowerupReceivedEvent(player, powerup));
+        		}
+        	}
+    	} 
+    	
     	// Check if player wins and notify views
-    	for (Entity entity : grid.get(dest)){
-    		if (entity instanceof Door){
-    			send(new WinEvent(player, grid));
-    			endGame();
-    		}
+    	if (unit instanceof Player){
+	    	for (Entity entity : grid.get(dest)){
+	    		if (entity instanceof Door){
+	    			send(new WinEvent((Player)unit, grid));
+	    			endGame();
+	    		}
+	    	}
     	}
     }
     
     // Callback methods
+    
+    /**
+     * For use by the AIController doing pathfinding.
+     * This returns the nearest player
+     */
+    public synchronized Point getNearestPlayerLocation(Point source){
+    	if (!isGameRunning()) return null; //players aren't on the board yet!
+    	
+    	Point minPoint = null;
+    	int minPath = Integer.MAX_VALUE;
+    	
+    	for (Player player : players.values()){
+    		Point loc = grid.find(player);
+    		List<Point> path = getGrid().getShortestPath(source, loc);
+    				
+    		if (path != null && path.size() < minPath){
+    			minPath = path.size();
+    			minPoint = loc;
+    		}
+    	}
+    	
+    	return minPoint;
+    }
     
     public synchronized Bomb dropBombBy(Player player){
     	Point loc = grid.find(player);
@@ -300,8 +358,10 @@ public class Server extends GameController implements SimulationListener {
 			for (Entity entity : grid.get(p)){
 					
 				// Kill any players in blast path
-				if (entity instanceof Player){
-					killPlayer((Player) entity);
+				if (entity instanceof Unit){
+					if(!((Unit) entity).isImmuneToBombs()){
+						killUnit((Unit) entity);
+					}
 				}
 				
 				// Detonate any bombs in blast path

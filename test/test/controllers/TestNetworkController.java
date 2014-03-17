@@ -57,11 +57,6 @@ public class TestNetworkController extends GameController {
     }
     
     @Override
-	public boolean isGameRunning() {
-		return true;
-	}
-    
-    @Override
 	public boolean isAcceptingConnections() {
 		return isAcceptingConnections;
 	}
@@ -203,5 +198,21 @@ public class TestNetworkController extends GameController {
      	assertEquals(2, getClientIdFromServer(clientA));
      	assertEquals(3, getClientIdFromServer(clientB));
      	assertEquals(4, getClientIdFromServer(clientC));
+    }
+    
+    @Test
+    public void testNetworkControllerIsBlockedWhenGameControllerIsBusy() {
+    	startServer(server);
+    	addServerToClient(clientA);
+    	server.setBusy(true);
+    	clientA.send(new ConnectEvent(false));
+    	try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    	assertTrue(!server.hasHandled(ConnectEvent.class));
+    	server.setBusy(false);
+    	server.waitFor(ConnectEvent.class);
     }
 }

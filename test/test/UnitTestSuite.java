@@ -13,8 +13,10 @@ import test.integration.ServerTest;
 import test.integration.SystemTest;
 import test.integration.TestBombs;
 import test.integration.TestClient;
+import test.integration.TestPowerups;
 import test.models.TestBombFactory;
 import test.models.TestGrid;
+import test.models.TestPlayer;
 import test.models.TestSquare;
 
 @RunWith(Suite.class)
@@ -30,12 +32,14 @@ import test.models.TestSquare;
    TestTestDriver.class,
    TestSimulationTimer.class,
    TestBombFactory.class,
+   TestPlayer.class,
    
    //Integration Tests
    ServerTest.class,
    SystemTest.class,
    TestClient.class,
    TestBombs.class,
+   TestPowerups.class,
 })
 
 public class UnitTestSuite {}

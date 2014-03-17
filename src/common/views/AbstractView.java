@@ -4,12 +4,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import common.controllers.GameController.GameState;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
 import common.events.Event;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
+import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
 import common.events.WinEvent;
 import common.models.Grid;
@@ -22,8 +24,9 @@ public abstract class AbstractView extends WindowAdapter {
 		this.textGen = textGen;
 	}
 	
-	public void handleEvent(Event event){
+	public void handleEvent(GameState state, Event event){
 		String message = null;
+		int playerId = event.getPlayerID();
 		
 		if (event instanceof ViewUpdateEvent){
 			ViewUpdateEvent viewEvent = (ViewUpdateEvent) event;
@@ -34,7 +37,7 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getPlayerDead(deadEvent.player);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
-			message = textGen.getConnectionAccepted(event.getPlayerID());
+			message = textGen.getConnectionAccepted(playerId);
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			message = textGen.getConnectionRejected();
@@ -48,12 +51,16 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getStartGame();
 		}
 		else if (event instanceof DisconnectEvent){
-			message = textGen.getPlayerDisconnected(event.getPlayerID());
+			message = textGen.getPlayerDisconnected(playerId);
+		} else if (event instanceof PowerupReceivedEvent){
+			PowerupReceivedEvent pEvent = (PowerupReceivedEvent) event;
+			message = textGen.getPowerupMessage(pEvent.player, pEvent.powerup);
 		}
 		
 		if (message != null){
 			displayMessage(message);
 		}
+		setTitle(textGen.getTitle(state));
 	}
 	
 	@Override
@@ -65,4 +72,5 @@ public abstract class AbstractView extends WindowAdapter {
 	public abstract void displayGrid(Grid grid);
 	public abstract void close();
 	public abstract void addKeyListener(KeyListener l);
+	protected abstract void setTitle(String string);
 }

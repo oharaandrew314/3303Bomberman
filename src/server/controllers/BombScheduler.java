@@ -20,14 +20,13 @@ public class BombScheduler implements SimulationListener {
 	public synchronized void scheduleBomb(Bomb bomb){
 		bombs.put(
 			bomb,
-			System.currentTimeMillis() + Bomb.FUSE_TIME
+			SimulationTimer.currentTimeMillis() + Bomb.FUSE_TIME
 		);
 	}
 	
 	@Override
-	public synchronized void simulationUpdate(){
+	public synchronized void simulationUpdate(long now){
 		// Detonate bombs ready for detonation
-		long now = System.currentTimeMillis();
 		ArrayList<Bomb> toRemove = new ArrayList<>();
 		
 		for (Entry<Bomb, Long> entry : bombs.entrySet()){

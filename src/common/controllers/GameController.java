@@ -8,16 +8,29 @@ import common.views.AbstractView;
 
 public abstract class GameController extends Observable{
 	
+	public static enum GameState {
+		stopped, idle, newGame, gameRunning, stopping, error
+	};
+	
 	protected final NetworkController nwc;
-	private AbstractView view;
+	protected AbstractView view;
 	protected Grid grid;
+	protected GameState state = GameState.stopped;
 
 	public GameController() {
 		nwc = new NetworkController(this);
 	}
 	
-	public Grid getGrid(){
+	public final Grid getGrid(){
 		return grid;
+	}
+	
+	public final GameState getState(){
+		return state;
+	}
+	
+	public final boolean isGameRunning(){
+		return state == GameState.gameRunning;
 	}
 	
 	public void setView(AbstractView view){
@@ -30,7 +43,7 @@ public abstract class GameController extends Observable{
 	
 	protected void updateView(Event event){
 		if (view != null){
-			view.handleEvent(event);
+			view.handleEvent(state, event);
 		}
 	}
 	
@@ -41,8 +54,7 @@ public abstract class GameController extends Observable{
 			view.close();
 		}
 	}
-
-	public abstract boolean isGameRunning();
+	
 	public abstract Event receive(Event event);
 	public abstract boolean isAcceptingConnections();
     

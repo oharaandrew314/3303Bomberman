@@ -14,18 +14,18 @@ import common.events.PlayerDeadEvent;
 import common.events.WinEvent;
 
 public abstract class Client extends GameController {
-	
-	public static enum State {stopped, idle, gameRunning, stopping };
-	private State state = State.stopped;
 
+	protected int playerId;
+	
 	public Client() {
 		this(NetworkController.LOCALHOST);
+		playerId = -1; // no Id until given by server
 	}
 	
 	public Client(String serverAddress){
         nwc.startListeningOnAnyAvailablePort();
 		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		nwc.send(new ConnectEvent(isSpectator()));
+		send(new ConnectEvent(isSpectator()));
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public abstract class Client extends GameController {
 			processPlayerDead((PlayerDeadEvent) event);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
-			processConnectionAccepted();
+			processConnectionAccepted((ConnectAcceptedEvent) event);
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
@@ -52,47 +52,51 @@ public abstract class Client extends GameController {
 		return null;
 	}
 	
+	@Override
+	protected void updateView(Event event){
+		if (view != null){
+			event.setPlayerID(playerId); //little hack, substitute local playerId
+			view.handleEvent(state, event);
+		}
+	}
+	
+	public int getPlayerId(){
+		return playerId;
+	}
+	
 	protected void setGameStarted(){
-		state = State.gameRunning;
+		state = GameState.gameRunning;
 	}
 	
 	protected void endGame(WinEvent winEvent){
-		state = State.idle;
+		state = GameState.idle;
 	}
 	
 	protected void processPlayerDead(PlayerDeadEvent event){
-		state = State.idle;
-	}
-	
-	@Override
-	public boolean isGameRunning(){
-		return state == State.gameRunning;
+		state = GameState.idle;
 	}
 	
 	public boolean isAcceptingConnections(){
 		return false;
 	}
 	
-	public State getState(){
-		return state;
-	}
-	
 	@Override
 	public void stop(){
-		if (state != State.stopped){
-			state = State.stopping;
+		if (state != GameState.stopped){
+			state = GameState.stopping;
 			send(new DisconnectEvent());
 		} else {
 			super.stop();
 		}
 	}
 	
-	protected  void processConnectionAccepted() {
-		state = State.idle;
+	protected void processConnectionAccepted(ConnectAcceptedEvent event) {
+		state = GameState.idle;
+		playerId = event.getAssignedPlayerId();
 	}
 	
 	protected void processConnectionRejected() {
-		state = State.stopped;
+		state = GameState.stopped;
 		stop();
 	}
 	

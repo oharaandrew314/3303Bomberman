@@ -1,4 +1,6 @@
-package common.models;
+package common.models.units;
+
+import common.models.Entity;
 
 public abstract class Unit extends Entity {
 
@@ -13,5 +15,17 @@ public abstract class Unit extends Entity {
 		// true since we give players a chance to "pass through" another unit...
 		// they just die when they do.
 		return true;
+	}
+	
+	public boolean canBeHurtBy(Entity e){
+		return (e instanceof Unit && !isInvulnerable());
+	}
+	
+	public boolean isInvulnerable(){
+		return false;
+	}
+	
+	public boolean isImmuneToBombs(){
+		return false;
 	}
 }

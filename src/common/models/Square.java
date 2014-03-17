@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import common.models.units.Unit;
+
 
 public class Square implements Serializable {
 

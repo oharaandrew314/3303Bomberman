@@ -1,6 +1,7 @@
 package common.views;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.TextArea;
@@ -14,7 +15,6 @@ import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
-
 import common.controllers.GameController;
 import common.models.Grid;
 
@@ -59,6 +59,7 @@ public class JFrameTextView extends AbstractView {
 		}
 	}
 	
+	@Override
 	protected void setTitle(String title){
 		frame.setTitle(title);
 	}
@@ -90,6 +91,10 @@ public class JFrameTextView extends AbstractView {
 		console.append(message + LINE_SEP);
 	}
 	
+	public Component getComponent(){
+		return frame;
+	}
+	
 	public static JFrameTextView newClientView(){
 		PlayableClient client = new PlayableClient();
 		JFrameTextView view = new JFrameTextView(
@@ -112,7 +117,7 @@ public class JFrameTextView extends AbstractView {
 		JFrameTextView view = new JFrameTextView(
 			new Spectator(), new SpectatorTextGenerator()
 		);
-		view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
+		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));
 		return view;
 	}
 }

@@ -1,6 +1,6 @@
 package common.events;
 
-import common.models.Player;
+import common.models.units.Player;
 
 public class PlayerDeadEvent extends Event {
 	

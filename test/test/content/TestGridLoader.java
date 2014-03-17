@@ -14,8 +14,8 @@ import common.models.Door;
 import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
-import common.models.Player;
 import common.models.Wall;
+import common.models.units.Player;
 import server.content.CreateGridException;
 import server.content.GridLoader;
 
