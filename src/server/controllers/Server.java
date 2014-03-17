@@ -367,28 +367,30 @@ public class Server extends GameController implements SimulationListener {
     }
     
     public synchronized void detonateBomb(Bomb bomb){
-    	bomb.setDetonated();
-		for (Point p : grid.getAffectedExplosionSquares(bomb)){
-			for (Entity entity : grid.get(p)){
+    	synchronized(bomb){
+	    	bomb.setDetonated();
+			for (Point p : grid.getAffectedExplosionSquares(bomb)){
+				for (Entity entity : grid.get(p)){
+						
+					// Kill any players in blast path
+					if (entity instanceof Unit){
+						if(!((Unit) entity).isImmuneToBombs()){
+							killUnit((Unit) entity);
+						}
+					}
 					
-				// Kill any players in blast path
-				if (entity instanceof Unit){
-					if(!((Unit) entity).isImmuneToBombs()){
-						killUnit((Unit) entity);
+					// Detonate any bombs in blast path
+					else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
+						detonateBomb((Bomb)entity);
+					}
+					
+					// Remove any other destructible entities in blast path
+					else if (entity.isDestructible()){
+						grid.remove(entity);
 					}
 				}
-				
-				// Detonate any bombs in blast path
-				else if (entity instanceof Bomb && !((Bomb)entity).isDetonated()){
-					detonateBomb((Bomb)entity);
-				}
-				
-				// Remove any other destructible entities in blast path
-				else if (entity.isDestructible()){
-					grid.remove(entity);
-				}
 			}
-		}
+    	}
     }
     
     // Main method
