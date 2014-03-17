@@ -7,6 +7,10 @@ public class Door extends Entity {
 	public Door() {
 		super("Door");
 	}
+	
+	public Door(Door door) {
+		super(door);
+	}
 
 	@Override
 	public boolean isPassable() {

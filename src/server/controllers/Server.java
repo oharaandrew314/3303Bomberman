@@ -44,6 +44,8 @@ public class Server extends GameController implements SimulationListener {
 	private final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
+	
+	private Grid stableGrid;
 
 	public Server(){
 		players = new HashMap<>();
@@ -53,6 +55,8 @@ public class Server extends GameController implements SimulationListener {
 		timer.addListener(this);
 		timer.addListener(bombScheduler = new BombScheduler(this));
 		timer.addListener(aiScheduler = new AIScheduler(this));
+		
+		stableGrid = grid;
 		
 		state = GameState.idle;
 		
@@ -138,9 +142,7 @@ public class Server extends GameController implements SimulationListener {
 	@Override
 	public synchronized void simulationUpdate(long now){
 		if (isGameRunning()){
-			nwc.setBusy(true);
-			send(new ViewUpdateEvent(grid));
-			nwc.setBusy(false);
+			send(new ViewUpdateEvent(stableGrid));
 		}
 	}
 	
@@ -170,15 +172,18 @@ public class Server extends GameController implements SimulationListener {
 		setChanged();
 		notifyObservers(event);
 	}
+	
 
     @Override
     public synchronized Event receive(Event event) {
     	setChanged();
     	notifyObservers(event);
     	
+    	Event returnEvent = null;
+    	
     	// Decide whether to accept or reject connection request
     	if (event instanceof ConnectEvent){
-    		return handleConnectionRequest((ConnectEvent) event);
+    		returnEvent = handleConnectionRequest((ConnectEvent) event);
     	}
     	
     	/*
@@ -215,11 +220,15 @@ public class Server extends GameController implements SimulationListener {
     	   } else if (keyCode == KeyEvent.VK_ENTER){
     		   startGame();
     	   }
-    	   return new GameKeyEventAck(keyEvent);
+    	   returnEvent = new GameKeyEventAck(keyEvent);
        } else if (event instanceof DisconnectEvent){
-    	   return disconnectPlayer(event);
+    	   returnEvent = disconnectPlayer(event);
        }
-    	return null;
+    	
+    	if (grid != null)
+    		stableGrid = new Grid(grid);
+    	
+    	return returnEvent;
     }
     
     private Event handleConnectionRequest(ConnectEvent event){

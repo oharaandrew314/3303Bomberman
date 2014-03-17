@@ -7,4 +7,8 @@ public class Wall extends Box {
 	public Wall() {
 		super("Wall");
 	}
+	
+	public Wall(Wall wall) {
+		super(wall);
+	}
 }

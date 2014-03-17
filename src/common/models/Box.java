@@ -8,6 +8,10 @@ public abstract class Box extends Entity {
 		super(name);
 	}
 	
+	public Box(Box box) {
+		super(box);
+	}
+	
 	@Override
 	public boolean isPassable() {
 		return false;
