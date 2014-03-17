@@ -173,17 +173,9 @@ public class Server extends GameController implements SimulationListener {
     public synchronized Event receive(Event event) {
     	setChanged();
     	notifyObservers(event);
-<<<<<<< HEAD
-
-    	// Decide whether to accept or reject connection request
-    	if (event instanceof ConnectEvent){
-    		return handleConnectionRequest((ConnectEvent) event);
-    	}
-=======
-    	
+   	
     	Event response = null;
->>>>>>> dev
-    	
+
     	// Handle events
     	if (event instanceof ConnectEvent){
     		response =  handleConnectionRequest((ConnectEvent) event);

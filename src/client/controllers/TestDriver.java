@@ -27,15 +27,10 @@ public class TestDriver {
 			} catch (CreateGridException e) {
 				e.printStackTrace();
 			}
-<<<<<<< HEAD
 			test.run(server);
 			if(server.isGameRunning()){
-				server.endGame();
+				server.endGame(null);
 			}
-=======
-			test.run();
-			server.endGame(null);
->>>>>>> dev
 		}
 		System.out.println("Stopping the server");
 		server.stop();
