@@ -27,7 +27,6 @@ public class JFrameTextView extends AbstractView {
 	protected final JFrame frame;
 	private final GameController gc;
 	private TextArea textArea, console;
-	private DoubleBufferedString doubleBufferedString = new DoubleBufferedString();
 	
 	public JFrameTextView(GameController gc, TextGenerator textGen){
 		super(textGen);
@@ -75,8 +74,7 @@ public class JFrameTextView extends AbstractView {
 	
 	@Override
 	public void displayGrid(Grid grid) {
-		doubleBufferedString.write(grid.toString());
-		textArea.setText(doubleBufferedString.read());
+		textArea.setText(grid.toString());
 	}
 
 	@Override

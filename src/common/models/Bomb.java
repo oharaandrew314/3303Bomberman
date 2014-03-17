@@ -19,6 +19,13 @@ public class Bomb extends Entity {
 		blastRange = range;
 	}
 	
+	public Bomb(Bomb bomb) {
+		super(bomb);
+		this.factory = bomb.factory;
+		this.detonated = bomb.detonated;
+		this.blastRange = bomb.blastRange;
+	}
+	
 	public synchronized void setDetonated(){
 		if (detonated){
 			throw new RuntimeException("Cannot detonate a bomb more than once.");

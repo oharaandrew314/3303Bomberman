@@ -7,6 +7,10 @@ public class Pillar extends Box {
 	public Pillar() {
 		super("Pillar");
 	}
+	
+	public Pillar(Pillar pillar) {
+		super(pillar);
+	}
 
 	@Override
 	public boolean isDestructible() {

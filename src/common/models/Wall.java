@@ -8,6 +8,10 @@ public class Wall extends Box {
 		super("Wall");
 	}
 	
+	public Wall(Wall wall) {
+		super(wall);
+	}
+
 	@Override
 	public String toString(){
 		return "*";

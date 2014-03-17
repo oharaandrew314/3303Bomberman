@@ -136,9 +136,8 @@ public class Server extends GameController implements SimulationListener {
 	@Override
 	public synchronized void simulationUpdate(long now){
 		if (isGameRunning()){
-			nwc.setBusy(true);
-			send(new ViewUpdateEvent(grid));
-			nwc.setBusy(false);
+			Grid stableGrid = new Grid(grid);
+			send(new ViewUpdateEvent(stableGrid));
 		}
 	}
 	
@@ -168,6 +167,7 @@ public class Server extends GameController implements SimulationListener {
 		setChanged();
 		notifyObservers(event);
 	}
+	
 
     @Override
     public synchronized Event receive(Event event) {

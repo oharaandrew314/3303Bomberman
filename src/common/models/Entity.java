@@ -17,6 +17,13 @@ public abstract class Entity implements Serializable {
 		
 		this.name = name;
 	}
+	
+	public Entity(Entity entity) {
+		this.id = entity.id;
+		this.name = entity.name;
+		this.visible = entity.visible;
+	}
+	
 	abstract public boolean isPassable();
 	
 	@Override

@@ -22,6 +22,16 @@ public class Square implements Serializable {
 		passableEntities = new ArrayList<Entity>();
 	}
 	
+	public Square(Square square) {
+		if (square.impassableEntity instanceof Bomb)
+			this.impassableEntity = new Bomb((Bomb)square.impassableEntity);
+		else if (square.impassableEntity instanceof Pillar)
+			this.impassableEntity = new Pillar((Pillar)square.impassableEntity);
+		else if (square.impassableEntity instanceof Wall)
+			this.impassableEntity = new Wall((Wall)square.impassableEntity);
+		this.passableEntities = new ArrayList<Entity>(square.passableEntities);
+	}
+	
 	/**
 	 * Checks if this square is passable. A square is passable
 	 * if none of it's entities are impassable.
