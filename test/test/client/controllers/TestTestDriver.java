@@ -13,8 +13,7 @@ public class TestTestDriver{
 	@Test
 	public void testTestCases(){
         driver = new TestDriver();
-		String[] testfiles = {"test1", "test3", "test2" };
-		driver.readTestCases(testfiles);
-		assertEquals(3, driver.getTestCases().size());
+		driver.readTestCases(TestDriver.TESTFILES);
+		assertEquals(13, driver.getTestCases().size());
 	}
 }

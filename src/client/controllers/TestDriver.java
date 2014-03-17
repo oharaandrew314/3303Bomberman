@@ -10,7 +10,13 @@ import server.controllers.Server;
 public class TestDriver {
 	
 	private Collection<TestCase> testcases;
-
+	public static String[] TESTFILES = {
+		"playerWin", "twoPlayerWin", "playerCollision",
+		"testPlayerEnemyCollision", "breakWallWithBomb",
+		"killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs",
+		"place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass",
+		"testInvulnerability", "testUpgradedBombsChainReaction"
+	};
 
 	public TestDriver(){
 		this.testcases = new ArrayList<TestCase>();
@@ -54,14 +60,7 @@ public class TestDriver {
 	
 	public static void run(Server server){
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {
-			"playerWin", "twoPlayerWin", "playerCollision",
-			"testPlayerEnemyCollision", "breakWallWithBomb",
-			"killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs",
-			"place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass",
-			"testInvulnerability", "testUpgradedBombsChainReaction"
-		};
-		driver.readTestCases(testfiles);
+		driver.readTestCases(TESTFILES);
 		driver.runAll(server);
 	}
 	

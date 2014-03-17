@@ -23,7 +23,7 @@ public class TestGrid {
 		LINE_SEP = System.getProperty("line.separator"),
 		GRID_STRING = (
 			"-----" + LINE_SEP +
-			"|  .|" + LINE_SEP +
+			"|  *|" + LINE_SEP +
 			"|X1 |" + LINE_SEP +
 			"|  D|" + LINE_SEP +
 			"-----"
