@@ -4,6 +4,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -16,6 +18,8 @@ public class Launcher extends WindowAdapter {
 	
 	private final JFrame frame;
 	private Server server;
+	
+	private final Collection<JButton> clientButtons;
 
 	public Launcher() {
 		frame = new JFrame("Bomberman");
@@ -23,20 +27,33 @@ public class Launcher extends WindowAdapter {
 		frame.addWindowListener(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		clientButtons = new ArrayList<>();
+		
 		add(new NewServerAction(this));
-		add(new NewSpectatorAction());
-		add(new NewClientAction());
+		addClientButton(new NewSpectatorAction());
+		addClientButton(new NewClientAction());
 		
 		frame.pack();
 		frame.setVisible(true);
 	}
 	
-	private void add(Action action){
-		frame.add(new JButton(action));
+	private JButton addClientButton(Action action){
+		JButton button = add(action);
+		clientButtons.add(button);
+		return button;
+	}
+	
+	private JButton add(Action action){
+		JButton button = new JButton(action);
+		frame.add(button);
+		return button;
 	}
 	
 	private void newServer(){
-		JFrameTextView.newServerView(server = new Server());		
+		JFrameTextView.newServerView(server = new Server());
+		for (JButton clientButton : clientButtons){
+			clientButton.setEnabled(true);
+		}
 	}
 	
 	@Override
@@ -70,6 +87,7 @@ public class Launcher extends WindowAdapter {
 		
 		public NewSpectatorAction(){
 			super("New Spectator");
+			setEnabled(false);
 		}
 
 		@Override
@@ -83,6 +101,7 @@ public class Launcher extends WindowAdapter {
 		
 		public NewClientAction(){
 			super("New Client");
+			setEnabled(false);
 		}
 
 		@Override
