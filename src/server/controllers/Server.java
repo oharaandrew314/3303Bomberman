@@ -173,9 +173,9 @@ public class Server extends GameController implements SimulationListener {
     public synchronized Event receive(Event event) {
     	setChanged();
     	notifyObservers(event);
-    	
+   	
     	Event response = null;
-    	
+
     	// Handle events
     	if (event instanceof ConnectEvent){
     		response =  handleConnectionRequest((ConnectEvent) event);
@@ -364,6 +364,10 @@ public class Server extends GameController implements SimulationListener {
     		return bomb;
     	}
     	return null;
+    }
+    
+    public Player getPlayer(int playerId){
+    	return players.get(playerId);
     }
     
     public synchronized void detonateBomb(Bomb bomb){

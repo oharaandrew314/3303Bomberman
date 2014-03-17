@@ -1,5 +1,0 @@
-Players = 1
-1  RIGHT
-1  RIGHT
-1  RIGHT
-1  DOWN

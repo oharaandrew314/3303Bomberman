@@ -1,0 +1,10 @@
+{
+	"size": {"width": 4, "height": 4},
+	"squares": [
+		{"point": {"x": 1, "y": 0}, "entities": ["Mystery"]},
+		{"point": {"x": 1, "y": 1}, "entities": ["pillar"]},
+		{"point": {"x": 1, "y": 2}, "entities": ["wall"]},
+		{"point": {"x": 3, "y": 1}, "entities": ["door"]},
+		{"point": {"x": 3, "y": 3}, "entities": ["pillar"]},
+	]
+}
