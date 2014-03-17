@@ -44,8 +44,6 @@ public class Server extends GameController implements SimulationListener {
 	private final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
-	
-	private Grid stableGrid;
 
 	public Server(){
 		players = new HashMap<>();
@@ -55,8 +53,6 @@ public class Server extends GameController implements SimulationListener {
 		timer.addListener(this);
 		timer.addListener(bombScheduler = new BombScheduler(this));
 		timer.addListener(aiScheduler = new AIScheduler(this));
-		
-		stableGrid = grid;
 		
 		state = GameState.idle;
 		
@@ -140,6 +136,7 @@ public class Server extends GameController implements SimulationListener {
 	@Override
 	public synchronized void simulationUpdate(long now){
 		if (isGameRunning()){
+			Grid stableGrid = new Grid(grid);
 			send(new ViewUpdateEvent(stableGrid));
 		}
 	}
@@ -192,9 +189,6 @@ public class Server extends GameController implements SimulationListener {
     	if (players.isEmpty()){
     		endGame(null);
     	}
-    	
-    	if (grid != null)
-    		stableGrid = new Grid(grid);
     	
     	return response;
     }
