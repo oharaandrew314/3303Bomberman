@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import common.models.Door;
+import common.models.Entity;
 import common.models.Grid;
 import common.models.Pillar;
 import common.models.Wall;
@@ -27,8 +28,8 @@ public class GridGenerator {
 	
 	private static final double
 		WALL_DENSITY = 0.3,
-		ENEMY_DENSITY = 0.08,
-		POWERUP_DENSITY = 0.04;
+		ENEMY_DENSITY = 0.04,
+		POWERUP_DENSITY = 0.02;
 
 	private GridGenerator(Dimension size, Random r){
 		this.r = r;
@@ -36,37 +37,48 @@ public class GridGenerator {
 		
 		List<Point> points = new ArrayList<>(grid.keySet());
 		
-		// Create Pillars and walls
+		// Create Pillars
 		for (Point point : points){
 			if (grid.isPassable(point) && pillarLoc(point)){
 				grid.set(new Pillar(), point);
 			}
-			else if (chance(WALL_DENSITY) && grid.isPassable(point)){
-				grid.set(new Wall(), point);
-			}
-			else if (chance(ENEMY_DENSITY) && grid.isPassable(point)){
-				grid.set(randomEnemy(r), point);
-			}
-			else if (chance(POWERUP_DENSITY) && grid.isPassable(point)){
-				grid.set(randomPowerup(r), point);
-			}
+		}
+		
+		// Create walls
+		for (int i=0; i<getNum(WALL_DENSITY); i++){
+			findPlace(points, new Wall(), false);
+		}
+		
+		// Create Enemies
+		for (int i=0; i<getNum(ENEMY_DENSITY); i++){
+			findPlace(points, randomEnemy(), false);
+		}
+		
+		// Create Powerups
+		for (int i=0; i<getNum(POWERUP_DENSITY); i++){
+			findPlace(points, randomPowerup(), false);
 		}
 		
 		// Place Door underneath a random wall
+		findPlace(points, new Door(), true);
+	}
+	
+	private int getNum(double density){
+		int area = grid.getSize().height * grid.getSize().width;
+		return (int) (area * density);
+	}
+	
+	private void findPlace(List<Point> points, Entity entity, boolean underWall){
 		boolean placed = false;
 		while (!placed){
 			Point p = points.get(r.nextInt(points.size()));
-			if (grid.hasTypeAt(Wall.class, p)){
-				placed = grid.set(new Door(), p);
+			if ((underWall && grid.hasTypeAt(Wall.class, p)) || grid.isPassable(p)){
+				placed = grid.set(entity, p);
 			}
 		}
 	}
 	
-	private boolean chance(double density){
-		return r.nextDouble() < density;
-	}
-	
-	private Enemy randomEnemy(Random r){
+	private Enemy randomEnemy(){
 		switch(r.nextInt(3)){
 		case 0: return new RandomEnemy();
 		case 1: return new LineEnemy();
@@ -75,7 +87,7 @@ public class GridGenerator {
 		}
 	}
 	
-	private Powerup randomPowerup(Random r){
+	private Powerup randomPowerup(){
 		switch(r.nextInt(4)){
 		case 0: return new BombPlusOnePowerup();
 		case 1: return new BombRangePowerup();
