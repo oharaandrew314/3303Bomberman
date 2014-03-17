@@ -127,8 +127,8 @@ public class GridLoader {
 				case "player": return new Player(playerIndex++);
 				case "door": return new Door();
 				case "bombrange": return new BombRangePowerup();
-				case "flamepass": return new FlamePassPowerup(10000);
-				case "mystery": return new MysteryPowerup(10000);
+				case "flamepass": return new FlamePassPowerup();
+				case "mystery": return new MysteryPowerup();
 				case "bombplusone": return new BombPlusOnePowerup();
 				case "randomenemy": return new RandomEnemy();
 				case "lineenemy": return new LineEnemy();
