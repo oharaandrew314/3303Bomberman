@@ -166,12 +166,12 @@ public class MenuBarFactory {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String controls = (
+			String helpText = (
 				"X: Pillar | *: Wall\n" + 
 				"R: Random Enemy | L: Line enemy | S: Smart Enemy\n" + 
 				"[1-9]: player | B: Bomb | P: Powerup"
 			);
-			JOptionPane.showMessageDialog(parent, controls);
+			JOptionPane.showMessageDialog(parent, helpText);
 			
 		}
 		
