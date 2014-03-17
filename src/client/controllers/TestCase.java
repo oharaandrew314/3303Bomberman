@@ -108,6 +108,8 @@ public class TestCase {
 			}
 			
 		}
+		
+		//disconnect all the testClients
 		for(TestRunner t : testClients){
 			t.stop();
 		}
