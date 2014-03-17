@@ -244,7 +244,7 @@ public class NetworkController {
     /**
      * Serializes an event into a packet.
      */
-    private synchronized DatagramPacket serialize(Event event) throws IOException {
+    private DatagramPacket serialize(Event event) throws IOException {
         ByteArrayOutputStream serializerOutput = new ByteArrayOutputStream();
         ObjectOutputStream serializer = new ObjectOutputStream(serializerOutput);
         serializer.writeObject(event);
