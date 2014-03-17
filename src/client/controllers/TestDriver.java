@@ -47,7 +47,13 @@ public class TestDriver {
 	
 	public static void main(String[] args){		
 		TestDriver driver = new TestDriver();
-		String[] testfiles = {"playerWin", "twoPlayerWin", "playerCollision", "testPlayerEnemyCollision", "breakWallWithBomb", "killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs", "place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass", "testInvulnerability", "testUpgradedBombsChainReaction" };
+		String[] testfiles = {
+			"playerWin", "twoPlayerWin", "playerCollision",
+			"testPlayerEnemyCollision", "breakWallWithBomb",
+			"killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs",
+			"place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass",
+			"testInvulnerability", "testUpgradedBombsChainReaction"
+		};
 		driver.readTestCases(testfiles);
 		driver.runAll(new Server());
 		System.exit(0);
