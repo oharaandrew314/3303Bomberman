@@ -12,8 +12,8 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import client.controllers.TestDriver;
 import common.views.JFrameTextView;
-
 import server.controllers.Server;
 
 public class Launcher extends WindowAdapter {
@@ -25,7 +25,7 @@ public class Launcher extends WindowAdapter {
 
 	public Launcher() {
 		frame = new JFrame("Bomberman");
-		frame.setLayout(new GridLayout(3, 1));
+		frame.setLayout(new GridLayout(4, 1));
 		frame.addWindowListener(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -34,6 +34,7 @@ public class Launcher extends WindowAdapter {
 		add(new NewServerAction(this));
 		addClientButton(new NewSpectatorAction());
 		addClientButton(new NewClientAction());
+		addClientButton(new TestDriverAction(this));
 		
 		frame.pack();
 		frame.setVisible(true);
@@ -63,6 +64,10 @@ public class Launcher extends WindowAdapter {
 		if (server != null){
 			server.stop();
 		}
+	}
+	
+	public Server getServer(){
+		return server;
 	}
 	
 	// Actions
@@ -114,5 +119,23 @@ public class Launcher extends WindowAdapter {
 	
 	public static void main(String[] args){
 		new Launcher();
+	}
+	
+	@SuppressWarnings("serial")
+	private static class TestDriverAction extends AbstractAction {
+		
+		private final Launcher launcher;
+		
+		public TestDriverAction(Launcher launcher){
+			super("Run Test Driver");
+			this.launcher = launcher;
+			setEnabled(false);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			TestDriver.run(launcher.getServer());
+			
+		}
 	}
 }
