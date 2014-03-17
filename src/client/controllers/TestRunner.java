@@ -9,11 +9,10 @@ import common.events.ConnectAcceptedEvent;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.PlayerDeadEvent;
-import common.events.WinEvent;
 
 
 public class TestRunner extends PlayableClient implements Runnable{
-	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 100;
+	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 150;
 	private Collection<Event> receivedEvents;
 	private ArrayList<Integer> events;
 	private ArrayList<Long> timings;
@@ -34,7 +33,8 @@ public class TestRunner extends PlayableClient implements Runnable{
 	public void run(){
 		int i = 0;
 			
-		while (!events.isEmpty() && i != events.size()) {
+		boolean timeout = false;
+		while (!events.isEmpty() && i != events.size() && !timeout) {
 			
 			//wait for an amount of time specified next to the command in the test file
 			//if none specified, it will be DEFAULT_WAIT_BETWEEN_ACTIONS
@@ -48,9 +48,8 @@ public class TestRunner extends PlayableClient implements Runnable{
 			//game state might have changed while waiting
 			if(!dead&& isGameRunning()){
 				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
-				pressKeyAndWait(keyEvent.getKeyCode());
+				timeout = pressKeyAndWait(keyEvent.getKeyCode());
 			} else{
-				stop();
 				break;
 			}
 			i++;
@@ -83,7 +82,7 @@ public class TestRunner extends PlayableClient implements Runnable{
 	
 	
 	
-	public synchronized void pressKeyAndWait(int keyCode){
+	public synchronized boolean pressKeyAndWait(int keyCode){
 		Collection<GameKeyEventAck> wrongKeys = new ArrayList<>();
 		
 		pressKey(keyCode);
@@ -93,7 +92,11 @@ public class TestRunner extends PlayableClient implements Runnable{
 		while(!found){
 			response = (GameKeyEventAck) waitFor(GameKeyEventAck.class);
 			
-			if(response == null) return; //occurs when it times out (one case being the player died before receiving
+			if(response == null){
+				System.err.println("did not receive ack");
+				return true;
+				//return; //occurs when it times out (one case being the player died before receiving
+			}
 										//the ack
 			if (response.getKeyCode() != keyCode){
 				wrongKeys.add(response);
@@ -104,6 +107,7 @@ public class TestRunner extends PlayableClient implements Runnable{
 		
 		receivedEvents.addAll(wrongKeys);
 		notify();
+		return false;
 	}
 	
 	public synchronized Event waitFor(Class<? extends Event> eventType){
