@@ -1,42 +1,62 @@
-package common.views;
+package common;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import client.controllers.TestDriver;
+import common.views.JFrameTextView;
 import server.controllers.Server;
 
 public class Launcher extends WindowAdapter {
 	
 	private final JFrame frame;
 	private Server server;
+	
+	private final Collection<JButton> clientButtons;
 
 	public Launcher() {
 		frame = new JFrame("Bomberman");
-		frame.setLayout(new GridLayout(3, 1));
+		frame.setLayout(new GridLayout(4, 1));
 		frame.addWindowListener(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		clientButtons = new ArrayList<>();
+		
 		add(new NewServerAction(this));
-		add(new NewSpectatorAction());
-		add(new NewClientAction());
+		addClientButton(new NewSpectatorAction());
+		addClientButton(new NewClientAction());
+		addClientButton(new TestDriverAction(this));
 		
 		frame.pack();
 		frame.setVisible(true);
 	}
 	
-	private void add(Action action){
-		frame.add(new JButton(action));
+	private JButton addClientButton(Action action){
+		JButton button = add(action);
+		clientButtons.add(button);
+		return button;
+	}
+	
+	private JButton add(Action action){
+		JButton button = new JButton(action);
+		frame.add(button);
+		return button;
 	}
 	
 	private void newServer(){
-		JFrameTextView.newServerView(server = new Server());		
+		JFrameTextView.newServerView(server = new Server());
+		for (JButton clientButton : clientButtons){
+			clientButton.setEnabled(true);
+		}
 	}
 	
 	@Override
@@ -44,6 +64,10 @@ public class Launcher extends WindowAdapter {
 		if (server != null){
 			server.stop();
 		}
+	}
+	
+	public Server getServer(){
+		return server;
 	}
 	
 	// Actions
@@ -70,6 +94,7 @@ public class Launcher extends WindowAdapter {
 		
 		public NewSpectatorAction(){
 			super("New Spectator");
+			setEnabled(false);
 		}
 
 		@Override
@@ -83,6 +108,7 @@ public class Launcher extends WindowAdapter {
 		
 		public NewClientAction(){
 			super("New Client");
+			setEnabled(false);
 		}
 
 		@Override
@@ -93,5 +119,23 @@ public class Launcher extends WindowAdapter {
 	
 	public static void main(String[] args){
 		new Launcher();
+	}
+	
+	@SuppressWarnings("serial")
+	private static class TestDriverAction extends AbstractAction {
+		
+		private final Launcher launcher;
+		
+		public TestDriverAction(Launcher launcher){
+			super("Run Test Driver");
+			this.launcher = launcher;
+			setEnabled(false);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			TestDriver.run(launcher.getServer());
+			
+		}
 	}
 }

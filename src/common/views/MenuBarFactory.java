@@ -22,6 +22,7 @@ public class MenuBarFactory {
 		
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.add(new ControlsAction(view.getComponent()));
+		helpMenu.add(new GridLegendAction(view.getComponent()));
 		
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
@@ -34,20 +35,44 @@ public class MenuBarFactory {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(new LoadGridAction(view.getComponent(), server));
 		fileMenu.add(new GenerateGridAction(view.getComponent(), server));
+		fileMenu.add(new EndGameAction(server));
 		fileMenu.add(new ExitAction(view));
 		
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.add(new GridLegendAction(view.getComponent()));
+		
 		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
 		return menuBar;
 	}
 	
 	public static JMenuBar createSpectatorMenuBar(JFrameTextView view){
-JMenuBar menuBar = new JMenuBar();
+		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(new ExitAction(view));
 		
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.add(new GridLegendAction(view.getComponent()));
+		
 		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
 		return menuBar;
+	}
+	
+	// Actions
+	
+	@SuppressWarnings("serial")
+	private abstract static class ServerAction extends AbstractAction {
+		
+		protected final Server server;
+		protected final Component parent;
+		
+		protected ServerAction(String name, Server server, Component parent){
+			super(name);
+			this.server = server;
+			this.parent = parent;
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -67,15 +92,10 @@ JMenuBar menuBar = new JMenuBar();
 	}
 	
 	@SuppressWarnings("serial")
-	private static class LoadGridAction extends AbstractAction {
-		
-		private final Component parent;
-		private final Server server;
+	private static class LoadGridAction extends ServerAction {
 		
 		public LoadGridAction(Component parent, Server server){
-			super("Load Grid");
-			this.server = server;
-			this.parent = parent;
+			super("Load Grid", server, parent);
 		}
 
 		@Override
@@ -85,15 +105,10 @@ JMenuBar menuBar = new JMenuBar();
 	}
 	
 	@SuppressWarnings("serial")
-	private static class GenerateGridAction extends AbstractAction {
-		
-		private final Component parent;
-		private final Server server;
+	private static class GenerateGridAction extends ServerAction {
 		
 		public GenerateGridAction(Component parent, Server server){
-			super("Generate Grid");
-			this.server = server;
-			this.parent = parent;
+			super("Generate Grid", server, parent);
 		}
 
 		@Override
@@ -120,9 +135,47 @@ JMenuBar menuBar = new JMenuBar();
 				"Southpaw Controls:\n" +
 				"Movement: IJKL, Bomb: ;\n\n" +
 				"n00b Controls:\n" +
-				"Movement: UpDownLeftRight, Bomb: Space"
+				"Movement: UpDownLeftRight, Bomb: Space\n\n" +
+				"Universal:\n" +
+				"Start game: Enter | Disconnect: Escape"
 			);
 			JOptionPane.showMessageDialog(parent, controls);
 		}
+	}
+	
+	@SuppressWarnings("serial")
+	private static class EndGameAction extends ServerAction {
+		
+		public EndGameAction(Server server){
+			super("End Game", server, null);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			server.endGame(null);
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	private static class GridLegendAction extends AbstractAction {
+		
+		private final Component parent;
+		
+		public GridLegendAction(Component parent){
+			super("Grid Legend");
+			this.parent = parent;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String helpText = (
+				"X: Pillar | *: Wall\n" + 
+				"R: Random Enemy | L: Line enemy | S: Smart Enemy\n" + 
+				"[1-9]: player | B: Bomb | P: Powerup"
+			);
+			JOptionPane.showMessageDialog(parent, helpText);
+			
+		}
+		
 	}
 }

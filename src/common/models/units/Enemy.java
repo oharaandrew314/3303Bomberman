@@ -1,5 +1,7 @@
 package common.models.units;
 
+import common.models.Entity;
+
 public class Enemy extends Unit {
 
 	private static final long serialVersionUID = 7031350047918428917L;
@@ -16,6 +18,11 @@ public class Enemy extends Unit {
 			lastMovement = now;
 			return true;
 		}
+		return false;
+	}
+	
+	@Override
+	public boolean canBeHurtBy(Entity entity){
 		return false;
 	}
 }

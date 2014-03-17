@@ -11,4 +11,9 @@ public class Wall extends Box {
 	public Wall(Wall wall) {
 		super(wall);
 	}
+
+	@Override
+	public String toString(){
+		return "*";
+	}
 }

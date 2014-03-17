@@ -11,7 +11,7 @@ import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
-import common.events.WinEvent;
+import common.events.EndGameEvent;
 
 public abstract class Client extends GameController {
 
@@ -39,8 +39,8 @@ public abstract class Client extends GameController {
 		else if (event instanceof ConnectRejectedEvent){
 			processConnectionRejected();
 		}
-		else if (event instanceof WinEvent){
-			endGame((WinEvent) event);
+		else if (event instanceof EndGameEvent){
+			endGame((EndGameEvent) event);
 		}
 		else if (event instanceof GameStartEvent){
 			setGameStarted();
@@ -68,7 +68,7 @@ public abstract class Client extends GameController {
 		state = GameState.gameRunning;
 	}
 	
-	protected void endGame(WinEvent winEvent){
+	protected void endGame(EndGameEvent winEvent){
 		state = GameState.idle;
 	}
 	

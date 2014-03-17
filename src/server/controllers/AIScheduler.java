@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import common.models.Grid;
 import common.models.units.Enemy;
 import common.models.units.LineEnemy;
 import common.models.units.PathFindingEnemy;
@@ -97,9 +98,22 @@ public class AIScheduler implements SimulationListener {
 	 * A list rather than a set to make random indexing easier.
 	 */
 	private List<Point> getPossibleMoves(Enemy enemy){
+		Grid grid = server.getGrid();
 		Point currentLocation = getCurrentLocation(enemy);
-		List<Point> possibleMoves = new ArrayList<Point>(server.getGrid().getPossibleMoves(currentLocation));
+		List<Point> possibleMoves = new ArrayList<Point>(grid.getPossibleMoves(currentLocation));
 		possibleMoves.remove(currentLocation);
+		
+		// Remove any locations which are occupied by another enemy
+		List<Point> toRemove = new ArrayList<>();
+		for (Point point : possibleMoves){
+			if (grid.hasTypeAt(Enemy.class, point)){
+				toRemove.add(point);
+			}
+		}
+		
+		if (!toRemove.isEmpty()){
+			possibleMoves.removeAll(toRemove);
+		}
 		return possibleMoves;
 	}
 	

@@ -1,0 +1,9 @@
+Players = 2; Location=[1->0,0:2->2,0] ; Grid=testGrid2WithFlamePass
+1:RIGHT
+1:SPACE
+1:LEFT
+1:RIGHT:2100
+1:RIGHT
+1:RIGHT
+1:DOWN
+2:DOWN:3050

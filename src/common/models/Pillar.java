@@ -16,5 +16,10 @@ public class Pillar extends Box {
 	public boolean isDestructible() {
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		return "X";
+	}
 
 }

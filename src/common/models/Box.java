@@ -18,7 +18,5 @@ public abstract class Box extends Entity {
 	}
 	
 	@Override
-	public String toString(){
-		return isDestructible() ? "." : "X";
-	}
+	public abstract String toString();
 }

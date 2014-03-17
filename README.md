@@ -5,23 +5,14 @@ Bomberman game for the SYSC 3303 Project.
 
 https://github.com/oharaandrew314/3303Bomberman
 
-###TA Notes
-
-- The instructions say that the Door must be hidden.  Since the door cannot be revealed by destroying walls, the player will not see the Door until the step on it, ending the game.
-
 ###Usage Instructions
 
-By JAR:
-Running Jar will open a DemoRunner
+1. Run the Jar to open the Launcher
+2. The launcher is self-explanatory
+3. The server and clients include help menus for applicable topics
+4. The server must create a new game before clients can start the game
 
-1. Click Server
-2. Optionally click Spectator
-3. Click TestDriver to run tests
-4. Check output log file next to JAR
-
-With Eclipse:
-
-Run client.controllers.TestDriver with no arguments
+Do NOT run the game using other main methods or with command-line arguments. The game is not yet tested to run on a Network, and all other configurations can be made with the Launcher and its linked GUIs.
 
 ###Deadlines
 - Milestone 1: March 3rd
@@ -29,10 +20,10 @@ Run client.controllers.TestDriver with no arguments
 - Milestone 3: March 31
 
 ###Contributors
-- Andrew O'Hara - 100815259  - Controllers, Grid Generation, Integration tests
-- Caleb Simpson - 100819001  - Networking, Events
-- Dennis Dionne - 100822373  - Test Client and loader
-- Darrell Penner - 100817231 - Client, Grid Models
+- Andrew O'Hara  - 100815259
+- Caleb Simpson  - 100819001
+- Dennis Dionne  - 100822373
+- Darrell Penner - 100817231
 
 ###Contribution Rules
 
