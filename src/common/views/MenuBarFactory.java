@@ -22,6 +22,7 @@ public class MenuBarFactory {
 		
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.add(new ControlsAction(view.getComponent()));
+		helpMenu.add(new GridLegendAction(view.getComponent()));
 		
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
@@ -143,5 +144,28 @@ public class MenuBarFactory {
 		public void actionPerformed(ActionEvent e) {
 			server.endGame(null);
 		}
+	}
+	
+	@SuppressWarnings("serial")
+	private static class GridLegendAction extends AbstractAction {
+		
+		private final Component parent;
+		
+		public GridLegendAction(Component parent){
+			super("Grid Legend");
+			this.parent = parent;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String controls = (
+				"X: Pillar | *: Wall\n" + 
+				"R: Random Enemy | L: Line enemy | S: Smart Enemy\n" + 
+				"[1-9]: player | B: Bomb | P: Powerup"
+			);
+			JOptionPane.showMessageDialog(parent, controls);
+			
+		}
+		
 	}
 }
