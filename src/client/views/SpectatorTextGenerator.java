@@ -29,7 +29,10 @@ public class SpectatorTextGenerator implements TextGenerator{
 
 	@Override
 	public String getEndGame(Player player) {
-		return String.format("The game is over.  %s has won!", player);
+		return String.format(
+			"The game is over.  %s has won!",
+			player == null ? "No one" : player.name
+		);
 	}
 
 	@Override

@@ -34,6 +34,7 @@ public class MenuBarFactory {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(new LoadGridAction(view.getComponent(), server));
 		fileMenu.add(new GenerateGridAction(view.getComponent(), server));
+		fileMenu.add(new EndGameAction(server));
 		fileMenu.add(new ExitAction(view));
 		
 		menuBar.add(fileMenu);
@@ -41,13 +42,28 @@ public class MenuBarFactory {
 	}
 	
 	public static JMenuBar createSpectatorMenuBar(JFrameTextView view){
-JMenuBar menuBar = new JMenuBar();
+		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(new ExitAction(view));
 		
 		menuBar.add(fileMenu);
 		return menuBar;
+	}
+	
+	// Actions
+	
+	@SuppressWarnings("serial")
+	private abstract static class ServerAction extends AbstractAction {
+		
+		protected final Server server;
+		protected final Component parent;
+		
+		protected ServerAction(String name, Server server, Component parent){
+			super(name);
+			this.server = server;
+			this.parent = parent;
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -67,15 +83,10 @@ JMenuBar menuBar = new JMenuBar();
 	}
 	
 	@SuppressWarnings("serial")
-	private static class LoadGridAction extends AbstractAction {
-		
-		private final Component parent;
-		private final Server server;
+	private static class LoadGridAction extends ServerAction {
 		
 		public LoadGridAction(Component parent, Server server){
-			super("Load Grid");
-			this.server = server;
-			this.parent = parent;
+			super("Load Grid", server, parent);
 		}
 
 		@Override
@@ -85,15 +96,10 @@ JMenuBar menuBar = new JMenuBar();
 	}
 	
 	@SuppressWarnings("serial")
-	private static class GenerateGridAction extends AbstractAction {
-		
-		private final Component parent;
-		private final Server server;
+	private static class GenerateGridAction extends ServerAction {
 		
 		public GenerateGridAction(Component parent, Server server){
-			super("Generate Grid");
-			this.server = server;
-			this.parent = parent;
+			super("Generate Grid", server, parent);
 		}
 
 		@Override
@@ -123,6 +129,19 @@ JMenuBar menuBar = new JMenuBar();
 				"Movement: UpDownLeftRight, Bomb: Space"
 			);
 			JOptionPane.showMessageDialog(parent, controls);
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	private static class EndGameAction extends ServerAction {
+		
+		public EndGameAction(Server server){
+			super("End Game", server, null);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			server.endGame(null);
 		}
 	}
 }

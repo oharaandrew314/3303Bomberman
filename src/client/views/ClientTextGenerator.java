@@ -38,7 +38,10 @@ public class ClientTextGenerator implements TextGenerator {
 
 	@Override
 	public String getEndGame(Player player) {
-		if (player.playerId == playerId){
+		if (player == null){
+			return "The game is over.  No one has won.";
+		}
+		else if (player.playerId == playerId){
 			return "You have won the game!";
 		}
 		return String.format("The game is over.  %s has won!", player);

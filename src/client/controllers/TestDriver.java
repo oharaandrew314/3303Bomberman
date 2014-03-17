@@ -27,7 +27,7 @@ public class TestDriver {
 				e.printStackTrace();
 			}
 			test.run();
-			server.endGame();
+			server.endGame(null);
 		}
 		server.stop();
 	}
