@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import common.models.Grid;
+import common.models.units.Player;
 import server.controllers.Server;
 import static java.awt.event.KeyEvent.*;
 
@@ -90,7 +92,13 @@ public class TestCase {
 		//move the players to their start locations
 		for(TestRunner t : testClients){
 			int index = testClients.indexOf(t);
-			server.movePlayerTo(index+1, startLocations.get(index));
+			
+			Player player = server.getPlayer(index+1);
+			Grid grid = server.getGrid();
+			if (grid.contains(player)){
+				grid.remove(player);
+			}
+			grid.set(player, startLocations.get(index));
 		}
 		
 		//start the threads

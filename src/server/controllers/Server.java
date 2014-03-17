@@ -366,14 +366,10 @@ public class Server extends GameController implements SimulationListener {
     	return null;
     }
     
-    public Player movePlayerTo(int playerId, Point newPos){
-		Player player = players.get(playerId);
-		if (grid.contains(player)){
-			grid.remove(player);
-		}
-		grid.set(player, newPos);
-		return player;
-	}
+    public Player getPlayer(int playerId){
+    	return players.get(playerId);
+    }
+    
     public synchronized void detonateBomb(Bomb bomb){
     	synchronized(bomb){
 	    	bomb.setDetonated();

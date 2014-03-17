@@ -50,6 +50,7 @@ public class TestDriver {
 		String[] testfiles = {"playerWin", "twoPlayerWin", "playerCollision", "testPlayerEnemyCollision", "breakWallWithBomb", "killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs", "place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass", "testInvulnerability", "testUpgradedBombsChainReaction" };
 		driver.readTestCases(testfiles);
 		driver.runAll(new Server());
+		System.exit(0);
 	}
 	
 	public Collection<TestCase> getTestCases(){
