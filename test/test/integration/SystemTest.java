@@ -30,7 +30,7 @@ public class SystemTest {
 	@After
 	public void after(){
 		if (server.isGameRunning()){
-			server.endGame();
+			server.endGame(null);
 		}
 		assertTrue(!server.isGameRunning());
 		server.stop();

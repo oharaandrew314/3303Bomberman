@@ -28,7 +28,10 @@ public class LevelLoaderDialog extends JDialog {
 		setLayout(new GridLayout(3, 1));
 		add(new JLabel("Enter the grid to load"));
 		add(gridName = new JTextField());
-		add(new JButton(new LoadNewGameAction(this)));
+		
+		JButton submitButton = new JButton(new LoadNewGameAction(this));
+		getRootPane().setDefaultButton(submitButton);
+		add(submitButton);
 		
 		pack();
 		setVisible(true);
