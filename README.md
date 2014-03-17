@@ -12,6 +12,8 @@ https://github.com/oharaandrew314/3303Bomberman
 3. The server and clients include help menus for applicable topics
 4. The server must create a new game before clients can start the game
 
+Do NOT run the game using other main methods or with command-line arguments. The game is not yet tested to run on a Network, and all other configurations can be made with the Launcher and its linked GUIs.
+
 ###Deadlines
 - Milestone 1: March 3rd
 - Milestone 2: March 17
