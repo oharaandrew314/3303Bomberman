@@ -32,8 +32,7 @@ public class TestDriver {
 				server.endGame(null);
 			}
 		}
-		System.out.println("Stopping the server");
-		server.stop();
+		
 	}
 	
 	/**
@@ -45,12 +44,25 @@ public class TestDriver {
 		}
 	}
 	
-	public static void main(String[] args){		
-		TestDriver driver = new TestDriver();
-		String[] testfiles = {"playerWin", "twoPlayerWin", "playerCollision", "testPlayerEnemyCollision", "breakWallWithBomb", "killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs", "place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass", "testInvulnerability", "testUpgradedBombsChainReaction" };
-		driver.readTestCases(testfiles);
-		driver.runAll(new Server());
+	public static void main(String[] args){
+		Server server = new Server();
+		run(server);
+		System.out.println("Stopping the server");
+		server.stop();
 		System.exit(0);
+	}
+	
+	public static void run(Server server){
+		TestDriver driver = new TestDriver();
+		String[] testfiles = {
+			"playerWin", "twoPlayerWin", "playerCollision",
+			"testPlayerEnemyCollision", "breakWallWithBomb",
+			"killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs",
+			"place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass",
+			"testInvulnerability", "testUpgradedBombsChainReaction"
+		};
+		driver.readTestCases(testfiles);
+		driver.runAll(server);
 	}
 	
 	public Collection<TestCase> getTestCases(){
