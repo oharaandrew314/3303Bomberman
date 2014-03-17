@@ -108,6 +108,9 @@ public class TestCase {
 			}
 			
 		}
+		for(TestRunner t : testClients){
+			t.stop();
+		}
 		System.out.println("Done");
 	}
 	

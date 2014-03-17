@@ -12,7 +12,7 @@ import common.events.PlayerDeadEvent;
 
 
 public class TestRunner extends PlayableClient implements Runnable{
-	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 150;
+	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 100;
 	private Collection<Event> receivedEvents;
 	private ArrayList<Integer> events;
 	private ArrayList<Long> timings;
@@ -54,7 +54,6 @@ public class TestRunner extends PlayableClient implements Runnable{
 			}
 			i++;
 		}
-		stop();
 	}
 
 	@Override
@@ -94,10 +93,8 @@ public class TestRunner extends PlayableClient implements Runnable{
 			
 			if(response == null){
 				System.err.println("did not receive ack");
-				return true;
-				//return; //occurs when it times out (one case being the player died before receiving
+				return true; //timed out, did not receive the ack event
 			}
-										//the ack
 			if (response.getKeyCode() != keyCode){
 				wrongKeys.add(response);
 			} else {
