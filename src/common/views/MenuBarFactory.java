@@ -135,7 +135,9 @@ public class MenuBarFactory {
 				"Southpaw Controls:\n" +
 				"Movement: IJKL, Bomb: ;\n\n" +
 				"n00b Controls:\n" +
-				"Movement: UpDownLeftRight, Bomb: Space"
+				"Movement: UpDownLeftRight, Bomb: Space\n\n" +
+				"Universal:\n" +
+				"Start game: Enter | Disconnect: Escape"
 			);
 			JOptionPane.showMessageDialog(parent, controls);
 		}
