@@ -38,7 +38,11 @@ public class MenuBarFactory {
 		fileMenu.add(new EndGameAction(server));
 		fileMenu.add(new ExitAction(view));
 		
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.add(new GridLegendAction(view.getComponent()));
+		
 		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
 		return menuBar;
 	}
 	
@@ -48,7 +52,11 @@ public class MenuBarFactory {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(new ExitAction(view));
 		
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.add(new GridLegendAction(view.getComponent()));
+		
 		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
 		return menuBar;
 	}
 	
