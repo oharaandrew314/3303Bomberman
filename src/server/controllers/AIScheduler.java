@@ -84,7 +84,7 @@ public class AIScheduler implements SimulationListener {
 		Point target = server.getNearestPlayerLocation(currentLocation);
 		
 		if (target == null) return new Point(0, 0);
-		List<Point> path = server.getGrid().getShortestPath(currentLocation, target);
+		List<Point> path = server.getGridCopy().getShortestPath(currentLocation, target);
 		if (path == null || path.size() <= 1) return new Point(0, 0);
 		
 		Point nextMove = path.get(1); //current location in path, want next point
@@ -98,7 +98,7 @@ public class AIScheduler implements SimulationListener {
 	 * A list rather than a set to make random indexing easier.
 	 */
 	private List<Point> getPossibleMoves(Enemy enemy){
-		Grid grid = server.getGrid();
+		Grid grid = server.getGridCopy();
 		Point currentLocation = getCurrentLocation(enemy);
 		List<Point> possibleMoves = new ArrayList<Point>(grid.getPossibleMoves(currentLocation));
 		possibleMoves.remove(currentLocation);
@@ -118,7 +118,7 @@ public class AIScheduler implements SimulationListener {
 	}
 	
 	private Point getCurrentLocation(Enemy enemy){
-		return server.getGrid().find(enemy);
+		return server.getGridCopy().find(enemy);
 	}
 	
 	@Override

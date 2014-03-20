@@ -151,7 +151,7 @@ public class ServerTest {
 	}
 	
 	private void checkPos(Player player, int x, int y){
-		assertEquals(new Point(x, y), server.getGrid().find(player));
+		assertEquals(new Point(x, y), server.getGridCopy().find(player));
 	}
 	
 	private void assertPlayers(int expected){

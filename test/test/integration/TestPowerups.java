@@ -1,6 +1,8 @@
 package test.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -13,6 +15,8 @@ import org.junit.Test;
 import server.controllers.SimulationTimer;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
+
+import common.controllers.GameController.GridBuffer;
 import common.models.Bomb;
 import common.models.powerups.BombPlusOnePowerup;
 import common.models.powerups.BombRangePowerup;
@@ -56,7 +60,7 @@ public class TestPowerups {
 		Powerup bombPlusPowerUp = new BombPlusOnePowerup();
 		Point loc = new Point(1,0);
 		placePowerup(bombPlusPowerUp, loc);
-		assertTrue(server.getGrid().get(loc).contains(bombPlusPowerUp));
+		assertTrue(server.getGridCopy().get(loc).contains(bombPlusPowerUp));
 	}
 	
 	@Test
@@ -106,15 +110,14 @@ public class TestPowerups {
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isImmuneToBombs());
 		Bomb bomb = server.dropBombBy(player);
-		Point playerLoc = server.getGrid().find(player);
+		Point playerLoc = server.getGridCopy().find(player);
 		
 		// Wait for bomb to detonate
-		SimulationTimer.setTimeCompression(true);
 		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
-		client.waitForViewUpdate(); // avert state synchronization error
-		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	
+		client.waitForViewUpdate();
+		assertTrue(server.getGridCopy().hasTypeAt(Player.class, playerLoc));	
 	}
 	
 	@Test
@@ -123,18 +126,21 @@ public class TestPowerups {
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isInvulnerable());
 		Bomb bomb = server.dropBombBy(player);
-		Point playerLoc = server.getGrid().find(player);
+		Point playerLoc = server.getGridCopy().find(player);
 		
 		// Wait for bomb to detonate
 		SimulationTimer.setTimeCompression(true);
 		while(!bomb.isDetonated());
 		
+		client.waitForViewUpdate();
 		assertTrue(bomb.isDetonated());
-		assertTrue(server.getGrid().hasTypeAt(Player.class, playerLoc));	
+		assertTrue(server.getGridCopy().hasTypeAt(Player.class, playerLoc));	
 	}
 	
 
 	private void placePowerup(Powerup p, Point loc){
-		server.getGrid().set(p, loc);
+		try(GridBuffer buf = server.acquireGrid()){
+			buf.grid.set(p, loc);
+		}
 	}
 }
