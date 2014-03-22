@@ -25,10 +25,14 @@ public class MockServer extends Server {
 	
 	public Player movePlayerTo(int playerId, Point newPos){
 		Player player = players.get(playerId);
-		if (grid.contains(player)){
-			grid.remove(player);
+		
+		try(GridBuffer buf = acquireGrid()){
+			if (buf.grid.contains(player)){
+				buf.grid.remove(player);
+			}
+			buf.grid.set(player, newPos);
 		}
-		grid.set(player, newPos);
+		
 		return player;
 	}
 }

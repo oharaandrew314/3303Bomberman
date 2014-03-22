@@ -56,7 +56,7 @@ public abstract class Client extends GameController {
 	protected void updateView(Event event){
 		if (view != null){
 			event.setPlayerID(playerId); //little hack, substitute local playerId
-			view.handleEvent(state, event);
+			view.handleEvent(getState(), event);
 		}
 	}
 	
@@ -65,15 +65,15 @@ public abstract class Client extends GameController {
 	}
 	
 	protected void setGameStarted(){
-		state = GameState.gameRunning;
+		setState(GameState.gameRunning);
 	}
 	
 	protected void endGame(EndGameEvent winEvent){
-		state = GameState.idle;
+		setState(GameState.idle);
 	}
 	
 	protected void processPlayerDead(PlayerDeadEvent event){
-		state = GameState.idle;
+		setState(GameState.idle);
 	}
 	
 	public boolean isAcceptingConnections(){
@@ -82,8 +82,8 @@ public abstract class Client extends GameController {
 	
 	@Override
 	public void stop(){
-		if (state != GameState.stopped){
-			state = GameState.stopping;
+		if (getState() != GameState.stopped){
+			setState(GameState.stopping);
 			send(new DisconnectEvent());
 		} else {
 			super.stop();
@@ -91,12 +91,12 @@ public abstract class Client extends GameController {
 	}
 	
 	protected void processConnectionAccepted(ConnectAcceptedEvent event) {
-		state = GameState.idle;
+		setState(GameState.idle);
 		playerId = event.getAssignedPlayerId();
 	}
 	
 	protected void processConnectionRejected() {
-		state = GameState.stopped;
+		setState(GameState.stopped);
 		stop();
 	}
 	

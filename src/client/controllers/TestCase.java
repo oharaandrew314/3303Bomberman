@@ -1,4 +1,10 @@
 package client.controllers;
+import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_SPACE;
+import static java.awt.event.KeyEvent.VK_UP;
+
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,10 +12,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import common.models.Grid;
-import common.models.units.Player;
 import server.controllers.Server;
-import static java.awt.event.KeyEvent.*;
+
+import common.controllers.GameController.GridBuffer;
+import common.models.units.Player;
 
 
 public class TestCase {
@@ -94,11 +100,13 @@ public class TestCase {
 			int index = testClients.indexOf(t);
 			
 			Player player = server.getPlayer(index+1);
-			Grid grid = server.getGrid();
-			if (grid.contains(player)){
-				grid.remove(player);
+			try(GridBuffer buf = server.acquireGrid()){
+				if (buf.grid.contains(player)){
+					buf.grid.remove(player);
+				}
+				buf.grid.set(player, startLocations.get(index));
 			}
-			grid.set(player, startLocations.get(index));
+			
 		}
 		
 		//start the threads

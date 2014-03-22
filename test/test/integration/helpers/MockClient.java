@@ -50,6 +50,8 @@ public class MockClient extends PlayableClient {
 		}
 		
 		events.addAll(wrongKeys);
+		
+		waitForViewUpdate();
 		notify();
 	}
 	
