@@ -30,9 +30,8 @@ public class JFrameTextView extends AbstractView {
 	
 	public JFrameTextView(GameController gc, TextGenerator textGen){
 		super(textGen);
-		gc.setView(this);
-		this.gc = gc;
 		
+		// Setup frame
 		frame = new JFrame("Bomberman");
 		frame.setLayout(new BorderLayout());
 		frame.addWindowListener(this);
@@ -48,6 +47,10 @@ public class JFrameTextView extends AbstractView {
 		console = new TextArea();
 		console.setEditable(false);
 		frame.add(console, BorderLayout.SOUTH);
+		
+		// Register as listener to GameController
+		gc.setView(this);
+		this.gc = gc;
 		
 		frame.setVisible(true);
 	}
