@@ -29,7 +29,7 @@ public class MenuBarFactory {
 		return menuBar;
 	}
 	
-	public static JMenuBar createServerMenuBar(Server server, TextView view){
+	public static JMenuBar createServerMenuBar(Server server, AbstractView view){
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -46,7 +46,7 @@ public class MenuBarFactory {
 		return menuBar;
 	}
 	
-	public static JMenuBar createSpectatorMenuBar(TextView view){
+	public static JMenuBar createSpectatorMenuBar(AbstractView view){
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");

@@ -10,7 +10,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import client.controllers.PlayableClient;
+import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
+import client.views.SpectatorTextGenerator;
 import common.content.ImageLoader;
 import common.controllers.GameController;
 import common.models.Entity;
@@ -92,6 +94,14 @@ public class GraphicalView extends AbstractView{
 		);
 		view.addKeyListener(client);
 		view.addMenuBar(MenuBarFactory.createClientMenuBar(view));
+		return view;
+	}
+	
+	public static AbstractView newSpectatorView(){
+		AbstractView view = new GraphicalView(
+			new Spectator(), new SpectatorTextGenerator()
+		);
+		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));
 		return view;
 	}
 }

@@ -100,7 +100,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			TextView.newSpectatorView();
+			GraphicalView.newSpectatorView();
 		}
 	}
 	
