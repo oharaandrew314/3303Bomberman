@@ -13,6 +13,7 @@ public class ListenThread extends Thread {
     private boolean continueRunning = true;
     
     public ListenThread(NetworkController networkController) {
+    	super("Socket Listener");
         this.networkController = networkController;
         this.socket = networkController.getSocket();
     }

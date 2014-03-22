@@ -13,6 +13,7 @@ import org.junit.Test;
 import server.controllers.SimulationTimer;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
+import common.events.ConnectRejectedEvent;
 import common.models.Bomb;
 import common.models.BombFactory;
 import common.models.Grid;
@@ -46,6 +47,7 @@ public class TestBombs {
 	@After
 	public void tearDown(){
 		client.stop();
+		client.waitFor(ConnectRejectedEvent.class);
 		server.stop();
 	}
 
@@ -74,7 +76,7 @@ public class TestBombs {
 	public void testBombDeployPosition(){
 		// Drop bomb and do not move
 		Bomb bomb = server.dropBombBy(player);
-		Grid grid = server.getGrid();
+		Grid grid = server.getGridCopy();
 		assertEquals(grid.find(player), grid.find(bomb));
 	}
 	
@@ -82,28 +84,29 @@ public class TestBombs {
 	public void testBombDeployPositionAfterMove(){
 		Bomb bomb = server.dropBombBy(player);
 		
-		Grid grid = server.getGrid();
-		Point dropLoc = grid.find(player);
+		Point dropLoc = server.getGridCopy().find(player);
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		
-		assertEquals(dropLoc, grid.find(bomb));
-		assertNotEquals(grid.find(player), grid.find(bomb));
+		Grid afterGrid = server.getGridCopy();
+		
+		assertEquals(dropLoc, afterGrid.find(bomb));
+		assertNotEquals(afterGrid.find(player), afterGrid.find(bomb));
 	}
 	
 	@Test
 	public void testTimedDetonation(){
-		Point playerLoc = server.getGrid().find(player);
+		Point playerLoc = server.getGridCopy().find(player);
 		Bomb bomb = server.dropBombBy(player);
 		assertTrue(!bomb.isDetonated());
 		assertEquals(BombFactory.INIT_MAX_BOMBS - 1, player.getNumBombs());
-		assertTrue(server.getGrid().hasTypeAt(Bomb.class, playerLoc));
+		assertTrue(server.getGridCopy().hasTypeAt(Bomb.class, playerLoc));
 		
 		// Wait for bomb to detonate
 		SimulationTimer.setTimeCompression(true);
 		while(!bomb.isDetonated());
 		client.waitForViewUpdate();
 		
-		assertTrue(!server.getGrid().hasTypeAt(Bomb.class, playerLoc));
+		assertTrue(!server.getGridCopy().hasTypeAt(Bomb.class, playerLoc));
 		assertTrue(bomb.isDetonated());
 		assertEquals(BombFactory.INIT_MAX_BOMBS, player.getNumBombs());
 	}
@@ -126,19 +129,20 @@ public class TestBombs {
 		Point playerLoc = new Point(0, 2);
 		server.movePlayerTo(player.playerId, playerLoc);
 		
-		// test if wall is where it should be
+		// test if wall starts where it's supposed to (sanity test)
 		Point wallPoint = new Point(1, 2);
-		assertTrue(server.getGrid().hasTypeAt(Wall.class, wallPoint));
+		assertTrue(server.getGridCopy().hasTypeAt(Wall.class, wallPoint));
 		
 		// Drop bomb
 		Bomb bomb = server.dropBombBy(player);
 		server.detonateBomb(bomb);
 		
+		Grid afterDetonation = server.getGridCopy();
 		// Make sure wall is gone now
-		assertTrue(!server.getGrid().hasTypeAt(Wall.class, wallPoint));
+		assertTrue(!afterDetonation.hasTypeAt(Wall.class, wallPoint));
 		
 		// Make sure player is dead, too (not just removed from grid)
-		assertTrue(!server.getGrid().hasTypeAt(Player.class, playerLoc));
+		assertTrue(!afterDetonation.hasTypeAt(Player.class, playerLoc));
 		assertTrue(server.getPlayers().isEmpty());
 	}
 	
