@@ -54,10 +54,8 @@ public abstract class Client extends GameController {
 	
 	@Override
 	protected void updateView(Event event){
-		if (view != null){
-			event.setPlayerID(playerId); //little hack, substitute local playerId
-			view.handleEvent(state, event);
-		}
+		event.setPlayerID(playerId); //little hack, substitute local playerId
+		super.updateView(event);
 	}
 	
 	public int getPlayerId(){
