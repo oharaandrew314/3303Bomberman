@@ -1,8 +1,7 @@
 package common.controllers;
 
 import java.util.Observable;
-
-import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
+import java.util.concurrent.locks.ReentrantLock;
 
 import common.events.Event;
 import common.models.Grid;
@@ -14,7 +13,7 @@ public abstract class GameController extends Observable{
 		stopped, idle, newGame, gameRunning, stopping, error
 	};
 	
-	private final Mutex gridMutex;
+	private final ReentrantLock gridMutex;
 	protected final NetworkController nwc;
 	protected AbstractView view;
 	private Grid grid;
@@ -22,17 +21,12 @@ public abstract class GameController extends Observable{
 
 	public GameController() {
 		nwc = new NetworkController(this);
-		gridMutex = new Mutex();
+		gridMutex = new ReentrantLock();
 	}
 	
 	public final GridBuffer acquireGrid(){
-		try {
-			gridMutex.acquire();
-			return new GridBuffer(this, new Grid(grid));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return null;
-		}
+		gridMutex.lock();
+		return new GridBuffer(this, new Grid(grid));
 	}
 	
 	public final Grid getGridCopy(){
@@ -43,7 +37,9 @@ public abstract class GameController extends Observable{
 	
 	public final void applyGrid(Grid grid){
 		this.grid = grid;
-		gridMutex.release();
+		if (gridMutex.isLocked()){
+			gridMutex.unlock();
+		}
 	}
 	
 	public final GameState getState(){
