@@ -70,8 +70,8 @@ public class GraphicalView extends AbstractView{
 				g.setColor(BG_COLOR);
 				g.fillRect(
 					0, 0,
-					nextGrid.getSize().width * GRID_TEXT_SIZE,
-					nextGrid.getSize().height * GRID_TEXT_SIZE
+					nextGrid.getSize().width * GRID_SQUARE_SIZE,
+					nextGrid.getSize().height * GRID_SQUARE_SIZE
 				);
 				
 				// Paint entities
@@ -81,8 +81,8 @@ public class GraphicalView extends AbstractView{
 						BufferedImage img = ImageLoader.getImage(e);
 						g.drawImage(
 							img,
-							point.x * GRID_TEXT_SIZE, point.y * GRID_TEXT_SIZE,
-							GRID_TEXT_SIZE, GRID_TEXT_SIZE,
+							point.x * GRID_SQUARE_SIZE, point.y * GRID_SQUARE_SIZE,
+							GRID_SQUARE_SIZE, GRID_SQUARE_SIZE,
 							this
 						);
 					}

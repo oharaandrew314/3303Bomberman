@@ -26,7 +26,7 @@ import common.models.Grid;
 public abstract class AbstractView extends WindowAdapter {
 	
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
-	public static final int GRID_TEXT_SIZE = 30;
+	public static final int GRID_SQUARE_SIZE = 30;
 	public static final String LINE_SEP = System.getProperty("line.separator");
 	
 	private final TextGenerator textGen;

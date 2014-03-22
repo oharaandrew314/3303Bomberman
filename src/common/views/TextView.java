@@ -28,7 +28,7 @@ public class TextView extends AbstractView {
 	protected void initComponents() {
 		// Add Text Area
 		textArea = new TextArea();
-		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_TEXT_SIZE));
+		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_SQUARE_SIZE));
 		textArea.setEditable(false);
 		frame.add(textArea, BorderLayout.CENTER);
 		
