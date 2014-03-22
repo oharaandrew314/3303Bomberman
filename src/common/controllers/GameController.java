@@ -1,6 +1,8 @@
 package common.controllers;
 
+import java.util.ArrayDeque;
 import java.util.Observable;
+import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
 import common.events.Event;
@@ -14,14 +16,17 @@ public abstract class GameController extends Observable{
 	};
 	
 	private final ReentrantLock gridMutex;
+	private final Queue<Event> undisplayedViewEvents;
 	protected final NetworkController nwc;
-	protected AbstractView view;
-	private Grid grid;
-	private GameState state = GameState.stopped;
+	
+	protected AbstractView view = null;
+	protected Grid grid;
+	protected GameState state = GameState.stopped;
 
 	public GameController() {
 		nwc = new NetworkController(this);
 		gridMutex = new ReentrantLock();
+		undisplayedViewEvents = new ArrayDeque<>();
 	}
 	
 	public final GridBuffer acquireGrid(){
@@ -60,6 +65,9 @@ public abstract class GameController extends Observable{
 	
 	public void setView(AbstractView view){
 		this.view = view;
+		for (Event event : undisplayedViewEvents){
+			updateView(event);
+		}
 	}
 	
 	protected void send(Event event){
@@ -69,6 +77,8 @@ public abstract class GameController extends Observable{
 	protected void updateView(Event event){
 		if (view != null){
 			view.handleEvent(state, event);
+		} else {
+			undisplayedViewEvents.add(event);
 		}
 	}
 	
@@ -99,5 +109,5 @@ public abstract class GameController extends Observable{
 		public void close() {
 			gc.applyGrid(grid);
 		}
-	}   
+	}
 }
