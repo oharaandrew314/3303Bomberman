@@ -13,7 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import client.controllers.TestDriver;
-import common.views.JFrameTextView;
+import common.views.GraphicalView;
+import common.views.TextView;
 import server.controllers.Server;
 
 public class Launcher extends WindowAdapter {
@@ -53,7 +54,7 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	private void newServer(){
-		JFrameTextView.newServerView(server = new Server());
+		TextView.newServerView(server = new Server());
 		for (JButton clientButton : clientButtons){
 			clientButton.setEnabled(true);
 		}
@@ -99,7 +100,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JFrameTextView.newSpectatorView();
+			TextView.newSpectatorView();
 		}
 	}
 	
@@ -113,7 +114,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JFrameTextView.newClientView();
+			GraphicalView.newClientView();
 		}
 	}
 	

@@ -247,4 +247,8 @@ public class Grid implements Serializable {
 		
 		return path;
 	}
+	
+	public Entity getVisibleEntity(Point p){
+		return getSquare(p).getVisibleEntity();
+	}
 }
