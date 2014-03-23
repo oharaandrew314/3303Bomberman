@@ -21,7 +21,6 @@ import common.models.Grid;
 
 public class GraphicalView extends AbstractView{
 	
-	private static final Color BG_COLOR = new Color(201, 193,  97);
 	private GraphicsPanel graphicsPanel;
 	private TextArea console;
 
@@ -59,21 +58,18 @@ public class GraphicalView extends AbstractView{
 	@SuppressWarnings("serial")
 	private class GraphicsPanel extends JPanel {
 		
+		private final Color BG_COLOR = new Color(201, 193,  97);
 		private Grid nextGrid;
+		
+		public GraphicsPanel(){
+			setBackground(BG_COLOR);
+		}
 		
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			
-			if (nextGrid != null){
-				// Paint background color
-				g.setColor(BG_COLOR);
-				g.fillRect(
-					0, 0,
-					nextGrid.getSize().width * GRID_SQUARE_SIZE,
-					nextGrid.getSize().height * GRID_SQUARE_SIZE
-				);
-				
+			if (nextGrid != null){				
 				// Paint entities
 				for (Point point : nextGrid.keySet()){
 					Entity e = nextGrid.getVisibleEntity(point);
