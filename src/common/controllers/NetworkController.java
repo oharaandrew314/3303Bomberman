@@ -262,4 +262,12 @@ public class NetworkController {
         ObjectInputStream deserializer = new ObjectInputStream(baos);
         return (Event)deserializer.readObject();
     }
+    
+    public String getConnectionString(){
+    	try {
+			return InetAddress.getLocalHost() + ":" + socket.getLocalPort();
+		} catch (UnknownHostException e) {
+			return "Error: Unknown Address";
+		}
+    }
 }

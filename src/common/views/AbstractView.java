@@ -32,9 +32,11 @@ public abstract class AbstractView extends WindowAdapter {
 	private final TextGenerator textGen;
 	protected final JFrame frame;
 	private final GameController gc;
+	private final String connectionString;
 	
 	public AbstractView(GameController gc, TextGenerator textGen){
 		this.textGen = textGen;
+		connectionString = gc.getConnectionString();
 		
 		// Setup frame
 		frame = new JFrame("Bomberman");
@@ -48,6 +50,7 @@ public abstract class AbstractView extends WindowAdapter {
 		gc.setView(this);
 		this.gc = gc;
 		
+		frame.setTitle(textGen.getTitle(connectionString, gc.getState()));
 		frame.setVisible(true);
 	}
 	
@@ -86,7 +89,7 @@ public abstract class AbstractView extends WindowAdapter {
 		if (message != null){
 			displayMessage(message);
 		}
-		frame.setTitle(textGen.getTitle(state));
+		frame.setTitle(textGen.getTitle(connectionString, state));
 	}
 	
 	@Override

@@ -8,11 +8,11 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 
 import server.controllers.Server;
+import server.views.ServerTextGenerator;
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
-
 import common.controllers.GameController;
 import common.models.Grid;
 
@@ -69,7 +69,7 @@ public class TextView extends AbstractView {
 	
 	public static TextView newServerView(Server server){
 		TextView view = new TextView(
-			server, new SpectatorTextGenerator()
+			server, new ServerTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
 		view.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -10,7 +10,7 @@ public class ClientTextGenerator implements TextGenerator {
 	private int playerId = -1;
 	
 	@Override
-	public String getTitle(GameState state) {
+	public String getTitle(String connectionString, GameState state) {
 		String title = String.format("Bomberman - %s", state);
 		if (playerId != -1){
 			title += ": Player " + playerId;
