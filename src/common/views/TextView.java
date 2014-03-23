@@ -1,45 +1,34 @@
 package common.views;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 
 import server.controllers.Server;
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
+
 import common.controllers.GameController;
 import common.models.Grid;
 
-public class JFrameTextView extends AbstractView {
+public class TextView extends AbstractView {
 	
-	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
-	public static final int GRID_TEXT_SIZE = 30;
-	public static final String LINE_SEP = System.getProperty("line.separator");
-	
-	protected final JFrame frame;
-	private final GameController gc;
 	private TextArea textArea, console;
 	
-	public JFrameTextView(GameController gc, TextGenerator textGen){
-		super(textGen);
-		
-		// Setup frame
-		frame = new JFrame("Bomberman");
-		frame.setLayout(new BorderLayout());
-		frame.addWindowListener(this);
-		frame.setSize(FRAME_SIZE);
-		
+	public TextView(GameController gc, TextGenerator textGen){
+		super(gc, textGen);
+	}
+	
+	@Override
+	protected void initComponents() {
 		// Add Text Area
 		textArea = new TextArea();
-		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_TEXT_SIZE));
+		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_SQUARE_SIZE));
 		textArea.setEditable(false);
 		frame.add(textArea, BorderLayout.CENTER);
 		
@@ -47,32 +36,6 @@ public class JFrameTextView extends AbstractView {
 		console = new TextArea();
 		console.setEditable(false);
 		frame.add(console, BorderLayout.SOUTH);
-		
-		// Register as listener to GameController
-		gc.setView(this);
-		this.gc = gc;
-		
-		frame.setVisible(true);
-	}
-	
-	public void addMenuBar(JMenuBar menuBar){
-		if (menuBar != null){
-			frame.setJMenuBar(menuBar);
-		}
-	}
-	
-	@Override
-	protected void setTitle(String title){
-		frame.setTitle(title);
-	}
-
-	@Override
-	public void close() {
-		if (frame.isVisible()){
-			frame.setVisible(false);
-			frame.dispose();
-			gc.stop();
-		}
 	}
 	
 	@Override
@@ -82,7 +45,7 @@ public class JFrameTextView extends AbstractView {
 
 	@Override
 	public void addKeyListener(KeyListener l) {
-		frame.addKeyListener(l);
+		super.addKeyListener(l);
 		textArea.addKeyListener(l);
 		console.addKeyListener(l);
 	}
@@ -92,13 +55,11 @@ public class JFrameTextView extends AbstractView {
 		console.append(message + LINE_SEP);
 	}
 	
-	public Component getComponent(){
-		return frame;
-	}
+	// Factory methods
 	
-	public static JFrameTextView newClientView(){
+	public static TextView newClientView(){
 		PlayableClient client = new PlayableClient();
-		JFrameTextView view = new JFrameTextView(
+		TextView view = new TextView(
 			client, new ClientTextGenerator()
 		);
 		view.addKeyListener(client);
@@ -106,8 +67,8 @@ public class JFrameTextView extends AbstractView {
 		return view;
 	}
 	
-	public static JFrameTextView newServerView(Server server){
-		JFrameTextView view = new JFrameTextView(
+	public static TextView newServerView(Server server){
+		TextView view = new TextView(
 			server, new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
@@ -115,8 +76,8 @@ public class JFrameTextView extends AbstractView {
 		return view;
 	}
 	
-	public static JFrameTextView newSpectatorView(){
-		JFrameTextView view = new JFrameTextView(
+	public static TextView newSpectatorView(){
+		TextView view = new TextView(
 			new Spectator(), new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));

@@ -1,9 +1,16 @@
 package common.views;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+
+import common.controllers.GameController;
 import common.controllers.GameController.GameState;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
@@ -18,10 +25,30 @@ import common.models.Grid;
 
 public abstract class AbstractView extends WindowAdapter {
 	
-	private final TextGenerator textGen;
+	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
+	public static final int GRID_SQUARE_SIZE = 30;
+	public static final String LINE_SEP = System.getProperty("line.separator");
 	
-	public AbstractView(TextGenerator textGen){
+	private final TextGenerator textGen;
+	protected final JFrame frame;
+	private final GameController gc;
+	
+	public AbstractView(GameController gc, TextGenerator textGen){
 		this.textGen = textGen;
+		
+		// Setup frame
+		frame = new JFrame("Bomberman");
+		frame.setLayout(new BorderLayout());
+		frame.addWindowListener(this);
+		frame.setSize(FRAME_SIZE);
+		
+		initComponents();
+		
+		// Register as listener to GameController
+		gc.setView(this);
+		this.gc = gc;
+		
+		frame.setVisible(true);
 	}
 	
 	public void handleEvent(GameState state, Event event){
@@ -59,7 +86,7 @@ public abstract class AbstractView extends WindowAdapter {
 		if (message != null){
 			displayMessage(message);
 		}
-		setTitle(textGen.getTitle(state));
+		frame.setTitle(textGen.getTitle(state));
 	}
 	
 	@Override
@@ -67,9 +94,29 @@ public abstract class AbstractView extends WindowAdapter {
 		close();
 	}
 	
+	public void close(){
+		if (frame.isVisible()){
+			frame.setVisible(false);
+			frame.dispose();
+			gc.stop();
+		}
+	}
+	
+	public void addMenuBar(JMenuBar menuBar){
+		if (menuBar != null){
+			frame.setJMenuBar(menuBar);
+		}
+	}
+	
+	public void addKeyListener(KeyListener l) {
+		frame.addKeyListener(l);
+	}
+	
+	public Component getComponent(){
+		return frame;
+	}
+	
 	public abstract void displayMessage(String message);
 	public abstract void displayGrid(Grid grid);
-	public abstract void close();
-	public abstract void addKeyListener(KeyListener l);
-	protected abstract void setTitle(String string);
+	protected abstract void initComponents();
 }

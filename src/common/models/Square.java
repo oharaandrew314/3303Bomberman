@@ -92,18 +92,22 @@ public class Square implements Serializable {
 		return entity == impassableEntity || passableEntities.contains(entity);
 	}
 	
-	@Override
-	public synchronized String toString(){
+	public Entity getVisibleEntity(){
 		// Impassable object gets priority
-		if (!isPassable()) return impassableEntity.toString();
+		if (!isPassable()) return impassableEntity;
 		
 		// Otherwise, pick a passable object if one exists
 		for (Entity entity : passableEntities){
 			if (entity.isVisible()){
-				return entity.toString();
+				return entity;
 			}
 		}
-		
-		return EMPTY_SQUARE_SYMBOL;
+		return null;
+	}
+	
+	@Override
+	public synchronized String toString(){
+		Entity visibleEntity = getVisibleEntity();
+		return visibleEntity == null ? EMPTY_SQUARE_SYMBOL : visibleEntity.toString();
 	}
 }
