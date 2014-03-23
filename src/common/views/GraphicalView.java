@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TextArea;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
@@ -14,6 +13,7 @@ import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
+
 import common.content.ImageLoader;
 import common.controllers.GameController;
 import common.models.Entity;
@@ -78,9 +78,8 @@ public class GraphicalView extends AbstractView{
 				for (Point point : nextGrid.keySet()){
 					Entity e = nextGrid.getVisibleEntity(point);
 					if (e != null){
-						BufferedImage img = ImageLoader.getImage(e);
 						g.drawImage(
-							img,
+							ImageLoader.getImage(e),
 							point.x * GRID_SQUARE_SIZE, point.y * GRID_SQUARE_SIZE,
 							GRID_SQUARE_SIZE, GRID_SQUARE_SIZE,
 							this
