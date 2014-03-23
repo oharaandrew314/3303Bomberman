@@ -134,7 +134,7 @@ public class NetworkController {
      * Add a new peer, to which all messages will be sent.
      * @param peer The peer to add.
      */
-    private synchronized void addPeer(InetSocketAddress peer) {
+    public synchronized void addPeer(InetSocketAddress peer) {
         peers.put( getPlayerIdFor(peer), peer);
     }
     

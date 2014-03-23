@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.KeyListener;
+import java.net.InetSocketAddress;
 
 import javax.swing.JFrame;
 
@@ -57,8 +58,8 @@ public class TextView extends AbstractView {
 	
 	// Factory methods
 	
-	public static TextView newClientView(){
-		PlayableClient client = new PlayableClient();
+	public static TextView newClientView(InetSocketAddress address){
+		PlayableClient client = new PlayableClient(address);
 		TextView view = new TextView(
 			client, new ClientTextGenerator()
 		);
@@ -76,9 +77,9 @@ public class TextView extends AbstractView {
 		return view;
 	}
 	
-	public static TextView newSpectatorView(){
+	public static TextView newSpectatorView(InetSocketAddress address){
 		TextView view = new TextView(
-			new Spectator(), new SpectatorTextGenerator()
+			new Spectator(address), new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));
 		return view;
