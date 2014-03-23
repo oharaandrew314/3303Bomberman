@@ -18,6 +18,14 @@ public class ImageLoader {
 	public static final String IMG_PATH = "img/";
 	private static final HashMap<String, BufferedImage> CACHE = new HashMap<>();
 	
+	/**
+	 * Load the image assigned to the given Entity.
+	 * The image must be stored in the img dir.
+	 * The image filename must conform to <classname>.png.
+	 * 
+	 * @param entity the entity to find the image for
+	 * @return the image for the given entity.
+	 */
 	public static BufferedImage getImage(Entity entity){
 		return getImage(entity.getClass().getSimpleName() + ".png");
 	}
