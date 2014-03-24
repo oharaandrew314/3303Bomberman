@@ -1,10 +1,14 @@
 package common.views;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -12,13 +16,15 @@ import javax.swing.JOptionPane;
 import server.controllers.Server;
 import server.views.LevelGeneratorDialog;
 import server.views.LevelLoaderDialog;
-
+import common.content.ImageLoader;
+import common.models.Bomb;
 import common.models.Entity;
 import common.models.Pillar;
 import common.models.Wall;
 import common.models.powerups.FlamePassPowerup;
 import common.models.units.LineEnemy;
-import common.models.units.PathFindingEnemy;
+import common.models.units.Player;
+import common.models.units.SmartEnemy;
 import common.models.units.RandomEnemy;
 
 public class MenuBarFactory {
@@ -144,35 +150,46 @@ public class MenuBarFactory {
 		
 		private final Component parent;
 		
-		public GridLegendAction(Component parent){
+		public GridLegendAction(AbstractView view){
 			super("Grid Legend");
-			this.parent = parent;
+			parent = view.getComponent();
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String helpText = String.format(
-				"%s: Pillar | %s: Wall\n" + 
-				"%s: Random Enemy | %s: Line enemy | %s: Smart Enemy\n" + 
-				"#: Player | B: Bomb | %s: Powerup",
-				getEntityChar(Pillar.class),
-				getEntityChar(Wall.class),
-				getEntityChar(RandomEnemy.class),
-				getEntityChar(LineEnemy.class),
-				getEntityChar(PathFindingEnemy.class),
-				getEntityChar(FlamePassPowerup.class)
-			);
-			JOptionPane.showMessageDialog(parent, helpText);
-			
+			new LegendDialog();
 		}
 		
-		private String getEntityChar(Class<? extends Entity> type){
-			try {
-				return type.newInstance().toString();
-			} catch (InstantiationException | IllegalAccessException e) {
-				return "<Error>";
+		private class LegendDialog extends JDialog {
+			
+			public LegendDialog(){
+				setLocationRelativeTo(parent);
+				setLayout(new GridLayout(9, 3));
+				
+				add(new JLabel("Entity"));
+				add(new JLabel("Text Repr."));
+				add(new JLabel("Image"));
+				
+				add(new Pillar());
+				add(new Wall());
+				add(new RandomEnemy());
+				add(new LineEnemy());
+				add(new SmartEnemy());
+				add(new FlamePassPowerup());
+				add(new Bomb(null, 1));
+				add(new Player(1));
+				
+				pack();
+				setVisible(true);
 			}
-		}		
+			
+			private void add(Entity e){
+				add(new JLabel(e.name));
+				add(new JLabel(e.toString()));
+				add(new JLabel(new ImageIcon(ImageLoader.getImage(e))));
+			}
+			
+		}
 	}
 	
 	private static class MenuBuilder {
@@ -187,7 +204,7 @@ public class MenuBarFactory {
 			bar.add(helpMenu = new JMenu("Help"));
 			
 			addToFile(new ExitAction(view));
-			addToHelp(new GridLegendAction(view.getComponent()));
+			addToHelp(new GridLegendAction(view));
 		}
 		
 		public void addToFile(Action action){
