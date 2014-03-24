@@ -3,6 +3,8 @@ package common.views;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -14,8 +16,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 
 import server.controllers.Server;
+import server.models.ControlScheme;
+import server.models.ControlScheme.Control;
 import server.views.LevelGeneratorDialog;
 import server.views.LevelLoaderDialog;
+
 import common.content.ImageLoader;
 import common.models.Bomb;
 import common.models.Entity;
@@ -24,8 +29,8 @@ import common.models.Wall;
 import common.models.powerups.FlamePassPowerup;
 import common.models.units.LineEnemy;
 import common.models.units.Player;
-import common.models.units.SmartEnemy;
 import common.models.units.RandomEnemy;
+import common.models.units.SmartEnemy;
 
 public class MenuBarFactory {
 	
@@ -118,17 +123,20 @@ public class MenuBarFactory {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String controls = (
-				"Righty Controls:\n" +
-				"Movement: WASD, Bomb: F\n\n" +
-				"Southpaw Controls:\n" +
-				"Movement: IJKL, Bomb: ;\n\n" +
-				"n00b Controls:\n" +
-				"Movement: UpDownLeftRight, Bomb: Space\n\n" +
-				"Universal:\n" +
-				"Start game: Enter | Disconnect: Escape"
-			);
-			JOptionPane.showMessageDialog(parent, controls);
+			StringBuilder helpText = new StringBuilder();
+			for (ControlScheme scheme : ControlScheme.getControlSchemes()){
+				helpText.append(scheme.name);
+				helpText.append(" Controls:\n");
+				for (Entry<Control, Integer> binding : scheme.getControls().entrySet()){
+					helpText.append(binding.getKey().name());
+					helpText.append(": ");
+					helpText.append(KeyEvent.getKeyText(binding.getValue()));
+					helpText.append(" - ");
+				}
+				helpText.append("\n\n");
+			}
+			JOptionPane.showMessageDialog(parent, helpText);
+			
 		}
 	}
 	
