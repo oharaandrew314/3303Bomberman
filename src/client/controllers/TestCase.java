@@ -27,6 +27,7 @@ public class TestCase {
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
 	private ArrayList<ArrayList<Long>> timings;
+	private ArrayList<Long> latencies;
 	private ArrayList<Point> startLocations;
 	private String filename;
 	private String gridFileName;
@@ -35,6 +36,7 @@ public class TestCase {
 
 		startLocations = new ArrayList<Point>();
 		timings = new ArrayList<ArrayList<Long>>();
+		latencies = new ArrayList<Long>();
 		events = readEvents(filename);
 		this.filename = filename;
 
@@ -128,6 +130,8 @@ public class TestCase {
 		//disconnect all the testClients
 		for(TestRunner t : testClients){
 			t.stop();
+			latencies.addAll(t.getLatencyList());
+			
 		}
 		System.out.println("Done");
 	}
@@ -217,6 +221,10 @@ public class TestCase {
 			e.printStackTrace();
 		}
 		return events;
+	}
+	
+	public ArrayList<Long> getTestCaseLatencies(){
+		return latencies;
 	}
 	
 

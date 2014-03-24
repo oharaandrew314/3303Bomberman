@@ -16,12 +16,14 @@ public class TestRunner extends PlayableClient implements Runnable{
 	private Collection<Event> receivedEvents;
 	private ArrayList<Integer> events;
 	private ArrayList<Long> timings;
+	private ArrayList<Long> latencyPerEvent;
 	private boolean connected = false;
 	private boolean dead = false;
 	
 	public TestRunner(ArrayList<Integer> events, ArrayList<Long> timings){
 		this.events = events;
 		this.timings = timings;
+		latencyPerEvent = new ArrayList<Long>();
 	}
 
 	@Override
@@ -50,7 +52,10 @@ public class TestRunner extends PlayableClient implements Runnable{
 			//game state might have changed while waiting
 			if(!dead&& isGameRunning()){
 				GameKeyEvent keyEvent = new GameKeyEvent(events.get(i));
+				long keyPressedAt = System.currentTimeMillis();
 				timeout = pressKeyAndWait(keyEvent.getKeyCode());
+				long latency = System.currentTimeMillis() - keyPressedAt;
+				latencyPerEvent.add(latency);
 			} else{
 				break;
 			}
@@ -155,5 +160,9 @@ public class TestRunner extends PlayableClient implements Runnable{
 		receivedEvents.add(event);
 		notify();
 		return super.receive(event);
+	}
+	
+	public ArrayList<Long> getLatencyList(){
+		return latencyPerEvent;
 	}
 }

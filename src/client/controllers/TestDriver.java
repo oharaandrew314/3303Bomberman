@@ -62,6 +62,15 @@ public class TestDriver {
 		TestDriver driver = new TestDriver();
 		driver.readTestCases(TESTFILES);
 		driver.runAll(server);
+		long totalLatency = 0;
+		long trials = 0;
+		for(TestCase t : driver.getTestCases()){
+			for(Long l : t.getTestCaseLatencies()){
+				totalLatency += l;
+				trials++;
+			}
+		}
+		System.out.println("Average Latency per action: " + totalLatency / trials);
 	}
 	
 	public Collection<TestCase> getTestCases(){
