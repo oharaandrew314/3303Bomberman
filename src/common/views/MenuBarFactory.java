@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -14,50 +15,24 @@ import server.views.LevelLoaderDialog;
 
 public class MenuBarFactory {
 	
+	// Factories
+	
 	public static JMenuBar createClientMenuBar(AbstractView view){
-		JMenuBar menuBar = new JMenuBar();
-		
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.add(new ExitAction(view));
-		
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(new ControlsAction(view.getComponent()));
-		helpMenu.add(new GridLegendAction(view.getComponent()));
-		
-		menuBar.add(fileMenu);
-		menuBar.add(helpMenu);
-		return menuBar;
+		MenuBuilder builder = new MenuBuilder(view);
+		builder.addToHelp(new ControlsAction(view.getComponent()));
+		return builder.bar;
 	}
 	
 	public static JMenuBar createServerMenuBar(Server server, AbstractView view){
-		JMenuBar menuBar = new JMenuBar();
-		
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.add(new LoadGridAction(view.getComponent(), server));
-		fileMenu.add(new GenerateGridAction(view.getComponent(), server));
-		fileMenu.add(new EndGameAction(server));
-		fileMenu.add(new ExitAction(view));
-		
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(new GridLegendAction(view.getComponent()));
-		
-		menuBar.add(fileMenu);
-		menuBar.add(helpMenu);
-		return menuBar;
+		MenuBuilder builder = new MenuBuilder(view);
+		builder.addToFile(new LoadGridAction(view.getComponent(), server));
+		builder.addToFile(new GenerateGridAction(view.getComponent(), server));
+		builder.addToFile(new EndGameAction(server));
+		return builder.bar;
 	}
 	
 	public static JMenuBar createSpectatorMenuBar(AbstractView view){
-		JMenuBar menuBar = new JMenuBar();
-		
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.add(new ExitAction(view));
-		
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(new GridLegendAction(view.getComponent()));
-		
-		menuBar.add(fileMenu);
-		menuBar.add(helpMenu);
-		return menuBar;
+		return new MenuBuilder(view).bar;
 	}
 	
 	// Actions
@@ -177,5 +152,29 @@ public class MenuBarFactory {
 			
 		}
 		
+	}
+	
+	private static class MenuBuilder {
+		
+		public final JMenuBar bar;
+		private final JMenu fileMenu, helpMenu;
+		
+		public MenuBuilder(AbstractView view){
+			bar = new JMenuBar();
+			
+			bar.add(fileMenu = new JMenu("File"));
+			bar.add(helpMenu = new JMenu("Help"));
+			
+			addToFile(new ExitAction(view));
+			addToHelp(new GridLegendAction(view.getComponent()));
+		}
+		
+		public void addToFile(Action action){
+			fileMenu.add(action);
+		}
+		
+		public void addToHelp(Action action){
+			helpMenu.add(action);
+		}
 	}
 }
