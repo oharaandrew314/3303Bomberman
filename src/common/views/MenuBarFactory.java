@@ -13,6 +13,14 @@ import server.controllers.Server;
 import server.views.LevelGeneratorDialog;
 import server.views.LevelLoaderDialog;
 
+import common.models.Entity;
+import common.models.Pillar;
+import common.models.Wall;
+import common.models.powerups.FlamePassPowerup;
+import common.models.units.LineEnemy;
+import common.models.units.PathFindingEnemy;
+import common.models.units.RandomEnemy;
+
 public class MenuBarFactory {
 	
 	// Factories
@@ -143,15 +151,28 @@ public class MenuBarFactory {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String helpText = (
-				"X: Pillar | *: Wall\n" + 
-				"R: Random Enemy | L: Line enemy | S: Smart Enemy\n" + 
-				"[1-9]: player | B: Bomb | P: Powerup"
+			String helpText = String.format(
+				"%s: Pillar | %s: Wall\n" + 
+				"%s: Random Enemy | %s: Line enemy | %s: Smart Enemy\n" + 
+				"#: Player | B: Bomb | %s: Powerup",
+				getEntityChar(Pillar.class),
+				getEntityChar(Wall.class),
+				getEntityChar(RandomEnemy.class),
+				getEntityChar(LineEnemy.class),
+				getEntityChar(PathFindingEnemy.class),
+				getEntityChar(FlamePassPowerup.class)
 			);
 			JOptionPane.showMessageDialog(parent, helpText);
 			
 		}
 		
+		private String getEntityChar(Class<? extends Entity> type){
+			try {
+				return type.newInstance().toString();
+			} catch (InstantiationException | IllegalAccessException e) {
+				return "<Error>";
+			}
+		}		
 	}
 	
 	private static class MenuBuilder {
