@@ -135,7 +135,7 @@ public class NetworkController {
      * @param peer The peer to add.
      */
     private synchronized void addPeer(InetSocketAddress peer) {
-        peers.put( getPlayerIdFor(peer), peer);
+        peers.put( getPeerIdFor(peer), peer);
     }
     
     /**
@@ -184,8 +184,8 @@ public class NetworkController {
         try {
             event = deserialize(data);
             
-            int playerId = getPlayerIdFor(data);
-            event.setPlayerID(playerId);
+            int peerId = getPeerIdFor(data);
+            event.setPeerID(peerId);
             
             waitUntilReady();
             
@@ -195,12 +195,12 @@ public class NetworkController {
             		data.getAddress(), data.getPort()
             	);
             	if (response instanceof ConnectAcceptedEvent){
-            		peers.put(playerId, peer);
+            		peers.put(peerId, peer);
             	} else if (response instanceof ConnectRejectedEvent){
-            		peers.remove(playerId);
+            		peers.remove(peerId);
             	}
             	
-            	response.setPlayerID(playerId);
+            	response.setPeerID(peerId);
             	sendToOnePeer(response, peer);
             }
         } catch (ClassNotFoundException ex) {
@@ -213,14 +213,14 @@ public class NetworkController {
      * @return the player ID from which the packet came. If this is a new peer,
      * the next ID is given.
      */
-    private synchronized int getPlayerIdFor(DatagramPacket packet) {
+    private synchronized int getPeerIdFor(DatagramPacket packet) {
     	InetSocketAddress peer = new InetSocketAddress(
     		packet.getAddress().getHostAddress(), packet.getPort()
     	);
-    	return getPlayerIdFor(peer);
+    	return getPeerIdFor(peer);
     }
     
-    private synchronized int getPlayerIdFor(InetSocketAddress address){
+    private synchronized int getPeerIdFor(InetSocketAddress address){
     	int nextId = 1;
     	
     	// Search for existing peer

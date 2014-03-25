@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public abstract class Event implements Serializable {
 	private static final long serialVersionUID = 6289295918217598226L;
-	private int playerID;
+	private int peerID;
     
-    public void setPlayerID(int playerID) {
-        this.playerID = playerID;
+    public void setPeerID(int peerID) {
+        this.peerID = peerID;
     }
     
-    public int getPlayerID() {
-        return playerID;
+    public int getPeerID() {
+        return peerID;
     }
     
     @Override

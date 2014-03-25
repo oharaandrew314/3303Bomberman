@@ -52,12 +52,6 @@ public abstract class Client extends GameController {
 		return null;
 	}
 	
-	@Override
-	protected void updateView(Event event){
-		event.setPlayerID(playerId); //little hack, substitute local playerId
-		super.updateView(event);
-	}
-	
 	public int getPlayerId(){
 		return playerId;
 	}
@@ -82,7 +76,7 @@ public abstract class Client extends GameController {
 	public void stop(){
 		if (getState() != GameState.stopped){
 			setState(GameState.stopping);
-			send(new DisconnectEvent());
+			send(new DisconnectEvent(playerId));
 		} else {
 			super.stop();
 		}

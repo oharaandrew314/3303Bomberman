@@ -82,7 +82,7 @@ public class TestNetworkController extends GameController {
     
     private int getClientIdFromServer(MockNetworkController client){
     	Event response = client.sendAndWait(new GameKeyEvent(42), server);
-        return response.getPlayerID();
+        return response.getPeerID();
     }
     
     // Tests
@@ -144,11 +144,11 @@ public class TestNetworkController extends GameController {
 
         // Connect client A
         Event received = clientA.connectAndWait(server);
-        assertEquals(1, received.getPlayerID());
+        assertEquals(1, received.getPeerID());
         
         // Connect client B
         received = clientB.connectAndWait(server);
-        assertEquals(2, received.getPlayerID());
+        assertEquals(2, received.getPeerID());
 
         // Test player id
         assertEquals(2, getClientIdFromServer(clientB));
