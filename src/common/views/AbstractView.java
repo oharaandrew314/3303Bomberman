@@ -77,7 +77,7 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getStartGame();
 		}
 		else if (event instanceof DisconnectEvent){
-			message = textGen.getPlayerDisconnected(((DisconnectEvent) event).getDisconnectedPlayerId());
+			message = textGen.getPlayerDisconnected(((DisconnectEvent) event).disconnectedPlayerId);
 		} else if (event instanceof PowerupReceivedEvent){
 			PowerupReceivedEvent pEvent = (PowerupReceivedEvent) event;
 			message = textGen.getPowerupMessage(pEvent.player, pEvent.powerup);
