@@ -6,7 +6,7 @@ import common.models.units.Player;
 
 public interface TextGenerator {
 
-	public String getTitle(GameState state);
+	public String getTitle(String connectionString, GameState state);
 	public String getPlayerDead(Player player);
 	public String getConnectionAccepted(int playerId);
 	public String getConnectionRejected();

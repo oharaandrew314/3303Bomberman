@@ -2,6 +2,7 @@ package client.controllers;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.InetSocketAddress;
 
 import common.events.GameKeyEvent;
 
@@ -10,9 +11,9 @@ public class PlayableClient extends Client implements KeyListener {
 	public PlayableClient(){
 		super();
 	}
-
-	public PlayableClient(String serverAddress){
-		super(serverAddress);
+	
+	public PlayableClient(InetSocketAddress address){
+		super(address);
 	}
 
 	@Override
