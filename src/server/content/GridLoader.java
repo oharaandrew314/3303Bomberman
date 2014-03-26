@@ -27,7 +27,7 @@ import common.models.powerups.BombRangePowerup;
 import common.models.powerups.FlamePassPowerup;
 import common.models.powerups.MysteryPowerup;
 import common.models.units.LineEnemy;
-import common.models.units.PathFindingEnemy;
+import common.models.units.SmartEnemy;
 import common.models.units.Player;
 import common.models.units.RandomEnemy;
 
@@ -132,7 +132,7 @@ public class GridLoader {
 				case "bombplusone": return new BombPlusOnePowerup();
 				case "randomenemy": return new RandomEnemy();
 				case "lineenemy": return new LineEnemy();
-				case "pathfindingenemy": return new PathFindingEnemy();
+				case "pathfindingenemy": return new SmartEnemy();
 				default: throw new IllegalArgumentException(
 					name + " is an illegal entity"
 				);
