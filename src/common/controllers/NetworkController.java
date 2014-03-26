@@ -134,8 +134,8 @@ public class NetworkController {
      * Add a new peer, to which all messages will be sent.
      * @param peer The peer to add.
      */
-    private synchronized void addPeer(InetSocketAddress peer) {
-        peers.put( getPeerIdFor(peer), peer);
+    public synchronized void addPeer(InetSocketAddress peer) {
+	peers.put( getPeerIdFor(peer), peer);
     }
     
     /**
@@ -261,5 +261,13 @@ public class NetworkController {
         ByteArrayInputStream baos = new ByteArrayInputStream(packet.getData());
         ObjectInputStream deserializer = new ObjectInputStream(baos);
         return (Event)deserializer.readObject();
+    }
+    
+    public String getConnectionString(){
+    	try {
+			return InetAddress.getLocalHost() + ":" + socket.getLocalPort();
+		} catch (UnknownHostException e) {
+			return "Error: Unknown Address";
+		}
     }
 }

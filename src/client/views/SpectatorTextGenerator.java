@@ -8,7 +8,7 @@ import common.views.TextGenerator;
 public class SpectatorTextGenerator implements TextGenerator{
 	
 	@Override
-	public String getTitle(GameState state) {
+	public String getTitle(String connectionString, GameState state) {
 		return String.format("Bomberman (Spectator) - %s", state);
 	}
 

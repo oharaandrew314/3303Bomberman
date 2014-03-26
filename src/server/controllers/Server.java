@@ -1,7 +1,6 @@
 package server.controllers;
 
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -13,12 +12,15 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import server.models.ControlScheme;
+import server.models.ControlScheme.Control;
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
+import common.events.EndGameEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
@@ -26,7 +28,6 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
-import common.events.EndGameEvent;
 import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
@@ -205,36 +206,20 @@ public class Server extends GameController implements SimulationListener {
     
     private final Event handleGameKeyEvent(GameKeyEvent event){
     	Player player = players.get(peers.get(event.getPeerID()));
-    	int keyCode = event.getKeyCode();
+		Control control = ControlScheme.parse(event);
 
-    	// Handle disconnect event
-    	if (keyCode == KeyEvent.VK_ESCAPE){
+		if (control == Control.Exit){
     		return disconnectPeer(event);
-    	}
-    	
-    	// Handle start game event
-    	else if (keyCode == KeyEvent.VK_ENTER && !isGameRunning()){
+    	} else if (control == Control.Start && !isGameRunning()){
     		startGame();
-    	}
-    	
-    	// Handle all other key events if game is running
-    	else if (isGameRunning()){
-    		switch(keyCode){
-    		case KeyEvent.VK_UP:
-    		case KeyEvent.VK_W:
-    		case KeyEvent.VK_I: move(player, 0, -1); break;
-    		case KeyEvent.VK_LEFT:
-    		case KeyEvent.VK_A:
-    		case KeyEvent.VK_J: move(player, -1, 0); break;
-    		case KeyEvent.VK_DOWN:
-    		case KeyEvent.VK_S:
-    		case KeyEvent.VK_K: move(player, 0, 1); break;
-    		case KeyEvent.VK_RIGHT:
-    		case KeyEvent.VK_D:
-    		case KeyEvent.VK_L: move(player, 1, 0); break;
-    		case KeyEvent.VK_SPACE:
-    		case KeyEvent.VK_F:
-    		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
+    	} else if (isGameRunning()){
+    		switch(control){
+	    		case Up: move(player, 0, -1); break;
+	    		case Left: move(player, -1, 0); break;
+	    		case Down: move(player, 0, 1); break;
+	    		case Right: move(player, 1, 0); break;
+	    		case Bomb: dropBombBy(player); break;
+	    		default:
     		}
     	} 
     	
