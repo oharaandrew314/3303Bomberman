@@ -27,11 +27,7 @@ public class ImageLoader {
 	 * @return the image for the given entity.
 	 */
 	public static BufferedImage getImage(Entity entity){
-		return getImage(entity.getClass());
-	}
-	
-	public static BufferedImage getImage(Class<? extends Entity> type){
-		return getImage(type.getSimpleName() + ".png");
+		return getImage(entity.getClass().getSimpleName() + ".png");
 	}
 
 	public static BufferedImage getImage(String imageName){
