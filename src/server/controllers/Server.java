@@ -54,6 +54,7 @@ public class Server extends GameController implements SimulationListener {
 		timer.addListener(this);
 		timer.addListener(bombScheduler = new BombScheduler(this));
 		timer.addListener(aiScheduler = new AIScheduler(this));
+		timer.start();
 		
 		setState(GameState.idle);
 		
@@ -113,7 +114,6 @@ public class Server extends GameController implements SimulationListener {
 			
 			setState(GameState.gameRunning);
 			send(new GameStartEvent());
-			timer.start();
 		} else {
 			System.err.println("Could not start game; not in new game state.");
 		}
@@ -127,7 +127,6 @@ public class Server extends GameController implements SimulationListener {
 	
 	private synchronized void endGame(Grid grid, Player winner){
 		if (getState() == GameState.gameRunning){
-			timer.stop();
 			setState(GameState.idle);
 			send(new EndGameEvent(winner, grid));
 		}
@@ -144,6 +143,7 @@ public class Server extends GameController implements SimulationListener {
 	
 	@Override
 	public void simulationUpdate(long now){
+		nwc.requestAllEvents();
 		if (isGameRunning()){
 			send(new ViewUpdateEvent(getGridCopy()));
 		}
