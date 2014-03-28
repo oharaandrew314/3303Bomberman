@@ -2,11 +2,11 @@ package common.views;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.TextArea;
 import java.awt.event.KeyListener;
 import java.net.InetSocketAddress;
 
 import javax.swing.JFrame;
+import javax.swing.JTextArea;
 
 import server.controllers.Server;
 import server.views.ServerTextGenerator;
@@ -19,7 +19,7 @@ import common.models.Grid;
 
 public class TextView extends AbstractView {
 	
-	private TextArea textArea, console;
+	private JTextArea textArea, console;
 	
 	public TextView(GameController gc, TextGenerator textGen){
 		super(gc, textGen);
@@ -28,13 +28,13 @@ public class TextView extends AbstractView {
 	@Override
 	protected void initComponents() {
 		// Add Text Area
-		textArea = new TextArea();
+		textArea = new JTextArea();
 		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_SQUARE_SIZE));
 		textArea.setEditable(false);
 		frame.add(textArea, BorderLayout.CENTER);
 		
 		// Add Console
-		console = new TextArea();
+		console = new JTextArea();
 		console.setEditable(false);
 		frame.add(console, BorderLayout.SOUTH);
 	}

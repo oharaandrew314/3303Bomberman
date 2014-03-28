@@ -4,11 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.TextArea;
 import java.awt.event.KeyListener;
 import java.net.InetSocketAddress;
 
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
@@ -23,7 +23,7 @@ import common.models.Grid;
 public class GraphicalView extends AbstractView{
 	
 	private GraphicsPanel graphicsPanel;
-	private TextArea console;
+	private JTextArea console;
 
 	public GraphicalView(GameController gc, TextGenerator textGen) {
 		super(gc, textGen);
@@ -35,7 +35,7 @@ public class GraphicalView extends AbstractView{
 		frame.add(graphicsPanel = new GraphicsPanel(), BorderLayout.CENTER);
 		
 		// Add Console
-		frame.add(console = new TextArea(), BorderLayout.SOUTH);
+		frame.add(console = new JTextArea(), BorderLayout.SOUTH);
 		console.setEditable(false);
 	}
 
