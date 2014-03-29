@@ -14,7 +14,6 @@ import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
-
 import common.content.ImageLoader;
 import common.controllers.GameController;
 import common.models.Entity;
@@ -35,13 +34,12 @@ public class GraphicalView extends AbstractView{
 		frame.add(graphicsPanel = new GraphicsPanel(), BorderLayout.CENTER);
 		
 		// Add Console
-		frame.add(console = new JTextArea(), BorderLayout.SOUTH);
-		console.setEditable(false);
+		frame.add(console = new ConsoleView(), BorderLayout.SOUTH);
 	}
 
 	@Override
 	public void displayMessage(String message) {
-		console.append(message + LINE_SEP);
+		console.append(message);
 	}
 	
 	@Override

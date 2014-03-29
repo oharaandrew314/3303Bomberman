@@ -34,9 +34,7 @@ public class TextView extends AbstractView {
 		frame.add(textArea, BorderLayout.CENTER);
 		
 		// Add Console
-		console = new JTextArea();
-		console.setEditable(false);
-		frame.add(console, BorderLayout.SOUTH);
+		frame.add(console = new ConsoleView(), BorderLayout.SOUTH);
 	}
 	
 	@Override
@@ -53,7 +51,7 @@ public class TextView extends AbstractView {
 	
 	@Override
 	public void displayMessage(String message){
-		console.append(message + LINE_SEP);
+		console.append(message);
 	}
 	
 	// Factory methods
