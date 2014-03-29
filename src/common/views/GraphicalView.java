@@ -8,7 +8,6 @@ import java.awt.event.KeyListener;
 import java.net.InetSocketAddress;
 
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
@@ -22,7 +21,6 @@ import common.models.Grid;
 public class GraphicalView extends AbstractView{
 	
 	private GraphicsPanel graphicsPanel;
-	private JTextArea console;
 
 	public GraphicalView(GameController gc, TextGenerator textGen) {
 		super(gc, textGen);
@@ -33,20 +31,14 @@ public class GraphicalView extends AbstractView{
 		// Add graphics panel
 		frame.add(graphicsPanel = new GraphicsPanel(), BorderLayout.CENTER);
 		
-		// Add Console
-		frame.add(console = new ConsoleView(), BorderLayout.SOUTH);
-	}
-
-	@Override
-	public void displayMessage(String message) {
-		console.append(message);
+		// Enable Console
+		setConsoleEnabled(true);
 	}
 	
 	@Override
 	public void addKeyListener(KeyListener l) {
 		super.addKeyListener(l);
 		graphicsPanel.addKeyListener(l);
-		console.addKeyListener(l);
 	}
 
 	@Override

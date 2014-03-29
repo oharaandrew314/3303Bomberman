@@ -19,7 +19,7 @@ import common.models.Grid;
 
 public class TextView extends AbstractView {
 	
-	private JTextArea textArea, console;
+	private JTextArea textArea;
 	
 	public TextView(GameController gc, TextGenerator textGen){
 		super(gc, textGen);
@@ -33,8 +33,8 @@ public class TextView extends AbstractView {
 		textArea.setEditable(false);
 		frame.add(textArea, BorderLayout.CENTER);
 		
-		// Add Console
-		frame.add(console = new ConsoleView(), BorderLayout.SOUTH);
+		// Enable Console
+		setConsoleEnabled(true);
 	}
 	
 	@Override
@@ -46,12 +46,6 @@ public class TextView extends AbstractView {
 	public void addKeyListener(KeyListener l) {
 		super.addKeyListener(l);
 		textArea.addKeyListener(l);
-		console.addKeyListener(l);
-	}
-	
-	@Override
-	public void displayMessage(String message){
-		console.append(message);
 	}
 	
 	// Factory methods
