@@ -62,15 +62,19 @@ public class GraphicalView extends AbstractView{
 		private final Color BG_COLOR = new Color(201, 193,  97);
 		private Grid nextGrid;
 		
-		public GraphicsPanel(){
-			setBackground(BG_COLOR);
-		}
-		
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			
-			if (nextGrid != null){				
+			if (nextGrid != null){
+				// Paint grid area background
+				g.setColor(BG_COLOR);
+				g.fillRect(
+					0, 0,
+					nextGrid.getSize().width * GRID_SQUARE_SIZE,
+					nextGrid.getSize().height * GRID_SQUARE_SIZE
+				);
+				
 				// Paint entities
 				for (Point point : nextGrid.keySet()){
 					Entity e = nextGrid.getVisibleEntity(point);
