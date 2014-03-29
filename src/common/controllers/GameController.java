@@ -92,6 +92,10 @@ public abstract class GameController extends Observable{
 		setState(GameState.stopped);
 	}
 	
+	public String getConnectionString(){
+		return nwc.getConnectionString();
+	}
+	
 	public abstract Event receive(Event event);
 	public abstract boolean isAcceptingConnections();
 	

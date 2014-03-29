@@ -4,15 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.KeyListener;
+import java.net.InetSocketAddress;
 
 import javax.swing.JFrame;
 
 import server.controllers.Server;
+import server.views.ServerTextGenerator;
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
-
 import common.controllers.GameController;
 import common.models.Grid;
 
@@ -57,8 +58,8 @@ public class TextView extends AbstractView {
 	
 	// Factory methods
 	
-	public static TextView newClientView(){
-		PlayableClient client = new PlayableClient();
+	public static TextView newClientView(InetSocketAddress address){
+		PlayableClient client = new PlayableClient(address);
 		TextView view = new TextView(
 			client, new ClientTextGenerator()
 		);
@@ -69,16 +70,16 @@ public class TextView extends AbstractView {
 	
 	public static TextView newServerView(Server server){
 		TextView view = new TextView(
-			server, new SpectatorTextGenerator()
+			server, new ServerTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
 		view.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		return view;
 	}
 	
-	public static TextView newSpectatorView(){
+	public static TextView newSpectatorView(InetSocketAddress address){
 		TextView view = new TextView(
-			new Spectator(), new SpectatorTextGenerator()
+			new Spectator(address), new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));
 		return view;

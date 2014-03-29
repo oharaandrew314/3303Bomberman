@@ -1,5 +1,7 @@
 package client.controllers;
 
+import java.net.InetSocketAddress;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
@@ -19,13 +21,21 @@ public abstract class Client extends GameController {
 	
 	public Client() {
 		this(NetworkController.LOCALHOST);
-		playerId = -1; // no Id until given by server
 	}
 	
 	public Client(String serverAddress){
-        nwc.startListeningOnAnyAvailablePort();
-		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
+        this(serverAddress, NetworkController.SERVER_PORT);
+	}
+	
+	public Client(String serverAddress, int serverPort){
+		this(new InetSocketAddress(serverAddress, serverPort));
+	}
+	
+	public Client(InetSocketAddress address){
+		nwc.startListeningOnAnyAvailablePort();
+		nwc.addPeer(address);
 		send(new ConnectEvent(isSpectator()));
+		playerId = -1; // no Id until given by server
 	}
 
 	@Override

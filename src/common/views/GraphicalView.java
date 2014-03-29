@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TextArea;
 import java.awt.event.KeyListener;
+import java.net.InetSocketAddress;
 
 import javax.swing.JPanel;
 
@@ -94,8 +95,8 @@ public class GraphicalView extends AbstractView{
 	
 	// Factory methods
 	
-	public static AbstractView newClientView(){
-		PlayableClient client = new PlayableClient();
+	public static AbstractView newClientView(InetSocketAddress address){
+		PlayableClient client = new PlayableClient(address);
 		AbstractView view = new GraphicalView(
 			client, new ClientTextGenerator()
 		);
@@ -104,9 +105,10 @@ public class GraphicalView extends AbstractView{
 		return view;
 	}
 	
-	public static AbstractView newSpectatorView(){
+	public static AbstractView newSpectatorView(InetSocketAddress address){
 		AbstractView view = new GraphicalView(
-			new Spectator(), new SpectatorTextGenerator()
+			new Spectator(address),
+			new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));
 		return view;
