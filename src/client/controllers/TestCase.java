@@ -133,6 +133,11 @@ public class TestCase {
 			latencies.addAll(t.getLatencyList());
 			
 		}
+		long sum = 0;
+		for(long l : latencies){
+			sum += l;
+		}
+		System.out.println("Average Latency: " + sum/latencies.size());
 		System.out.println("Done");
 	}
 	

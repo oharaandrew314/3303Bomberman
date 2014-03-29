@@ -56,6 +56,7 @@ public class TestRunner extends PlayableClient implements Runnable{
 				timeout = pressKeyAndWait(keyEvent.getKeyCode());
 				long latency = System.currentTimeMillis() - keyPressedAt;
 				latencyPerEvent.add(latency);
+				System.out.println("Player: " + playerId + " - Average latency: " + getAverageLatency());
 			} else{
 				break;
 			}
@@ -164,5 +165,13 @@ public class TestRunner extends PlayableClient implements Runnable{
 	
 	public ArrayList<Long> getLatencyList(){
 		return latencyPerEvent;
+	}
+	
+	public long getAverageLatency(){
+		long sum = 0;
+		for(long l : latencyPerEvent){
+			sum += l;
+		}
+		return sum / latencyPerEvent.size();
 	}
 }
