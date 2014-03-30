@@ -48,7 +48,7 @@ public class TestCase {
 	 * Each thread is a player with all the events that player performs
 	 */
 	public void run(Server server){
-		System.out.print("testing " + filename + "...");
+		System.out.print("testing " + filename + "...\n\n");
 
 		ArrayList<TestRunner> testClients = new ArrayList<TestRunner>();
 		Thread[] threads = new Thread[events.size()];
@@ -133,11 +133,22 @@ public class TestCase {
 			latencies.addAll(t.getLatencyList());
 			
 		}
+		long highestLatency = 0;
+		long lowestLatency = 0;
+		if(latencies.size() != 0){
+			lowestLatency = latencies.get(0);
+		};
 		long sum = 0;
 		for(long l : latencies){
+			//System.out.println("L: " + l);
+			if(l < lowestLatency) lowestLatency = l;
+			if(l > highestLatency) highestLatency = l;
 			sum += l;
 		}
+		System.out.println("\nTestCase Performance: ");
 		System.out.println("Average Latency: " + sum/latencies.size());
+		System.out.println("Highest Latency: " + highestLatency);
+		System.out.println("Lowest Latency: " + lowestLatency + "\n");
 		System.out.println("Done");
 	}
 	
