@@ -2,23 +2,24 @@ package common.views;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.TextArea;
 import java.awt.event.KeyListener;
+import java.net.InetSocketAddress;
 
 import javax.swing.JFrame;
+import javax.swing.JTextArea;
 
 import server.controllers.Server;
+import server.views.ServerTextGenerator;
 import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
-
 import common.controllers.GameController;
 import common.models.Grid;
 
 public class TextView extends AbstractView {
 	
-	private TextArea textArea, console;
+	private JTextArea textArea;
 	
 	public TextView(GameController gc, TextGenerator textGen){
 		super(gc, textGen);
@@ -27,15 +28,13 @@ public class TextView extends AbstractView {
 	@Override
 	protected void initComponents() {
 		// Add Text Area
-		textArea = new TextArea();
+		textArea = new JTextArea();
 		textArea.setFont(new Font("monospaced", Font.PLAIN, GRID_SQUARE_SIZE));
 		textArea.setEditable(false);
 		frame.add(textArea, BorderLayout.CENTER);
 		
-		// Add Console
-		console = new TextArea();
-		console.setEditable(false);
-		frame.add(console, BorderLayout.SOUTH);
+		// Enable Console
+		setConsoleEnabled(true);
 	}
 	
 	@Override
@@ -47,18 +46,12 @@ public class TextView extends AbstractView {
 	public void addKeyListener(KeyListener l) {
 		super.addKeyListener(l);
 		textArea.addKeyListener(l);
-		console.addKeyListener(l);
-	}
-	
-	@Override
-	public void displayMessage(String message){
-		console.append(message + LINE_SEP);
 	}
 	
 	// Factory methods
 	
-	public static TextView newClientView(){
-		PlayableClient client = new PlayableClient();
+	public static TextView newClientView(InetSocketAddress address){
+		PlayableClient client = new PlayableClient(address);
 		TextView view = new TextView(
 			client, new ClientTextGenerator()
 		);
@@ -69,16 +62,16 @@ public class TextView extends AbstractView {
 	
 	public static TextView newServerView(Server server){
 		TextView view = new TextView(
-			server, new SpectatorTextGenerator()
+			server, new ServerTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createServerMenuBar(server, view));
 		view.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		return view;
 	}
 	
-	public static TextView newSpectatorView(){
+	public static TextView newSpectatorView(InetSocketAddress address){
 		TextView view = new TextView(
-			new Spectator(), new SpectatorTextGenerator()
+			new Spectator(address), new SpectatorTextGenerator()
 		);
 		view.addMenuBar(MenuBarFactory.createSpectatorMenuBar(view));
 		return view;

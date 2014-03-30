@@ -1,6 +1,5 @@
 package test.helpers;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -64,10 +63,10 @@ public class MockNetworkController extends NetworkController {
 	}
 
 	@Override
-	public synchronized Event receive(DatagramPacket data) throws IOException {
-		Event event = super.receive(data);
+	public synchronized void receive(DatagramPacket data) {
+		super.receive(data);
+		Event event = super.requestNextEvent();
 		events.add(event);
 		notify();
-		return event;
 	}
 }

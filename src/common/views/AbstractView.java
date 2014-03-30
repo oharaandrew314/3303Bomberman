@@ -1,14 +1,17 @@
 package common.views;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JTextArea;
 
 import common.controllers.GameController;
 import common.controllers.GameController.GameState;
@@ -25,16 +28,19 @@ import common.models.Grid;
 
 public abstract class AbstractView extends WindowAdapter {
 	
+	public static final String LINE_SEP = System.getProperty("line.separator");
 	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
 	public static final int GRID_SQUARE_SIZE = 30;
-	public static final String LINE_SEP = System.getProperty("line.separator");
 	
 	private final TextGenerator textGen;
 	protected final JFrame frame;
 	private final GameController gc;
+	private final String connectionString;
+	private final JTextArea console;
 	
 	public AbstractView(GameController gc, TextGenerator textGen){
 		this.textGen = textGen;
+		connectionString = gc.getConnectionString();
 		
 		// Setup frame
 		frame = new JFrame("Bomberman");
@@ -42,12 +48,20 @@ public abstract class AbstractView extends WindowAdapter {
 		frame.addWindowListener(this);
 		frame.setSize(FRAME_SIZE);
 		
+		// Create console
+		frame.add(console = new JTextArea(), BorderLayout.SOUTH);
+		console.setBorder(BorderFactory.createLineBorder(Color.gray));
+		console.setEditable(false);
+		console.setPreferredSize(new Dimension(400, 200));
+		setConsoleEnabled(false);
+		
 		initComponents();
 		
 		// Register as listener to GameController
 		gc.setView(this);
 		this.gc = gc;
 		
+		frame.setTitle(textGen.getTitle(connectionString, gc.getState()));
 		frame.setVisible(true);
 	}
 	
@@ -83,10 +97,10 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getPowerupMessage(pEvent.player, pEvent.powerup);
 		}
 		
-		if (message != null){
-			displayMessage(message);
+		if (message != null && console.isVisible()){
+			console.append(message + LINE_SEP);
 		}
-		frame.setTitle(textGen.getTitle(state));
+		frame.setTitle(textGen.getTitle(connectionString, state));
 	}
 	
 	@Override
@@ -110,13 +124,17 @@ public abstract class AbstractView extends WindowAdapter {
 	
 	public void addKeyListener(KeyListener l) {
 		frame.addKeyListener(l);
+		console.addKeyListener(l);
 	}
 	
 	public Component getComponent(){
 		return frame;
 	}
 	
-	public abstract void displayMessage(String message);
+	public void setConsoleEnabled(boolean enabled){
+		console.setVisible(enabled);
+	}
+	
 	public abstract void displayGrid(Grid grid);
 	protected abstract void initComponents();
 }

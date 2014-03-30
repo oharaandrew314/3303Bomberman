@@ -89,7 +89,16 @@ public class Square implements Serializable {
 	}
 	
 	public boolean contains(Entity entity){
-		return entity == impassableEntity || passableEntities.contains(entity);
+		return getEntities().contains(entity);
+	}
+	
+	public Entity findType(Class<? extends Entity> type){
+		for (Entity entity : getEntities()){
+			if (type.isInstance(entity)){
+				return entity;
+			}
+		}
+		return null;
 	}
 	
 	public Entity getVisibleEntity(){
@@ -97,12 +106,15 @@ public class Square implements Serializable {
 		if (!isPassable()) return impassableEntity;
 		
 		// Otherwise, pick a passable object if one exists
-		for (Entity entity : passableEntities){
-			if (entity.isVisible()){
-				return entity;
+		Entity entity = findType(Unit.class); // check for unit first
+		if (entity == null){
+			for (Entity e : passableEntities){
+				if (e.isVisible()){
+					entity = e;
+				}
 			}
 		}
-		return null;
+		return entity;
 	}
 	
 	@Override

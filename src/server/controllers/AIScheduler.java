@@ -11,7 +11,7 @@ import java.util.Random;
 import common.models.Grid;
 import common.models.units.Enemy;
 import common.models.units.LineEnemy;
-import common.models.units.PathFindingEnemy;
+import common.models.units.SmartEnemy;
 import common.models.units.RandomEnemy;
 
 public class AIScheduler implements SimulationListener {
@@ -53,7 +53,7 @@ public class AIScheduler implements SimulationListener {
 					translation = getLineTranslation(le.getDirection(), currentLocation, possibleMoves);
 					le.setDirection(translation); // save possibly new direction
 				}
-				else if (enemy instanceof PathFindingEnemy){
+				else if (enemy instanceof SmartEnemy){
 					translation = getPathTranslation(currentLocation);
 				}
 				else throw new UnsupportedOperationException("Enemy type not supported");

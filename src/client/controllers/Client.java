@@ -1,32 +1,52 @@
 package client.controllers;
 
+import java.net.InetSocketAddress;
+
+import server.controllers.SimulationListener;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
+import common.events.EndGameEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
-import common.events.EndGameEvent;
 
-public abstract class Client extends GameController {
+public abstract class Client extends GameController implements SimulationListener {
 
 	protected int playerId;
 	
 	public Client() {
 		this(NetworkController.LOCALHOST);
-		playerId = -1; // no Id until given by server
 	}
 	
 	public Client(String serverAddress){
-        nwc.startListeningOnAnyAvailablePort();
-		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		send(new ConnectEvent(isSpectator()));
+        this(serverAddress, NetworkController.SERVER_PORT);
 	}
+	
+	public Client(String serverAddress, int serverPort){
+		this(new InetSocketAddress(serverAddress, serverPort));
+	}
+	
+	public Client(InetSocketAddress address){
+		nwc.startListeningOnAnyAvailablePort();
+		nwc.addPeer(address);
+		send(new ConnectEvent(isSpectator()));
+		playerId = -1; // no Id until given by server
+	}
+	
+	@Override
+	public void simulationUpdate(long now){
+		nwc.requestAllEvents();
+	}
+	
+	@Override
+	public void onTimerReset() {}
 
 	@Override
 	public Event receive(Event event) {

@@ -1,8 +1,6 @@
 package server.controllers;
 
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,15 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import server.models.ControlScheme;
+import server.models.ControlScheme.Control;
 
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
+import common.events.EndGameEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
@@ -26,7 +25,6 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.PowerupReceivedEvent;
 import common.events.ViewUpdateEvent;
-import common.events.EndGameEvent;
 import common.models.Bomb;
 import common.models.Door;
 import common.models.Entity;
@@ -41,7 +39,6 @@ public class Server extends GameController implements SimulationListener {
 	public static final int MAX_PLAYERS = 4;
 	
 	protected Map<Integer, Player> players;
-	private final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
 
@@ -49,19 +46,12 @@ public class Server extends GameController implements SimulationListener {
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 		 	
-		timer = new SimulationTimer();
-		timer.addListener(this);
-		timer.addListener(bombScheduler = new BombScheduler(this));
-		timer.addListener(aiScheduler = new AIScheduler(this));
+		addListenerToTimer(bombScheduler = new BombScheduler(this));
+		addListenerToTimer(aiScheduler = new AIScheduler(this));
 		
 		setState(GameState.idle);
 		
-		try {
-			nwc.startListeningOnServerPort();
-		} catch (SocketException e) {
-			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-			setState(GameState.error);
-		}
+		nwc.startListeningOnServerPort();
 	}
 	
 	// Accessors
@@ -112,7 +102,6 @@ public class Server extends GameController implements SimulationListener {
 			
 			setState(GameState.gameRunning);
 			send(new GameStartEvent());
-			timer.start();
 		} else {
 			System.err.println("Could not start game; not in new game state.");
 		}
@@ -126,9 +115,9 @@ public class Server extends GameController implements SimulationListener {
 	
 	private synchronized void endGame(Grid grid, Player winner){
 		if (getState() == GameState.gameRunning){
-			timer.stop();
 			setState(GameState.idle);
 			send(new EndGameEvent(winner, grid));
+			resetTimer();
 		}
 	}
 	
@@ -143,6 +132,7 @@ public class Server extends GameController implements SimulationListener {
 	
 	@Override
 	public void simulationUpdate(long now){
+		nwc.requestAllEvents();
 		if (isGameRunning()){
 			send(new ViewUpdateEvent(getGridCopy()));
 		}
@@ -158,10 +148,15 @@ public class Server extends GameController implements SimulationListener {
     	if(unit instanceof Player){
     		players.remove(((Player) unit).playerId);
     		send(new PlayerDeadEvent((Player) unit));
+    		
+    		// Check if game is over
+        	if (players.isEmpty()){
+        		endGame(null);
+        	}
     	} else{
     		aiScheduler.removeEnemy((Enemy) unit);
     	}
-    	buf.grid.remove(unit);    	
+    	buf.grid.remove(unit);
     }
 	
 	// Event Methods
@@ -192,46 +187,26 @@ public class Server extends GameController implements SimulationListener {
     	   response = disconnectPlayer(event);
        }
     	
-    	// Check if game-over
-    	if (players.isEmpty()){
-    		endGame(null);
-    	}
-    	
     	return response;
     }
     
     private final Event handleGameKeyEvent(GameKeyEvent event){
     	Player player = players.get(event.getPlayerID());
-    	int keyCode = event.getKeyCode();
+    	Control control = ControlScheme.parse(event);
 
-    	// Handle disconnect event
-    	if (keyCode == KeyEvent.VK_ESCAPE){
+    	// Handle control
+    	if (control == Control.Exit){
     		return disconnectPlayer(event);
-    	}
-    	
-    	// Handle start game event
-    	else if (keyCode == KeyEvent.VK_ENTER && !isGameRunning()){
+    	} else if (control == Control.Start && !isGameRunning()){
     		startGame();
-    	}
-    	
-    	// Handle all other key events if game is running
-    	else if (isGameRunning()){
-    		switch(keyCode){
-    		case KeyEvent.VK_UP:
-    		case KeyEvent.VK_W:
-    		case KeyEvent.VK_I: move(player, 0, -1); break;
-    		case KeyEvent.VK_LEFT:
-    		case KeyEvent.VK_A:
-    		case KeyEvent.VK_J: move(player, -1, 0); break;
-    		case KeyEvent.VK_DOWN:
-    		case KeyEvent.VK_S:
-    		case KeyEvent.VK_K: move(player, 0, 1); break;
-    		case KeyEvent.VK_RIGHT:
-    		case KeyEvent.VK_D:
-    		case KeyEvent.VK_L: move(player, 1, 0); break;
-    		case KeyEvent.VK_SPACE:
-    		case KeyEvent.VK_F:
-    		case KeyEvent.VK_SEMICOLON: dropBombBy(player); break;
+    	} else if (isGameRunning()){
+    		switch(control){
+	    		case Up: move(player, 0, -1); break;
+	    		case Left: move(player, -1, 0); break;
+	    		case Down: move(player, 0, 1); break;
+	    		case Right: move(player, 1, 0); break;
+	    		case Bomb: dropBombBy(player); break;
+	    		default:
     		}
     	} 
     	
