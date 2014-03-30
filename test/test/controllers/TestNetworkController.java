@@ -3,17 +3,13 @@ package test.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import test.helpers.MockNetworkController;
+
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
