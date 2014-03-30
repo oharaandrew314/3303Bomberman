@@ -91,9 +91,15 @@ public class NetworkController {
     
     /**
      * Start listening for messages on the default server port.
+     * If the default port is unavailable, any other available port is used,
+     * in this case the host will need to provide the port to the clients.
      */
-    public void startListeningOnServerPort() throws SocketException {
-        startListeningOn(SERVER_PORT);
+    public void startListeningOnServerPort() {
+    	try {
+    		startListeningOn(SERVER_PORT);
+    	} catch(SocketException e) {
+    		startListeningOnAnyAvailablePort();
+    	}
     }
     
     /**
