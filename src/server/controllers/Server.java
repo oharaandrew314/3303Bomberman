@@ -42,7 +42,6 @@ public class Server extends GameController implements SimulationListener {
 	public static final int MAX_PLAYERS = 4;
 	
 	protected Map<Integer, Player> players;
-	private final SimulationTimer timer;
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
 
@@ -50,11 +49,8 @@ public class Server extends GameController implements SimulationListener {
 		players = new HashMap<>();
 		addObserver(new TestLogger());
 		 	
-		timer = new SimulationTimer();
-		timer.addListener(this);
-		timer.addListener(bombScheduler = new BombScheduler(this));
-		timer.addListener(aiScheduler = new AIScheduler(this));
-		timer.start();
+		addListenerToTimer(bombScheduler = new BombScheduler(this));
+		addListenerToTimer(aiScheduler = new AIScheduler(this));
 		
 		setState(GameState.idle);
 		

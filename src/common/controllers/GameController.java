@@ -5,11 +5,13 @@ import java.util.Observable;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
+import server.controllers.SimulationListener;
+import server.controllers.SimulationTimer;
 import common.events.Event;
 import common.models.Grid;
 import common.views.AbstractView;
 
-public abstract class GameController extends Observable{
+public abstract class GameController extends Observable implements SimulationListener {
 	
 	public static enum GameState {
 		stopped, idle, newGame, gameRunning, stopping, error
@@ -22,12 +24,28 @@ public abstract class GameController extends Observable{
 	protected AbstractView view = null;
 	protected Grid grid;
 	protected GameState state = GameState.stopped;
+	
+	private SimulationTimer timer;
 
 	public GameController() {
 		nwc = new NetworkController(this);
 		gridMutex = new ReentrantLock();
 		undisplayedViewEvents = new ArrayDeque<>();
+		
+		timer = new SimulationTimer();
+		addListenerToTimer(this);
+		timer.start();
 	}
+	
+	protected final void addListenerToTimer(SimulationListener listener) {
+		timer.addListener(listener);
+	}
+	
+	@Override
+	public void simulationUpdate(long now) {}
+	
+	@Override
+	public void onTimerReset() {}
 	
 	public final GridBuffer acquireGrid(){
 		gridMutex.lock();

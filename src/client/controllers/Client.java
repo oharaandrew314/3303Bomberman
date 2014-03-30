@@ -20,7 +20,6 @@ import common.events.EndGameEvent;
 public abstract class Client extends GameController implements SimulationListener {
 
 	protected int playerId;
-	private SimulationTimer timer;
 	
 	public Client() {
 		this(NetworkController.LOCALHOST);
@@ -39,10 +38,6 @@ public abstract class Client extends GameController implements SimulationListene
 		nwc.addPeer(address);
 		send(new ConnectEvent(isSpectator()));
 		playerId = -1; // no Id until given by server
-		
-		timer = new SimulationTimer();
-		timer.addListener(this);
-		timer.start();
 	}
 	
 	@Override
