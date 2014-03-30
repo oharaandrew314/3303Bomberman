@@ -117,6 +117,7 @@ public class Server extends GameController implements SimulationListener {
 		if (getState() == GameState.gameRunning){
 			setState(GameState.idle);
 			send(new EndGameEvent(winner, grid));
+			resetTimer();
 		}
 	}
 	
@@ -147,10 +148,15 @@ public class Server extends GameController implements SimulationListener {
     	if(unit instanceof Player){
     		players.remove(((Player) unit).playerId);
     		send(new PlayerDeadEvent((Player) unit));
+    		
+    		// Check if game is over
+        	if (players.isEmpty()){
+        		endGame(null);
+        	}
     	} else{
     		aiScheduler.removeEnemy((Enemy) unit);
     	}
-    	buf.grid.remove(unit);    	
+    	buf.grid.remove(unit);
     }
 	
 	// Event Methods
@@ -181,14 +187,7 @@ public class Server extends GameController implements SimulationListener {
     	   response = disconnectPlayer(event);
        }
     	
-    	checkGameOver();
     	return response;
-    }
-    
-    private void checkGameOver(){
-    	if (players.isEmpty()){
-    		endGame(null);
-    	}
     }
     
     private final Event handleGameKeyEvent(GameKeyEvent event){
@@ -386,7 +385,6 @@ public class Server extends GameController implements SimulationListener {
 				}
 			}
 		}
-		checkGameOver();
     }
     
     // Main method
