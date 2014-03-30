@@ -2,6 +2,8 @@ package client.controllers;
 
 import java.net.InetSocketAddress;
 
+import server.controllers.SimulationListener;
+import server.controllers.SimulationTimer;
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
@@ -15,7 +17,7 @@ import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 import common.events.EndGameEvent;
 
-public abstract class Client extends GameController {
+public abstract class Client extends GameController implements SimulationListener {
 
 	protected int playerId;
 	
@@ -37,6 +39,14 @@ public abstract class Client extends GameController {
 		send(new ConnectEvent(isSpectator()));
 		playerId = -1; // no Id until given by server
 	}
+	
+	@Override
+	public void simulationUpdate(long now){
+		nwc.requestAllEvents();
+	}
+	
+	@Override
+	public void onTimerReset() {}
 
 	@Override
 	public Event receive(Event event) {
