@@ -1,7 +1,6 @@
 package server.controllers;
 
 import java.awt.Point;
-import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import server.models.ControlScheme;
 import server.models.ControlScheme.Control;
+
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -120,6 +117,7 @@ public class Server extends GameController implements SimulationListener {
 		if (getState() == GameState.gameRunning){
 			setState(GameState.idle);
 			send(new EndGameEvent(winner, grid));
+			resetTimer();
 		}
 	}
 	
@@ -150,10 +148,15 @@ public class Server extends GameController implements SimulationListener {
     	if(unit instanceof Player){
     		players.remove(((Player) unit).playerId);
     		send(new PlayerDeadEvent((Player) unit));
+    		
+    		// Check if game is over
+        	if (players.isEmpty()){
+        		endGame(null);
+        	}
     	} else{
     		aiScheduler.removeEnemy((Enemy) unit);
     	}
-    	buf.grid.remove(unit);    	
+    	buf.grid.remove(unit);
     }
 	
 	// Event Methods
@@ -183,11 +186,6 @@ public class Server extends GameController implements SimulationListener {
        } else if (event instanceof DisconnectEvent){
     	   response = disconnectPlayer(event);
        }
-    	
-    	// Check if game-over
-    	if (players.isEmpty()){
-    		endGame(null);
-    	}
     	
     	return response;
     }
