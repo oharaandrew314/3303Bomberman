@@ -3,19 +3,19 @@ package client.controllers;
 import java.net.InetSocketAddress;
 
 import server.controllers.SimulationListener;
-import server.controllers.SimulationTimer;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
+import common.events.EndGameEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
-import common.events.EndGameEvent;
 
 public abstract class Client extends GameController implements SimulationListener {
 
