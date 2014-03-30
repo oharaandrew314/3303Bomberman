@@ -12,7 +12,7 @@ import common.events.PlayerDeadEvent;
 
 
 public class TestRunner extends PlayableClient implements Runnable{
-	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 100;
+	public static final long DEFAULT_WAIT_BETWEEN_ACTIONS = 0;
 	private Collection<Event> receivedEvents;
 	private ArrayList<Integer> events;
 	private ArrayList<Long> timings;
@@ -38,10 +38,12 @@ public class TestRunner extends PlayableClient implements Runnable{
 			
 			//wait for an amount of time specified next to the command in the test file
 			//if none specified, it will be DEFAULT_WAIT_BETWEEN_ACTIONS
-			try {
-				Thread.sleep(timings.get(i));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if(timings.get(i) > 0){
+				try {
+					Thread.sleep(timings.get(i));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			//need to check if test player is dead or the game stopped here because of the waiting

@@ -27,6 +27,7 @@ public class TestCase {
 	private static final String TEST_PATH = "testFiles/";
 	private ArrayList<ArrayList<Integer>> events;
 	private ArrayList<ArrayList<Long>> timings;
+	private ArrayList<Long> latencies;
 	private ArrayList<Point> startLocations;
 	private String filename;
 	private String gridFileName;
@@ -35,6 +36,7 @@ public class TestCase {
 
 		startLocations = new ArrayList<Point>();
 		timings = new ArrayList<ArrayList<Long>>();
+		latencies = new ArrayList<Long>();
 		events = readEvents(filename);
 		this.filename = filename;
 
@@ -46,7 +48,7 @@ public class TestCase {
 	 * Each thread is a player with all the events that player performs
 	 */
 	public void run(Server server){
-		System.out.print("testing " + filename + "...");
+		System.out.print("testing " + filename + "...\n\n");
 
 		ArrayList<TestRunner> testClients = new ArrayList<TestRunner>();
 		Thread[] threads = new Thread[events.size()];
@@ -128,7 +130,25 @@ public class TestCase {
 		//disconnect all the testClients
 		for(TestRunner t : testClients){
 			t.stop();
+			latencies.addAll(t.getLatencyList());
+			
 		}
+		long highestLatency = 0;
+		long lowestLatency = 0;
+		if(latencies.size() != 0){
+			lowestLatency = latencies.get(0);
+		};
+		long sum = 0;
+		for(long l : latencies){
+			//System.out.println("L: " + l);
+			if(l < lowestLatency) lowestLatency = l;
+			if(l > highestLatency) highestLatency = l;
+			sum += l;
+		}
+		System.out.println("\nTestCase Performance: ");
+		System.out.println("Average Latency: " + sum/latencies.size());
+		System.out.println("Highest Latency: " + highestLatency);
+		System.out.println("Lowest Latency: " + lowestLatency + "\n");
 		System.out.println("Done");
 	}
 	
@@ -217,6 +237,10 @@ public class TestCase {
 			e.printStackTrace();
 		}
 		return events;
+	}
+	
+	public ArrayList<Long> getTestCaseLatencies(){
+		return latencies;
 	}
 	
 

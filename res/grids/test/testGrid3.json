@@ -1,0 +1,6 @@
+{
+	"size": {"width": 10, "height": 10},
+	"squares": [
+		{"point": {"x": 4, "y": 5}, "entities": ["door"]},
+	]
+}
