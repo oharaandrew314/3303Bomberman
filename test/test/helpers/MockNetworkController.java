@@ -1,6 +1,5 @@
 package test.helpers;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayDeque;
 import java.util.Queue;
