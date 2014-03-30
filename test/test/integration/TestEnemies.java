@@ -3,17 +3,15 @@ package test.integration;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.*;
 
-import common.controllers.GameController.GridBuffer;
 import common.events.ConnectRejectedEvent;
 import common.models.Grid;
 import common.models.Wall;
 import common.models.units.LineEnemy;
-import common.models.units.PathFindingEnemy;
+import common.models.units.SmartEnemy;
 import common.models.units.Player;
 
 import server.content.CreateGridException;
@@ -53,7 +51,7 @@ public class TestEnemies {
 	public void testPathFindingEnemy() throws InterruptedException{
 		Grid testGrid = getTestGrid();
 		
-		PathFindingEnemy enemy = new PathFindingEnemy();
+		SmartEnemy enemy = new SmartEnemy();
 		testGrid.set(enemy, new Point(1, 3));
 		
 		Point[] expectedPath = {new Point(2, 3), new Point(2, 2), new Point(3, 2)};
