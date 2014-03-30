@@ -64,6 +64,12 @@ public class TestNetworkController extends GameController {
     @Override
 	public void stop() {}
     
+    @Override
+    public void simulationUpdate(long now) {}
+    
+    @Override
+    public void onTimerReset() {}
+    
     // Helpers
     
     private void startServer(MockNetworkController server) {

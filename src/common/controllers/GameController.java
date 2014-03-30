@@ -25,7 +25,7 @@ public abstract class GameController extends Observable implements SimulationLis
 	protected Grid grid;
 	protected GameState state = GameState.stopped;
 	
-	private SimulationTimer timer;
+	private final SimulationTimer timer;
 
 	public GameController() {
 		nwc = new NetworkController(this);
@@ -40,12 +40,6 @@ public abstract class GameController extends Observable implements SimulationLis
 	protected final void addListenerToTimer(SimulationListener listener) {
 		timer.addListener(listener);
 	}
-	
-	@Override
-	public void simulationUpdate(long now) {}
-	
-	@Override
-	public void onTimerReset() {}
 	
 	public final GridBuffer acquireGrid(){
 		gridMutex.lock();
