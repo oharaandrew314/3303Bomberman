@@ -64,15 +64,16 @@ public class TestNetworkController extends GameController {
     @Override
 	public void stop() {}
     
+    @Override
+    public void simulationUpdate(long now) {}
+    
+    @Override
+    public void onTimerReset() {}
+    
     // Helpers
     
     private void startServer(MockNetworkController server) {
-    	try {
-    		server.startListeningOnServerPort();
-    	} catch (SocketException e) {
-    		Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-    		assertTrue(false);
-    	}
+    	server.startListeningOnServerPort();
     }
     
     private void addServerToClient(MockNetworkController client){

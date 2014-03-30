@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.TextArea;
 import java.awt.event.KeyListener;
 import java.net.InetSocketAddress;
 
@@ -14,7 +13,6 @@ import client.controllers.PlayableClient;
 import client.controllers.Spectator;
 import client.views.ClientTextGenerator;
 import client.views.SpectatorTextGenerator;
-
 import common.content.ImageLoader;
 import common.controllers.GameController;
 import common.models.Entity;
@@ -23,7 +21,6 @@ import common.models.Grid;
 public class GraphicalView extends AbstractView{
 	
 	private GraphicsPanel graphicsPanel;
-	private TextArea console;
 
 	public GraphicalView(GameController gc, TextGenerator textGen) {
 		super(gc, textGen);
@@ -34,21 +31,14 @@ public class GraphicalView extends AbstractView{
 		// Add graphics panel
 		frame.add(graphicsPanel = new GraphicsPanel(), BorderLayout.CENTER);
 		
-		// Add Console
-		frame.add(console = new TextArea(), BorderLayout.SOUTH);
-		console.setEditable(false);
-	}
-
-	@Override
-	public void displayMessage(String message) {
-		console.append(message + LINE_SEP);
+		// Enable Console
+		setConsoleEnabled(true);
 	}
 	
 	@Override
 	public void addKeyListener(KeyListener l) {
 		super.addKeyListener(l);
 		graphicsPanel.addKeyListener(l);
-		console.addKeyListener(l);
 	}
 
 	@Override
@@ -62,15 +52,19 @@ public class GraphicalView extends AbstractView{
 		private final Color BG_COLOR = new Color(201, 193,  97);
 		private Grid nextGrid;
 		
-		public GraphicsPanel(){
-			setBackground(BG_COLOR);
-		}
-		
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			
-			if (nextGrid != null){				
+			if (nextGrid != null){
+				// Paint grid area background
+				g.setColor(BG_COLOR);
+				g.fillRect(
+					0, 0,
+					nextGrid.getSize().width * GRID_SQUARE_SIZE,
+					nextGrid.getSize().height * GRID_SQUARE_SIZE
+				);
+				
 				// Paint entities
 				for (Point point : nextGrid.keySet()){
 					Entity e = nextGrid.getVisibleEntity(point);
