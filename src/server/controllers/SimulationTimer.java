@@ -59,6 +59,11 @@ public class SimulationTimer {
 		}
 	}
 	
+	public void reset(){
+		stop();
+		start();
+	}
+	
 	/**
 	 * Make copy of listeners to give up lock quickly
 	 * @return copy of current SimulationListeners

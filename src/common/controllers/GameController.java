@@ -94,6 +94,10 @@ public abstract class GameController extends Observable implements SimulationLis
 		}
 	}
 	
+	protected void resetTimer(){
+		timer.reset();
+	}
+	
 	public void stop(){
 		nwc.stopListening();
 		nwc.clear();
