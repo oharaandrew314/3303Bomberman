@@ -1,7 +1,6 @@
 package server.controllers;
 
 import java.awt.Point;
-import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import server.models.ControlScheme;
 import server.models.ControlScheme.Control;
+
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
