@@ -181,12 +181,14 @@ public class Server extends GameController implements SimulationListener {
     	   response = disconnectPlayer(event);
        }
     	
-    	// Check if game-over
+    	checkGameOver();
+    	return response;
+    }
+    
+    private void checkGameOver(){
     	if (players.isEmpty()){
     		endGame(null);
     	}
-    	
-    	return response;
     }
     
     private final Event handleGameKeyEvent(GameKeyEvent event){
@@ -384,6 +386,7 @@ public class Server extends GameController implements SimulationListener {
 				}
 			}
 		}
+		checkGameOver();
     }
     
     // Main method
