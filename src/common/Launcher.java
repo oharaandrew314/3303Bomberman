@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -21,7 +23,7 @@ import common.views.TextView;
 public class Launcher extends WindowAdapter {
 	
 	private final JFrame frame;
-	private Server server;
+	private List<Server> servers = new ArrayList<Server>();
 
 	public Launcher() {
 		frame = new JFrame("Bomberman");
@@ -45,18 +47,19 @@ public class Launcher extends WindowAdapter {
 	}
 	
 	private void newServer(){
-		TextView.newServerView(server = new Server());
+		Server s = new Server();
+		servers.add(s);
+		TextView.newServerView(s);
 	}
 	
 	@Override
 	public void windowClosing(WindowEvent e){
-		if (server != null){
-			server.stop();
-		}
+		for(Server s : servers)
+			s.stop();
 	}
 	
-	public Server getServer(){
-		return server;
+	public Server getFirstServer(){
+		return servers.get(0);
 	}
 	
 	// Actions
@@ -152,7 +155,7 @@ public class Launcher extends WindowAdapter {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			TestDriver.run(launcher.getServer());
+			TestDriver.run(launcher.getFirstServer());
 			
 		}
 	}

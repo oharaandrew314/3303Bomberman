@@ -57,12 +57,7 @@ public class Server extends GameController implements SimulationListener {
 		
 		setState(GameState.idle);
 		
-		try {
-			nwc.startListeningOnServerPort();
-		} catch (SocketException e) {
-			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-			setState(GameState.error);
-		}
+		nwc.startListeningOnServerPort();
 	}
 	
 	// Accessors
