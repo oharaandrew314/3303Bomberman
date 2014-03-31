@@ -10,8 +10,8 @@ https://github.com/oharaandrew314/3303Bomberman
 1. Run the JAR to open the Graphical Launcher Application
 2. Create a Server (if you wish to host the server)
 3. Create a Client
-	3.1. Enter the <IP>:<PORT> of the host to connect to (initially localhost)
-	3.2. The client will launch and attempt to connect to the server on the host
+    1. Enter the <IP>:<PORT> of the host to connect to (initially localhost)
+    2. The client will launch and attempt to connect to the server on the host
 3. The server and clients include help menus for applicable topics
 
 It is not reccomended to attempt to use command-line arguments to launch the server and client, they are deprecated and unmaintained
