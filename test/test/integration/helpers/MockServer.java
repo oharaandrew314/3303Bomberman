@@ -38,7 +38,7 @@ public class MockServer extends Server {
 	}
 	
 	public void changeAIScheduler(AIScheduler newScheduler){
-		removeListenerToTimer(aiScheduler);
+		removeListenerFromTimer(aiScheduler);
 		aiScheduler = newScheduler;
 		addListenerToTimer(newScheduler);
 	}

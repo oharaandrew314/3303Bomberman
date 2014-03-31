@@ -32,12 +32,16 @@ public class TestEnemies {
 	private LoggingAIScheduler aiScheduler;
 	private MockClient client;
 	private Player player;
+	private Grid testGrid;
 	
 	@Before
 	public void setUp() throws Exception {
 		server = new MockServer();
 		aiScheduler = new LoggingAIScheduler(server);
 		server.changeAIScheduler(aiScheduler);
+		
+		try { testGrid = GridLoader.loadGrid("test/testGrid2.json"); }
+		catch (CreateGridException e){ e.printStackTrace(); }
 		
 		// Connect a client and get the player
 		client = new MockClient(true);
@@ -57,9 +61,7 @@ public class TestEnemies {
 	}
 	
 	@Test
-	public void testPathFindingEnemy() throws InterruptedException{
-		Grid testGrid = getTestGrid();
-		
+	public void testPathFindingEnemy() throws InterruptedException{		
 		SmartEnemy enemy = new SmartEnemy();
 		testGrid.set(new Wall(), new Point(0, 1));
 		testGrid.set(enemy, new Point(0, 2));
@@ -81,8 +83,6 @@ public class TestEnemies {
 	
 	@Test
 	public void testLineEnemy() throws InterruptedException{
-		Grid testGrid = getTestGrid();
-		
 		LineEnemy enemy = new LineEnemy();
 		testGrid.set(new Wall(), new Point(0, 0));
 		testGrid.set(enemy, new Point(0, 1));
@@ -100,13 +100,6 @@ public class TestEnemies {
 		for(int i = 0; i < expectedMoves.length; i++){
 			assertEquals(expectedMoves[i], aiScheduler.moveLog.get(enemy).get(i));
 		}
-	}
-	
-	private Grid getTestGrid(){
-		Grid g = null;
-		try { g = GridLoader.loadGrid("test/testGrid2.json"); }
-		catch (CreateGridException e){ e.printStackTrace(); }
-		return g;
 	}
 }
 

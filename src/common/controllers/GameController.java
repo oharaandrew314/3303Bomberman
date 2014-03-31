@@ -40,7 +40,7 @@ public abstract class GameController extends Observable implements SimulationLis
 	protected final void addListenerToTimer(SimulationListener listener) {
 		timer.addListener(listener);
 	}
-	protected final void removeListenerToTimer(SimulationListener listener){
+	protected final void removeListenerFromTimer(SimulationListener listener){
 		timer.removeListener(listener);
 	}
 	
