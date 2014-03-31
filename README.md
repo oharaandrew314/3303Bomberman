@@ -8,11 +8,13 @@ https://github.com/oharaandrew314/3303Bomberman
 ###Usage Instructions
 
 1. Run the Jar to open the Launcher
-2. The launcher is self-explanatory
+2. Create a Server (if you wish to host the server)
+3. Create a Client
+	3.1. Enter the <IP>:<PORT> of the host to connect to (initially localhost)
+	3.2. The client will launch and attempt to connect to the server on the host
 3. The server and clients include help menus for applicable topics
-4. The server must create a new game before clients can start the game
 
-Do NOT run the game using other main methods or with command-line arguments. The game is not yet tested to run on a Network, and all other configurations can be made with the Launcher and its linked GUIs.
+It is not reccomended to attempt to use command-line arguments to launch the server and client, they are deprecated and unmaintained
 
 ###Extras
 - Full Graphical View
