@@ -59,7 +59,6 @@ public class AIScheduler implements SimulationListener {
 					}
 					else throw new UnsupportedOperationException("Enemy type not supported");
 					
-					//System.out.println("Enemy: " + enemy + " dx: " + translation.x + " dy: " + translation.y);
 					moveEnemy(enemy, translation.x, translation.y);
 				}
 			}
@@ -68,7 +67,6 @@ public class AIScheduler implements SimulationListener {
 	
 	protected void moveEnemy(Enemy enemy, int dx, int dy){
 		server.move(enemy, dx, dy);
-		//System.out.println("Enemy: " + enemy + " dx: " + dx + " dy: " + dy);
 	}
 	
 	private Point getRandomTranslation(Point currentLocation, List<Point> possibleMoves){

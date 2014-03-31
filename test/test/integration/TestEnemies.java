@@ -64,16 +64,15 @@ public class TestEnemies {
 		testGrid.set(new Wall(), new Point(0, 1));
 		testGrid.set(enemy, new Point(0, 2));
 
-		Point[] expectedMoves = {new Point(0, 1), new Point(0, 1), new Point(0, 1), new Point(0, 1), new Point(0, 1)};
+		Point[] expectedMoves = {new Point(0, 1), new Point(1, 0), new Point(1, 0), new Point(0, -1)};
 		
 		server.newGame(testGrid);
-		server.movePlayerTo(player.playerId, new Point(2, 3));
-		assertEquals(new Point(2, 3), server.getGridCopy().find(player));
+		server.movePlayerTo(player.playerId, new Point(3, 2));
+		assertEquals(new Point(3, 2), server.getGridCopy().find(player));
 		
-		//System.out.println(server.getGridCopy());
 		client.startGame();
 		
-		Thread.sleep(750); //allow enemy to make moves
+		Thread.sleep(2000); //allow enemy to make moves
 		
 		for(int i = 0; i < expectedMoves.length; i++){
 			assertEquals(expectedMoves[i], aiScheduler.moveLog.get(enemy).get(i));
@@ -88,7 +87,7 @@ public class TestEnemies {
 		testGrid.set(new Wall(), new Point(0, 0));
 		testGrid.set(enemy, new Point(0, 1));
 		
-		Point[] expectedMoves = {new Point(0, 1), new Point(0, 1), new Point(0, 1), new Point(0, 1), new Point(0, 1)};
+		Point[] expectedMoves = {new Point(0, 1), new Point(0, 1)};
 		
 		server.newGame(testGrid);
 		server.movePlayerTo(player.playerId, new Point(3, 2));
@@ -96,7 +95,7 @@ public class TestEnemies {
 		
 		client.startGame();
 		
-		Thread.sleep(750); //allow enemy to make moves
+		Thread.sleep(1000); //allow enemy to make moves
 		
 		for(int i = 0; i < expectedMoves.length; i++){
 			assertEquals(expectedMoves[i], aiScheduler.moveLog.get(enemy).get(i));
@@ -121,6 +120,7 @@ class LoggingAIScheduler extends AIScheduler {
 	
 	@Override
 	protected void moveEnemy(Enemy enemy, int dx, int dy){
+		super.moveEnemy(enemy, dx, dy);
 		synchronized(moveLog){
 			if (!moveLog.containsKey(enemy)){
 				List<Point> newMoveList = new ArrayList<Point>();
@@ -128,9 +128,7 @@ class LoggingAIScheduler extends AIScheduler {
 				moveLog.put(enemy, newMoveList);
 			}
 			else {
-				List<Point> moveList = moveLog.get(enemy);
-				moveList.add(new Point(dx, dy));
-				moveLog.put(enemy, moveList);
+				moveLog.get(enemy).add(new Point(dx, dy));
 			}
 		}
 	}
