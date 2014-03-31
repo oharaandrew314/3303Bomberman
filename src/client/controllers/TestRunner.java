@@ -3,6 +3,7 @@ package client.controllers;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import common.events.Event;
 import common.events.ConnectAcceptedEvent;
@@ -18,6 +19,8 @@ public class TestRunner extends PlayableClient implements Runnable{
 	private ArrayList<Long> timings;
 	private boolean connected = false;
 	private boolean dead = false;
+	private List<Long> latencyList = new ArrayList<Long>();
+	private long lastKeySent = System.currentTimeMillis();
 	
 	public TestRunner(ArrayList<Integer> events, ArrayList<Long> timings){
 		this.events = events;
@@ -149,11 +152,36 @@ public class TestRunner extends PlayableClient implements Runnable{
 	
 	@Override
 	public synchronized Event receive(Event event){
+		if(event instanceof GameKeyEventAck) {
+			long latency = System.currentTimeMillis() - lastKeySent;
+			latencyList.add(latency);
+			
+			System.out.print("Player: " + this.playerId + " - Latency: "+ latency + " - Average Latency: " + getAverageLatency() + "\n");
+		}
+		
 		if (receivedEvents == null){
 			receivedEvents = new ArrayList<>();
 		}
 		receivedEvents.add(event);
 		notify();
 		return super.receive(event);
+	}
+	
+	@Override
+	public void pressKey(int keyCode){
+		lastKeySent = System.currentTimeMillis();
+		send(new GameKeyEvent(keyCode));
+	}
+
+	public long getAverageLatency(){
+		long sum = 0;
+		for(long l : latencyList){
+			sum += l;
+		}
+		return sum/latencyList.size();
+	}
+	
+	public List<Long> getLatencyList(){
+		return latencyList;
 	}
 }

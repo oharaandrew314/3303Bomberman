@@ -12,9 +12,6 @@ import common.events.GameKeyEventAck;
 
 public class PlayableClient extends Client implements KeyListener {
 	
-	private long lastKeySent = System.currentTimeMillis();
-	private List<Long> latencyList = new ArrayList<Long>();
-	
 	public PlayableClient(){
 		super();		
 	}
@@ -35,7 +32,6 @@ public class PlayableClient extends Client implements KeyListener {
 	}
 	
 	public void pressKey(int keyCode){
-		lastKeySent = System.currentTimeMillis();
 		send(new GameKeyEvent(keyCode));
 	}
 	
@@ -51,30 +47,5 @@ public class PlayableClient extends Client implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		pressKey(e);
-	}
-	
-	@Override
-	public Event receive(Event event) {
-		if(event instanceof GameKeyEventAck) {
-			long latency = System.currentTimeMillis() - lastKeySent;
-			latencyList.add(latency);
-
-			System.out.print("Player: " + this.playerId + " - Latency: "+ latency + " - Average Latency: " + getAverageLatency() + "\n");
-		
-			
-		}
-		return super.receive(event);
-	}
-	
-	public long getAverageLatency(){
-		long sum = 0;
-		for(long l : latencyList){
-			sum += l;
-		}
-		return sum/latencyList.size();
-	}
-	
-	public List<Long> getLatencyList(){
-		return latencyList;
 	}
 }
