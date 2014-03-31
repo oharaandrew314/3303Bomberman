@@ -7,7 +7,7 @@ https://github.com/oharaandrew314/3303Bomberman
 
 ###Usage Instructions
 
-1. Run the Jar to open the Launcher
+1. Run the JAR to open the Graphical Launcher Application
 2. Create a Server (if you wish to host the server)
 3. Create a Client
 	3.1. Enter the <IP>:<PORT> of the host to connect to (initially localhost)
@@ -15,6 +15,26 @@ https://github.com/oharaandrew314/3303Bomberman
 3. The server and clients include help menus for applicable topics
 
 It is not reccomended to attempt to use command-line arguments to launch the server and client, they are deprecated and unmaintained
+
+###
+Loading Project into Eclipse
+1. Open the project in Eclipse
+2. Ensure that JUnit 4 is added to the build path
+3. Ensure that lib/gson is added to the build path
+4. Ensure the "res" folder is added to the build path
+
+### Testing Instructions
+
+Test Driver Application
+1. Run the JAR to open the Launcher Application
+2. Create a Server
+3. Run the TestDriver
+4. Wait for completion
+5. Check console output and log file output next to JAR
+
+Unit and Integration Tests
+1. Follow "Loading Project into Eclipse" instructions
+2. Run "test.UnitTestSuite with JUnit"
 
 ###Extras
 - Full Graphical View
