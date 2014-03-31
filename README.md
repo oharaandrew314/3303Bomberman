@@ -12,6 +12,7 @@ https://github.com/oharaandrew314/3303Bomberman
 3. Create a Client
     1. Enter the <IP>:<PORT> of the host to connect to (initially localhost)
     2. The client will launch and attempt to connect to the server on the host
+    3. Press the 'Enter' key to start the game
 3. The server and clients include help menus for applicable topics
 
 It is not reccomended to attempt to use command-line arguments to launch the server and client, they are deprecated and unmaintained
