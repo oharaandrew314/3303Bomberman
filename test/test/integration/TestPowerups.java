@@ -51,6 +51,7 @@ public class TestPowerups {
 	
 	@After
 	public void tearDown(){
+		SimulationTimer.setTimeCompression(false);
 		client.stop();
 		server.stop();
 	}
@@ -93,7 +94,7 @@ public class TestPowerups {
 	
 	@Test 
 	public void testFlamePassTimeout(){
-		FlamePassPowerup flamePass = new FlamePassPowerup(5000);
+		FlamePassPowerup flamePass = new FlamePassPowerup(10000);
 		placePowerup(flamePass, new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isImmuneToBombs());
@@ -106,13 +107,14 @@ public class TestPowerups {
 	
 	@Test
 	public void testBombImmunity(){
-		placePowerup(new FlamePassPowerup(5000), new Point(1,0));
+		placePowerup(new FlamePassPowerup(10000), new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isImmuneToBombs());
 		Bomb bomb = server.dropBombBy(player);
 		Point playerLoc = server.getGridCopy().find(player);
 		
 		// Wait for bomb to detonate
+		SimulationTimer.setTimeCompression(true);
 		while(!bomb.isDetonated());
 		
 		assertTrue(bomb.isDetonated());
@@ -122,7 +124,7 @@ public class TestPowerups {
 	
 	@Test
 	public void testInvulnerability(){
-		placePowerup(new MysteryPowerup(5000), new Point(1,0));
+		placePowerup(new MysteryPowerup(10000), new Point(1,0));
 		client.pressKeyAndWait(KeyEvent.VK_RIGHT);
 		assertTrue(player.isInvulnerable());
 		Bomb bomb = server.dropBombBy(player);
