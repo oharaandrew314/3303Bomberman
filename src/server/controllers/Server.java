@@ -38,14 +38,9 @@ public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	
-<<<<<<< HEAD
 	protected Map<Integer, Player> players; // maps playerId to player
 	private Map<Integer, Integer> peers; // maps peerId to playerId (absent or -1 for non-player peers)
 	private int nextPlayerId = 1;
-	private final SimulationTimer timer;
-=======
-	protected Map<Integer, Player> players;
->>>>>>> dev
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
 
