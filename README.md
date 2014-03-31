@@ -14,8 +14,14 @@ https://github.com/oharaandrew314/3303Bomberman
 
 Do NOT run the game using other main methods or with command-line arguments. The game is not yet tested to run on a Network, and all other configurations can be made with the Launcher and its linked GUIs.
 
+###Extras
+- Full Graphical View
+- Graphical Launcher Application (Server, Client, Spectator, TestDriver)
+- Complately data-driven help text
+- Multiple servers running at once
+
 ###Deadlines
-- Milestone 1: March 3rd
+- Milestone 1: March 3
 - Milestone 2: March 17
 - Milestone 3: March 31
 
