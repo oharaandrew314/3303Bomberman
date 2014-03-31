@@ -99,13 +99,14 @@ public class TestCase {
 		
 		//move the players to their start locations
 		for(TestRunner t : testClients){
-			int index = testClients.indexOf(t);
-			
-			Player player = server.getPlayer(index+1);
+					
+			Player player = server.getPlayer(t.playerId);
 			try(GridBuffer buf = server.acquireGrid()){
 				if (buf.grid.contains(player)){
 					buf.grid.remove(player);
 				}
+				
+				int index = testClients.indexOf(t);
 				buf.grid.set(player, startLocations.get(index));
 			}
 			
