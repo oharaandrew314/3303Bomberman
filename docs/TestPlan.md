@@ -64,9 +64,9 @@ Every other line contains 2 or 3 elements separated by a colon:
 
 -Third Element is the optional time to wait in milliseconds before performing the action
 
-Essentially, each line contains the player, the command it’s going to run, and the time to wait before performing the action.
+Essentially, each line contains the player, the command it's going to run, and the time to wait before performing the action.
 
-Note: Whether you order all your commands by player or not doesn’t matter. For example, the two following test cases will be the same:
+Note: Whether you order all your commands by player or not doesn't matter. For example, the two following test cases will be the same:
 
 1:RIGHT								1:RIGHT
 1:UP									2:UP
@@ -80,12 +80,14 @@ Note: Whether you order all your commands by player or not doesn’t matter. For e
 
 1. Create a json file in res/grids/test  (e.g. testFooBar.json)
 2. The json follows the schema:
+```
 {
 	"size": {"width": <width>, "height": <height>},
 	"squares": [
-		{"point": {"x": <x>, "y": <y>}, "entities": ["<entityName”, ….]},
-		…….
+		{"point": {"x": <x>, "y": <y>}, "entities": ["<entityName>", ...]},
+		...
 	]
 }
+```
 3. The list of updated entity names supported by the GridLoader can be found in server.content.GridLoader.loadEntity()
 

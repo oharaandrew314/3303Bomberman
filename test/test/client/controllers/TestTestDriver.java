@@ -14,6 +14,6 @@ public class TestTestDriver{
 	public void testTestCases(){
         driver = new TestDriver();
 		driver.readTestCases(TestDriver.TESTFILES);
-		assertEquals(13, driver.getTestCases().size());
+		assertEquals(TestDriver.TESTFILES.length, driver.getTestCases().size());
 	}
 }

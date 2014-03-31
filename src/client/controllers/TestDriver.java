@@ -15,7 +15,11 @@ public class TestDriver {
 		"testPlayerEnemyCollision", "breakWallWithBomb",
 		"killPlayerWithBomb", "testHiddenDoor", "tryAndPlaceMultipleBombs",
 		"place2BombsWithPowerUp", "testBombRangePlusOne", "testFlamePass",
-		"testInvulnerability", "testUpgradedBombsChainReaction"
+		"testInvulnerability", "testUpgradedBombsChainReaction",
+		"OnePlayerHeavyLoad", 
+		"twoPlayerHeavyLoad",
+		"threePlayerHeavyLoad",
+		"fourPlayerHeavyLoad"
 	};
 
 	public TestDriver(){
@@ -62,6 +66,26 @@ public class TestDriver {
 		TestDriver driver = new TestDriver();
 		driver.readTestCases(TESTFILES);
 		driver.runAll(server);
+		
+		
+		
+		ArrayList<Long> totalLatencyList = new ArrayList<Long>();
+		for(TestCase t : driver.getTestCases()){
+			for(Long l : t.getTestCaseLatencies()){
+				totalLatencyList.add(l);
+			}
+		}
+		long totalLatency = 0;
+		long highestLatency = 0;
+		long lowestLatency = totalLatencyList.get(0);
+		for(Long l : totalLatencyList){
+			totalLatency += l;
+			if(l > highestLatency) highestLatency = l;
+			if(l < lowestLatency) lowestLatency = l;
+		}
+		System.out.println("Average Latency per action: " + totalLatency / totalLatencyList.size());
+		System.out.println("Highest Latency Overall: " + highestLatency);
+		System.out.println("Lowest Latency Overall: " + lowestLatency);
 	}
 	
 	public Collection<TestCase> getTestCases(){

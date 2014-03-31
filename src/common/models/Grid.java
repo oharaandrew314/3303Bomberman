@@ -31,12 +31,10 @@ public class Grid implements Serializable {
 	}
 	
 	public Grid(Grid grid) {
-		this.size = new Dimension(grid.size);
-		this.squares = new Square[size.height][size.width];
-		for (int y = 0; y < size.height; y++){
-			for (int x = 0; x < size.width; x++){
-				this.squares[x][y] = new Square(grid.squares[x][y]);
-			}
+		size = new Dimension(grid.size);
+		squares = new Square[size.height][size.width];
+		for (Point p : grid.keySet()){
+			squares[p.y][p.x] = new Square(grid.getSquare(p));
 		}
 	}
 
@@ -246,5 +244,9 @@ public class Grid implements Serializable {
 		}
 		
 		return path;
+	}
+	
+	public Entity getVisibleEntity(Point p){
+		return getSquare(p).getVisibleEntity();
 	}
 }

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
-import common.models.Grid;
+
 import common.models.units.Player;
 
 public class SystemTest {
@@ -58,13 +58,9 @@ public class SystemTest {
 	
 		// Move player right
 		client.pressKeyAndWait(KeyEvent.VK_D);
-		assertEquals(new Point(1, 0), getGrid().find(p));
+		assertEquals(new Point(1, 0), server.getGridCopy().find(p));
 		
 		// Wait for view update response
 		client.waitForViewUpdate();
-	}
-	
-	private Grid getGrid(){
-		return server.getGrid();
 	}
 }

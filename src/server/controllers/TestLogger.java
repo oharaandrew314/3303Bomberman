@@ -27,7 +27,7 @@ public class TestLogger implements Observer{
 	}
 	
 	private String getPlayerText(Event event){
-		return "Player " + event.getPlayerID() + " - ";
+		return "Player " + event.getPeerID() + " - ";
 	}
 
 	@Override

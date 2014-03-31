@@ -33,6 +33,12 @@ public class SimulationTimer {
 		}
 	}
 	
+	public void removeListener(SimulationListener l){
+		synchronized(listeners){
+			listeners.remove(l);
+		}
+	}
+	
 	public void start(){
 		timer = new Timer();
 		timer.scheduleAtFixedRate(
@@ -57,6 +63,11 @@ public class SimulationTimer {
 		for (SimulationListener l : getListeners()){
 			l.onTimerReset();
 		}
+	}
+	
+	public void reset(){
+		stop();
+		start();
 	}
 	
 	/**

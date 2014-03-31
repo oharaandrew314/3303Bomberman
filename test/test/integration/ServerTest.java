@@ -146,12 +146,12 @@ public class ServerTest {
 	// Helpers
 	
 	private void send(int playerId, Event event){
-		event.setPlayerID(playerId);
+		event.setPeerID(playerId);
 		server.receive(event);
 	}
 	
 	private void checkPos(Player player, int x, int y){
-		assertEquals(new Point(x, y), server.getGrid().find(player));
+		assertEquals(new Point(x, y), server.getGridCopy().find(player));
 	}
 	
 	private void assertPlayers(int expected){

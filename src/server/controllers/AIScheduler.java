@@ -11,7 +11,7 @@ import java.util.Random;
 import common.models.Grid;
 import common.models.units.Enemy;
 import common.models.units.LineEnemy;
-import common.models.units.PathFindingEnemy;
+import common.models.units.SmartEnemy;
 import common.models.units.RandomEnemy;
 
 public class AIScheduler implements SimulationListener {
@@ -35,32 +35,38 @@ public class AIScheduler implements SimulationListener {
 	
 	@Override
 	public synchronized void simulationUpdate(long now) {
-		for (Enemy enemy : enemies){
-			if (enemy.isTimeToMove(now)){
-				
-				Point translation;
-				Point currentLocation = getCurrentLocation(enemy);
-				List<Point> possibleMoves = getPossibleMoves(enemy);
-				
-				if (possibleMoves.isEmpty()) {
-					translation = new Point(0, 0);
+		if (server.isGameRunning()){
+			for (Enemy enemy : enemies){
+				if (enemy.isTimeToMove(now)){
+					
+					Point translation;
+					Point currentLocation = getCurrentLocation(enemy);
+					List<Point> possibleMoves = getPossibleMoves(enemy);
+					
+					if (possibleMoves.isEmpty()) {
+						translation = new Point(0, 0);
+					}
+					else if (enemy instanceof RandomEnemy){
+						translation = getRandomTranslation(currentLocation, possibleMoves);
+					}
+					else if (enemy instanceof LineEnemy){
+						LineEnemy le = (LineEnemy) enemy;
+						translation = getLineTranslation(le.getDirection(), currentLocation, possibleMoves);
+						le.setDirection(translation); // save possibly new direction
+					}
+					else if (enemy instanceof SmartEnemy){
+						translation = getPathTranslation(currentLocation);
+					}
+					else throw new UnsupportedOperationException("Enemy type not supported");
+					
+					moveEnemy(enemy, translation.x, translation.y);
 				}
-				else if (enemy instanceof RandomEnemy){
-					translation = getRandomTranslation(currentLocation, possibleMoves);
-				}
-				else if (enemy instanceof LineEnemy){
-					LineEnemy le = (LineEnemy) enemy;
-					translation = getLineTranslation(le.getDirection(), currentLocation, possibleMoves);
-					le.setDirection(translation); // save possibly new direction
-				}
-				else if (enemy instanceof PathFindingEnemy){
-					translation = getPathTranslation(currentLocation);
-				}
-				else throw new UnsupportedOperationException("Enemy type not supported");
-				
-				server.move(enemy, translation.x, translation.y);
 			}
 		}
+	}
+	
+	protected void moveEnemy(Enemy enemy, int dx, int dy){
+		server.move(enemy, dx, dy);
 	}
 	
 	private Point getRandomTranslation(Point currentLocation, List<Point> possibleMoves){
@@ -84,7 +90,7 @@ public class AIScheduler implements SimulationListener {
 		Point target = server.getNearestPlayerLocation(currentLocation);
 		
 		if (target == null) return new Point(0, 0);
-		List<Point> path = server.getGrid().getShortestPath(currentLocation, target);
+		List<Point> path = server.getGridCopy().getShortestPath(currentLocation, target);
 		if (path == null || path.size() <= 1) return new Point(0, 0);
 		
 		Point nextMove = path.get(1); //current location in path, want next point
@@ -98,7 +104,7 @@ public class AIScheduler implements SimulationListener {
 	 * A list rather than a set to make random indexing easier.
 	 */
 	private List<Point> getPossibleMoves(Enemy enemy){
-		Grid grid = server.getGrid();
+		Grid grid = server.getGridCopy();
 		Point currentLocation = getCurrentLocation(enemy);
 		List<Point> possibleMoves = new ArrayList<Point>(grid.getPossibleMoves(currentLocation));
 		possibleMoves.remove(currentLocation);
@@ -118,7 +124,7 @@ public class AIScheduler implements SimulationListener {
 	}
 	
 	private Point getCurrentLocation(Enemy enemy){
-		return server.getGrid().find(enemy);
+		return server.getGridCopy().find(enemy);
 	}
 	
 	@Override

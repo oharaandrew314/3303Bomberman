@@ -1,17 +1,19 @@
 package client.controllers;
 
+import java.net.InetSocketAddress;
+
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
 import common.events.DisconnectEvent;
+import common.events.EndGameEvent;
 import common.events.Event;
 import common.events.GameKeyEvent;
 import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
-import common.events.EndGameEvent;
 
 public abstract class Client extends GameController {
 
@@ -19,14 +21,30 @@ public abstract class Client extends GameController {
 	
 	public Client() {
 		this(NetworkController.LOCALHOST);
-		playerId = -1; // no Id until given by server
 	}
 	
 	public Client(String serverAddress){
-        nwc.startListeningOnAnyAvailablePort();
-		nwc.addPeer(serverAddress, NetworkController.SERVER_PORT);
-		send(new ConnectEvent(isSpectator()));
+        this(serverAddress, NetworkController.SERVER_PORT);
 	}
+	
+	public Client(String serverAddress, int serverPort){
+		this(new InetSocketAddress(serverAddress, serverPort));
+	}
+	
+	public Client(InetSocketAddress address){
+		nwc.startListeningOnAnyAvailablePort();
+		nwc.addPeer(address);
+		send(new ConnectEvent(isSpectator()));
+		playerId = -1; // no Id until given by server
+	}
+	
+	@Override
+	public void simulationUpdate(long now){
+		nwc.requestAllEvents();
+	}
+	
+	@Override
+	public void onTimerReset() {}
 
 	@Override
 	public Event receive(Event event) {
@@ -52,28 +70,20 @@ public abstract class Client extends GameController {
 		return null;
 	}
 	
-	@Override
-	protected void updateView(Event event){
-		if (view != null){
-			event.setPlayerID(playerId); //little hack, substitute local playerId
-			view.handleEvent(state, event);
-		}
-	}
-	
 	public int getPlayerId(){
 		return playerId;
 	}
 	
 	protected void setGameStarted(){
-		state = GameState.gameRunning;
+		setState(GameState.gameRunning);
 	}
 	
 	protected void endGame(EndGameEvent winEvent){
-		state = GameState.idle;
+		setState(GameState.idle);
 	}
 	
 	protected void processPlayerDead(PlayerDeadEvent event){
-		state = GameState.idle;
+		setState(GameState.idle);
 	}
 	
 	public boolean isAcceptingConnections(){
@@ -82,21 +92,21 @@ public abstract class Client extends GameController {
 	
 	@Override
 	public void stop(){
-		if (state != GameState.stopped){
-			state = GameState.stopping;
-			send(new DisconnectEvent());
+		if (getState() != GameState.stopped){
+			setState(GameState.stopping);
+			send(new DisconnectEvent(playerId));
 		} else {
 			super.stop();
 		}
 	}
 	
 	protected void processConnectionAccepted(ConnectAcceptedEvent event) {
-		state = GameState.idle;
+		setState(GameState.idle);
 		playerId = event.getAssignedPlayerId();
 	}
 	
 	protected void processConnectionRejected() {
-		state = GameState.stopped;
+		setState(GameState.stopped);
 		stop();
 	}
 	

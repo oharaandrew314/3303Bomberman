@@ -18,7 +18,7 @@ import common.models.powerups.MysteryPowerup;
 import common.models.powerups.Powerup;
 import common.models.units.Enemy;
 import common.models.units.LineEnemy;
-import common.models.units.PathFindingEnemy;
+import common.models.units.SmartEnemy;
 import common.models.units.RandomEnemy;
 
 public class GridGenerator {
@@ -82,7 +82,7 @@ public class GridGenerator {
 		switch(r.nextInt(3)){
 		case 0: return new RandomEnemy();
 		case 1: return new LineEnemy();
-		case 2: return new PathFindingEnemy();
+		case 2: return new SmartEnemy();
 		default: throw new RuntimeException("Invalid random enemy");
 		}
 	}

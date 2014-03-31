@@ -5,11 +5,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import server.content.CreateGridException;
+import server.content.GridLoader;
 
 import common.models.Door;
 import common.models.Grid;
@@ -125,6 +130,18 @@ public class TestGrid {
 		
 		String expectedGridString = new String(GRID_STRING).replace("D", wall.toString());
 		assertEquals(expectedGridString, grid.toString());
+	}
+	
+	@Test
+	public void testGetShortestPath() throws CreateGridException{
+		List<Point> expectedPath = new ArrayList<>();
+		expectedPath.add(new Point(1, 3));
+		expectedPath.add(new Point(2, 3));
+		expectedPath.add(new Point(2, 2));
+		expectedPath.add(new Point(3, 2));
+		
+		Grid testGrid = GridLoader.loadGrid("test/testGrid2.json");
+		assertEquals(expectedPath, testGrid.getShortestPath(new Point(1, 3), new Point(3, 2)));
 	}
 	
 	@SuppressWarnings("serial")

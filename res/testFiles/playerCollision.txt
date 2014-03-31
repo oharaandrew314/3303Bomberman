@@ -1,5 +1,5 @@
 Players = 2; Location=[1->0,0:2->3,0] ; Grid = testGrid2
-1:RIGHT
-1:RIGHT
-1:RIGHT
+1:RIGHT:100
+1:RIGHT:100
+1:RIGHT:100
 2:DOWN:400

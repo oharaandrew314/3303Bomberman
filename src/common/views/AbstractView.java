@@ -1,9 +1,19 @@
 package common.views;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JTextArea;
+
+import common.controllers.GameController;
 import common.controllers.GameController.GameState;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectRejectedEvent;
@@ -18,10 +28,41 @@ import common.models.Grid;
 
 public abstract class AbstractView extends WindowAdapter {
 	
-	private final TextGenerator textGen;
+	public static final String LINE_SEP = System.getProperty("line.separator");
+	public static final Dimension FRAME_SIZE = new Dimension(760, 760);
+	public static final int GRID_SQUARE_SIZE = 30;
 	
-	public AbstractView(TextGenerator textGen){
+	private final TextGenerator textGen;
+	protected final JFrame frame;
+	private final GameController gc;
+	private final String connectionString;
+	private final JTextArea console;
+	
+	public AbstractView(GameController gc, TextGenerator textGen){
 		this.textGen = textGen;
+		connectionString = gc.getConnectionString();
+		
+		// Setup frame
+		frame = new JFrame("Bomberman");
+		frame.setLayout(new BorderLayout());
+		frame.addWindowListener(this);
+		frame.setSize(FRAME_SIZE);
+		
+		// Create console
+		frame.add(console = new JTextArea(), BorderLayout.SOUTH);
+		console.setBorder(BorderFactory.createLineBorder(Color.gray));
+		console.setEditable(false);
+		console.setPreferredSize(new Dimension(400, 200));
+		setConsoleEnabled(false);
+		
+		initComponents();
+		
+		// Register as listener to GameController
+		gc.setView(this);
+		this.gc = gc;
+		
+		frame.setTitle(textGen.getTitle(connectionString, gc.getState()));
+		frame.setVisible(true);
 	}
 	
 	public void handleEvent(GameState state, Event event){
@@ -36,7 +77,7 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getPlayerDead(deadEvent.player);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
-			message = textGen.getConnectionAccepted(event.getPlayerID());
+			message = textGen.getConnectionAccepted(((ConnectAcceptedEvent) event).getAssignedPlayerId());
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			message = textGen.getConnectionRejected();
@@ -50,16 +91,16 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getStartGame();
 		}
 		else if (event instanceof DisconnectEvent){
-			message = textGen.getPlayerDisconnected(event.getPlayerID());
+			message = textGen.getPlayerDisconnected(((DisconnectEvent) event).disconnectedPlayerId);
 		} else if (event instanceof PowerupReceivedEvent){
 			PowerupReceivedEvent pEvent = (PowerupReceivedEvent) event;
 			message = textGen.getPowerupMessage(pEvent.player, pEvent.powerup);
 		}
 		
-		if (message != null){
-			displayMessage(message);
+		if (message != null && console.isVisible()){
+			console.append(message + LINE_SEP);
 		}
-		setTitle(textGen.getTitle(state));
+		frame.setTitle(textGen.getTitle(connectionString, state));
 	}
 	
 	@Override
@@ -67,9 +108,33 @@ public abstract class AbstractView extends WindowAdapter {
 		close();
 	}
 	
-	public abstract void displayMessage(String message);
+	public void close(){
+		if (frame.isVisible()){
+			frame.setVisible(false);
+			frame.dispose();
+			gc.stop();
+		}
+	}
+	
+	public void addMenuBar(JMenuBar menuBar){
+		if (menuBar != null){
+			frame.setJMenuBar(menuBar);
+		}
+	}
+	
+	public void addKeyListener(KeyListener l) {
+		frame.addKeyListener(l);
+		console.addKeyListener(l);
+	}
+	
+	public Component getComponent(){
+		return frame;
+	}
+	
+	public void setConsoleEnabled(boolean enabled){
+		console.setVisible(enabled);
+	}
+	
 	public abstract void displayGrid(Grid grid);
-	public abstract void close();
-	public abstract void addKeyListener(KeyListener l);
-	protected abstract void setTitle(String string);
+	protected abstract void initComponents();
 }

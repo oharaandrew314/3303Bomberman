@@ -3,17 +3,13 @@ package test.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import test.helpers.MockNetworkController;
+
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -64,15 +60,16 @@ public class TestNetworkController extends GameController {
     @Override
 	public void stop() {}
     
+    @Override
+    public void simulationUpdate(long now) {}
+    
+    @Override
+    public void onTimerReset() {}
+    
     // Helpers
     
     private void startServer(MockNetworkController server) {
-    	try {
-    		server.startListeningOnServerPort();
-    	} catch (SocketException e) {
-    		Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-    		assertTrue(false);
-    	}
+    	server.startListeningOnServerPort();
     }
     
     private void addServerToClient(MockNetworkController client){
@@ -82,7 +79,7 @@ public class TestNetworkController extends GameController {
     
     private int getClientIdFromServer(MockNetworkController client){
     	Event response = client.sendAndWait(new GameKeyEvent(42), server);
-        return response.getPlayerID();
+        return response.getPeerID();
     }
     
     // Tests
@@ -144,11 +141,11 @@ public class TestNetworkController extends GameController {
 
         // Connect client A
         Event received = clientA.connectAndWait(server);
-        assertEquals(1, received.getPlayerID());
+        assertEquals(1, received.getPeerID());
         
         // Connect client B
         received = clientB.connectAndWait(server);
-        assertEquals(2, received.getPlayerID());
+        assertEquals(2, received.getPeerID());
 
         // Test player id
         assertEquals(2, getClientIdFromServer(clientB));

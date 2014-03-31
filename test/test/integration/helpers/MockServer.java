@@ -6,6 +6,7 @@ import java.util.List;
 
 import server.content.CreateGridException;
 import server.content.GridLoader;
+import server.controllers.AIScheduler;
 import server.controllers.Server;
 import common.models.units.Player;
 
@@ -25,10 +26,20 @@ public class MockServer extends Server {
 	
 	public Player movePlayerTo(int playerId, Point newPos){
 		Player player = players.get(playerId);
-		if (grid.contains(player)){
-			grid.remove(player);
+		
+		try(GridBuffer buf = acquireGrid()){
+			if (buf.grid.contains(player)){
+				buf.grid.remove(player);
+			}
+			buf.grid.set(player, newPos);
 		}
-		grid.set(player, newPos);
+		
 		return player;
+	}
+	
+	public void changeAIScheduler(AIScheduler newScheduler){
+		removeListenerFromTimer(aiScheduler);
+		aiScheduler = newScheduler;
+		addListenerToTimer(newScheduler);
 	}
 }
