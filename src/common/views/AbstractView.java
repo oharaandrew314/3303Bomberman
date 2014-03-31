@@ -109,6 +109,7 @@ public abstract class AbstractView extends WindowAdapter {
 	}
 	
 	public void close(){
+		System.err.println("close");
 		if (frame.isVisible()){
 			frame.setVisible(false);
 			frame.dispose();

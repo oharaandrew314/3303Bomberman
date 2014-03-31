@@ -201,7 +201,7 @@ public class Server extends GameController {
     		return disconnectPeer(event);
     	} else if (control == Control.Start && !isGameRunning()){
     		startGame();
-    	} else if (isGameRunning()){
+    	} else if (isGameRunning() && control != null){
     		switch(control){
 	    		case Up: move(player, 0, -1); break;
 	    		case Left: move(player, -1, 0); break;
