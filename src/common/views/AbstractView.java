@@ -77,7 +77,7 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getPlayerDead(deadEvent.player);
 		}
 		else if (event instanceof ConnectAcceptedEvent){
-			message = textGen.getConnectionAccepted(event.getPlayerID());
+			message = textGen.getConnectionAccepted(((ConnectAcceptedEvent) event).getAssignedPlayerId());
 		}
 		else if (event instanceof ConnectRejectedEvent){
 			message = textGen.getConnectionRejected();
@@ -91,7 +91,7 @@ public abstract class AbstractView extends WindowAdapter {
 			message = textGen.getStartGame();
 		}
 		else if (event instanceof DisconnectEvent){
-			message = textGen.getPlayerDisconnected(event.getPlayerID());
+			message = textGen.getPlayerDisconnected(((DisconnectEvent) event).disconnectedPlayerId);
 		} else if (event instanceof PowerupReceivedEvent){
 			PowerupReceivedEvent pEvent = (PowerupReceivedEvent) event;
 			message = textGen.getPowerupMessage(pEvent.player, pEvent.powerup);

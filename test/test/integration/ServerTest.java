@@ -146,7 +146,7 @@ public class ServerTest {
 	// Helpers
 	
 	private void send(int playerId, Event event){
-		event.setPlayerID(playerId);
+		event.setPeerID(playerId);
 		server.receive(event);
 	}
 	

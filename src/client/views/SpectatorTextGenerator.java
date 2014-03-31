@@ -19,7 +19,8 @@ public class SpectatorTextGenerator implements TextGenerator{
 
 	@Override
 	public String getConnectionAccepted(int playerId) {
-		return String.format("Player %d has been added to the game.", playerId);
+		if (playerId == -1) return "A spectator has connected";
+		return String.format("Player %d has been added to the game", playerId);
 	}
 
 	@Override
@@ -42,6 +43,7 @@ public class SpectatorTextGenerator implements TextGenerator{
 
 	@Override
 	public String getPlayerDisconnected(int playerId) {
+		if (playerId == -1) return "A spectator has disconnected";
 		return String.format("Player %d has disconnected.", playerId);
 	}
 

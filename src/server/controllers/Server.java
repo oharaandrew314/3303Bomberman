@@ -38,12 +38,15 @@ public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	
-	protected Map<Integer, Player> players;
+	protected Map<Integer, Player> players; // maps playerId to player
+	private Map<Integer, Integer> peers; // maps peerId to playerId (absent or -1 for non-player peers)
+	private int nextPlayerId = 1;
 	private final BombScheduler bombScheduler;
 	protected AIScheduler aiScheduler;
 
 	public Server(){
 		players = new HashMap<>();
+		peers = new HashMap<>();
 		addObserver(new TestLogger());
 		 	
 		addListenerToTimer(bombScheduler = new BombScheduler(this));
@@ -184,19 +187,18 @@ public class Server extends GameController {
     	} else if (event instanceof GameKeyEvent){
     	   response = handleGameKeyEvent((GameKeyEvent) event);
        } else if (event instanceof DisconnectEvent){
-    	   response = disconnectPlayer(event);
+    	   response = disconnectPeer(event);
        }
     	
     	return response;
     }
     
     private final Event handleGameKeyEvent(GameKeyEvent event){
-    	Player player = players.get(event.getPlayerID());
-    	Control control = ControlScheme.parse(event);
+    	Player player = players.get(peers.get(event.getPeerID()));
+		Control control = ControlScheme.parse(event);
 
-    	// Handle control
-    	if (control == Control.Exit){
-    		return disconnectPlayer(event);
+		if (control == Control.Exit){
+    		return disconnectPeer(event);
     	} else if (control == Control.Start && !isGameRunning()){
     		startGame();
     	} else if (isGameRunning()){
@@ -215,7 +217,8 @@ public class Server extends GameController {
     }
     
     private final Event handleConnectionRequest(ConnectEvent event){
-    	int playerId = event.getPlayerID();
+    	int peerId = event.getPeerID();
+    	int playerId = -1;
     	boolean accept = false;
     	
     	if (((ConnectEvent)event).spectator){
@@ -223,23 +226,45 @@ public class Server extends GameController {
 		}
 		else if (isAcceptingConnections()){
 			if (players.size() < MAX_PLAYERS){
-    			players.put(playerId, new Player(playerId));
+    			playerId = registerPlayer(peerId);
     			accept = true;
     		}		
 		}
     	
     	Event response = accept ? new ConnectAcceptedEvent(playerId) : new ConnectRejectedEvent();
-    	response.setPlayerID(event.getPlayerID());
+    	response.setPeerID(event.getPeerID());
     	updateView(response);
     	return response;
     }
     
-    private final Event disconnectPlayer(Event event){
-    	players.remove(event.getPlayerID()); // remove player from game
+    /**
+     * Assigns a peer to a Player and returns the playerId. If it already exists, simply return matching playerId 
+     * @param peerId The peer to register a player to.
+     * @return The playerId
+     */
+    private final int registerPlayer(int peerId){
+    	if (peers.containsKey(peerId)) return peers.get(peerId);
     	
-    	Event notice = new DisconnectEvent();
-    	notice.setPlayerID(event.getPlayerID());
-    	send(notice); // Notify players of disconnect
+    	int playerId = nextPlayerId;
+    	nextPlayerId++;
+    	peers.put(peerId, playerId);
+    	players.put(playerId, new Player(playerId));
+    	
+    	return playerId;
+    }
+    
+    private final Event disconnectPeer(Event event){
+    	int peerId = event.getPeerID();
+    	
+    	// Peer was a player, remove player from game
+    	if (peers.containsKey(peerId)){
+    		int playerId = peers.get(peerId);
+    		players.remove(playerId); // remove player from game
+    		Event notice = new DisconnectEvent(playerId);
+        	send(notice); // Notify players of disconnect
+    	}
+
+    	peers.remove(peerId);
     	
     	//if no players in game, end game
     	if (players.isEmpty()){
