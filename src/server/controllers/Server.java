@@ -1,7 +1,6 @@
 package server.controllers;
 
 import java.awt.Point;
-import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import server.models.ControlScheme;
 import server.models.ControlScheme.Control;
+
 import common.controllers.GameController;
-import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
 import common.events.ConnectEvent;
 import common.events.ConnectRejectedEvent;
@@ -37,14 +34,18 @@ import common.models.units.Enemy;
 import common.models.units.Player;
 import common.models.units.Unit;
 
-public class Server extends GameController implements SimulationListener {
+public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	
+<<<<<<< HEAD
 	protected Map<Integer, Player> players; // maps playerId to player
 	private Map<Integer, Integer> peers; // maps peerId to playerId (absent or -1 for non-player peers)
 	private int nextPlayerId = 1;
 	private final SimulationTimer timer;
+=======
+	protected Map<Integer, Player> players;
+>>>>>>> dev
 	private final BombScheduler bombScheduler;
 	private final AIScheduler aiScheduler;
 
@@ -53,19 +54,12 @@ public class Server extends GameController implements SimulationListener {
 		peers = new HashMap<>();
 		addObserver(new TestLogger());
 		 	
-		timer = new SimulationTimer();
-		timer.addListener(this);
-		timer.addListener(bombScheduler = new BombScheduler(this));
-		timer.addListener(aiScheduler = new AIScheduler(this));
+		addListenerToTimer(bombScheduler = new BombScheduler(this));
+		addListenerToTimer(aiScheduler = new AIScheduler(this));
 		
 		setState(GameState.idle);
 		
-		try {
-			nwc.startListeningOnServerPort();
-		} catch (SocketException e) {
-			Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, e);
-			setState(GameState.error);
-		}
+		nwc.startListeningOnServerPort();
 	}
 	
 	// Accessors
@@ -116,7 +110,6 @@ public class Server extends GameController implements SimulationListener {
 			
 			setState(GameState.gameRunning);
 			send(new GameStartEvent());
-			timer.start();
 		} else {
 			System.err.println("Could not start game; not in new game state.");
 		}
@@ -130,9 +123,9 @@ public class Server extends GameController implements SimulationListener {
 	
 	private synchronized void endGame(Grid grid, Player winner){
 		if (getState() == GameState.gameRunning){
-			timer.stop();
 			setState(GameState.idle);
 			send(new EndGameEvent(winner, grid));
+			resetTimer();
 		}
 	}
 	
@@ -147,6 +140,7 @@ public class Server extends GameController implements SimulationListener {
 	
 	@Override
 	public void simulationUpdate(long now){
+		nwc.requestAllEvents();
 		if (isGameRunning()){
 			send(new ViewUpdateEvent(getGridCopy()));
 		}
@@ -162,10 +156,15 @@ public class Server extends GameController implements SimulationListener {
     	if(unit instanceof Player){
     		players.remove(((Player) unit).playerId);
     		send(new PlayerDeadEvent((Player) unit));
+    		
+    		// Check if game is over
+        	if (players.isEmpty()){
+        		endGame(null);
+        	}
     	} else{
     		aiScheduler.removeEnemy((Enemy) unit);
     	}
-    	buf.grid.remove(unit);    	
+    	buf.grid.remove(unit);
     }
 	
 	// Event Methods
@@ -195,11 +194,6 @@ public class Server extends GameController implements SimulationListener {
        } else if (event instanceof DisconnectEvent){
     	   response = disconnectPeer(event);
        }
-    	
-    	// Check if game-over
-    	if (players.isEmpty()){
-    		endGame(null);
-    	}
     	
     	return response;
     }

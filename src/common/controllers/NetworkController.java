@@ -12,8 +12,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +34,8 @@ public class NetworkController {
     
     private boolean busy = false;
     private Object busyLock = new Object();
+    
+    private Queue<DatagramPacket> eventBuffer = new LinkedList<DatagramPacket>();
     
     public NetworkController(GameController gameController) {
         this.gameController = gameController;
@@ -83,6 +87,7 @@ public class NetworkController {
      * @param port The port to listen on.
      */
     private void startListeningOn(int port) throws SocketException {
+    	eventBuffer.clear();
         socket = new DatagramSocket(port);
         
         listener = new ListenThread(this);
@@ -91,9 +96,15 @@ public class NetworkController {
     
     /**
      * Start listening for messages on the default server port.
+     * If the default port is unavailable, any other available port is used,
+     * in this case the host will need to provide the port to the clients.
      */
-    public void startListeningOnServerPort() throws SocketException {
-        startListeningOn(SERVER_PORT);
+    public void startListeningOnServerPort() {
+    	try {
+    		startListeningOn(SERVER_PORT);
+    	} catch(SocketException e) {
+    		startListeningOnAnyAvailablePort();
+    	}
     }
     
     /**
@@ -114,6 +125,7 @@ public class NetworkController {
         if (listener != null)
             listener.stopListening();
         socket.close();
+        eventBuffer.clear();
     }
     
     /**
@@ -165,21 +177,26 @@ public class NetworkController {
      * @param event The event to send.
      * @param peer The peer to send the event to.
      */
-    private void sendToOnePeer(Event event, InetSocketAddress peer) throws IOException {
+    private void sendToOnePeer(Event event, InetSocketAddress peer) throws IOException, SocketException {
         DatagramPacket packet = serialize(event);
         packet.setAddress(peer.getAddress());
         packet.setPort(peer.getPort());
         socket.send(packet);
     }
     
-    /**
-     * Called by the ListenerThread when a packet has been received.
-     * If the packet contains a ConnectEvent, a reply is send with either
-     * ConnectAcceptedEvent or ConnectRejectedEvent depending on the state of
-     * acceptNewPeers.
-     * @param data The incoming packet.
-     */
-    public Event receive(DatagramPacket data) throws IOException {
+    public void requestAllEvents() {
+    	while (!eventBuffer.isEmpty()) {
+    		requestNextEvent();
+    	}
+    }
+    
+    public Event requestNextEvent() {
+    	DatagramPacket data = null;
+    	synchronized(this) {
+    		data = eventBuffer.poll();
+    	}
+    	if (data == null) return null;
+    	
     	Event event = null;
         try {
             event = deserialize(data);
@@ -199,14 +216,26 @@ public class NetworkController {
             	} else if (response instanceof ConnectRejectedEvent){
             		peers.remove(peerId);
             	}
-            	
             	response.setPeerID(peerId);
-            	sendToOnePeer(response, peer);
+            	try {
+            		sendToOnePeer(response, peer);
+            	} catch(SocketException e) {
+            		stopListening();
+            	}
             }
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException | IOException ex) {
             Logger.getLogger(NetworkController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return event;
+    }
+    
+    /**
+     * Called by the ListenerThread when a packet has been received.
+     * The packet is queued for handling by the game controller.
+     * @param data The incoming packet.
+     */
+    public synchronized void receive(DatagramPacket data) {
+    	eventBuffer.add(data);
     }
     
     /**
