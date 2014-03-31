@@ -3,7 +3,10 @@ package test.integration;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.*;
 
@@ -13,9 +16,12 @@ import common.models.Wall;
 import common.models.units.LineEnemy;
 import common.models.units.SmartEnemy;
 import common.models.units.Player;
+import common.models.units.Enemy;
 
 import server.content.CreateGridException;
 import server.content.GridLoader;
+import server.controllers.AIScheduler;
+import server.controllers.Server;
 import server.controllers.SimulationTimer;
 import test.integration.helpers.MockClient;
 import test.integration.helpers.MockServer;
@@ -23,12 +29,15 @@ import test.integration.helpers.MockServer;
 public class TestEnemies {
 
 	private MockServer server;
+	private LoggingAIScheduler aiScheduler;
 	private MockClient client;
 	private Player player;
 	
 	@Before
 	public void setUp() throws Exception {
 		server = new MockServer();
+		aiScheduler = new LoggingAIScheduler(server);
+		server.changeAIScheduler(aiScheduler);
 		
 		// Connect a client and get the player
 		client = new MockClient(true);
@@ -52,19 +61,21 @@ public class TestEnemies {
 		Grid testGrid = getTestGrid();
 		
 		SmartEnemy enemy = new SmartEnemy();
-		testGrid.set(enemy, new Point(1, 3));
-		
-		Point[] expectedPath = {new Point(2, 3), new Point(2, 2), new Point(3, 2)};
+		testGrid.set(new Wall(), new Point(0, 1));
+		testGrid.set(enemy, new Point(0, 2));
+
+		Point[] expectedMoves = {new Point(0, 1), new Point(1, 0), new Point(1, 0)};
 		
 		server.newGame(testGrid);
-		server.movePlayerTo(player.playerId, new Point(3, 2));
-		assertEquals(new Point(3, 2), server.getGridCopy().find(player));
+		server.movePlayerTo(player.playerId, new Point(2, 3));
+		assertEquals(new Point(2, 3), server.getGridCopy().find(player));
 		
 		client.startGame();
 		
-		for(int i = 0; i < expectedPath.length; i++){
-			client.waitForViewUpdate();
-			assertEquals(expectedPath[i], server.getGridCopy().find(enemy));
+		Thread.sleep(750); //allow enemy to make moves
+		
+		for(int i = 0; i < expectedMoves.length; i++){
+			assertEquals(expectedMoves[i], aiScheduler.moveLog.get(enemy).get(i));
 		}
 	}
 	
@@ -76,7 +87,7 @@ public class TestEnemies {
 		testGrid.set(new Wall(), new Point(0, 0));
 		testGrid.set(enemy, new Point(0, 1));
 		
-		Point[] expectedPath = {new Point(0, 2), new Point(0, 3)};
+		Point[] expectedMoves = {new Point(0, 1), new Point(0, 1)};
 		
 		server.newGame(testGrid);
 		server.movePlayerTo(player.playerId, new Point(3, 2));
@@ -84,9 +95,10 @@ public class TestEnemies {
 		
 		client.startGame();
 		
-		for(int i = 0; i < expectedPath.length; i++){
-			client.waitForViewUpdate();
-			assertEquals(expectedPath[i], server.getGridCopy().find(enemy));
+		Thread.sleep(750); //allow enemy to make moves
+		
+		for(int i = 0; i < expectedMoves.length; i++){
+			assertEquals(expectedMoves[i], aiScheduler.moveLog.get(enemy).get(i));
 		}
 	}
 	
@@ -95,5 +107,25 @@ public class TestEnemies {
 		try { g = GridLoader.loadGrid("test/testGrid2.json"); }
 		catch (CreateGridException e){ e.printStackTrace(); }
 		return g;
+	}
+}
+
+class LoggingAIScheduler extends AIScheduler {
+
+	public Map<Enemy, List<Point>> moveLog = new HashMap<Enemy, List<Point>>();
+	public LoggingAIScheduler(Server server) {
+		super(server);
+	}
+	
+	@Override
+	protected void moveEnemy(Enemy enemy, int dx, int dy){
+		if (!moveLog.containsKey(enemy)){
+			List<Point> newMoveList = new ArrayList<Point>();
+			newMoveList.add(new Point(dx, dy));
+			moveLog.put(enemy, newMoveList);
+		}
+		else {
+			moveLog.get(enemy).add(new Point(dx, dy));
+		}
 	}
 }
