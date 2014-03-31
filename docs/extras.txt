@@ -1,3 +1,0 @@
-- Graphical view
-- Completely data-driven help text
-- Full Graphical Launcher Application (no command-line arugments!)
