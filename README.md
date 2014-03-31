@@ -16,8 +16,7 @@ https://github.com/oharaandrew314/3303Bomberman
 
 It is not reccomended to attempt to use command-line arguments to launch the server and client, they are deprecated and unmaintained
 
-###
-Loading Project into Eclipse
+### Loading Project into Eclipse
 1. Open the project in Eclipse
 2. Ensure that JUnit 4 is added to the build path
 3. Ensure that lib/gson is added to the build path
