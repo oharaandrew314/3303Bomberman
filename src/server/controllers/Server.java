@@ -40,7 +40,7 @@ public class Server extends GameController {
 	
 	protected Map<Integer, Player> players;
 	private final BombScheduler bombScheduler;
-	private final AIScheduler aiScheduler;
+	protected AIScheduler aiScheduler;
 
 	public Server(){
 		players = new HashMap<>();

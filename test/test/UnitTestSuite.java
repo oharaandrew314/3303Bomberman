@@ -13,6 +13,7 @@ import test.integration.ServerTest;
 import test.integration.SystemTest;
 import test.integration.TestBombs;
 import test.integration.TestClient;
+import test.integration.TestEnemies;
 import test.integration.TestPowerups;
 import test.models.TestBombFactory;
 import test.models.TestGrid;
@@ -40,6 +41,7 @@ import test.models.TestSquare;
    TestClient.class,
    TestBombs.class,
    TestPowerups.class,
+   TestEnemies.class
 })
 
 public class UnitTestSuite {}

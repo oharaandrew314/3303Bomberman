@@ -35,32 +35,38 @@ public class AIScheduler implements SimulationListener {
 	
 	@Override
 	public synchronized void simulationUpdate(long now) {
-		for (Enemy enemy : enemies){
-			if (enemy.isTimeToMove(now)){
-				
-				Point translation;
-				Point currentLocation = getCurrentLocation(enemy);
-				List<Point> possibleMoves = getPossibleMoves(enemy);
-				
-				if (possibleMoves.isEmpty()) {
-					translation = new Point(0, 0);
+		if (server.isGameRunning()){
+			for (Enemy enemy : enemies){
+				if (enemy.isTimeToMove(now)){
+					
+					Point translation;
+					Point currentLocation = getCurrentLocation(enemy);
+					List<Point> possibleMoves = getPossibleMoves(enemy);
+					
+					if (possibleMoves.isEmpty()) {
+						translation = new Point(0, 0);
+					}
+					else if (enemy instanceof RandomEnemy){
+						translation = getRandomTranslation(currentLocation, possibleMoves);
+					}
+					else if (enemy instanceof LineEnemy){
+						LineEnemy le = (LineEnemy) enemy;
+						translation = getLineTranslation(le.getDirection(), currentLocation, possibleMoves);
+						le.setDirection(translation); // save possibly new direction
+					}
+					else if (enemy instanceof SmartEnemy){
+						translation = getPathTranslation(currentLocation);
+					}
+					else throw new UnsupportedOperationException("Enemy type not supported");
+					
+					moveEnemy(enemy, translation.x, translation.y);
 				}
-				else if (enemy instanceof RandomEnemy){
-					translation = getRandomTranslation(currentLocation, possibleMoves);
-				}
-				else if (enemy instanceof LineEnemy){
-					LineEnemy le = (LineEnemy) enemy;
-					translation = getLineTranslation(le.getDirection(), currentLocation, possibleMoves);
-					le.setDirection(translation); // save possibly new direction
-				}
-				else if (enemy instanceof SmartEnemy){
-					translation = getPathTranslation(currentLocation);
-				}
-				else throw new UnsupportedOperationException("Enemy type not supported");
-				
-				server.move(enemy, translation.x, translation.y);
 			}
 		}
+	}
+	
+	protected void moveEnemy(Enemy enemy, int dx, int dy){
+		server.move(enemy, dx, dy);
 	}
 	
 	private Point getRandomTranslation(Point currentLocation, List<Point> possibleMoves){

@@ -39,6 +39,11 @@ public abstract class Entity implements Serializable {
 		return false;
 	}
 	
+	@Override
+	public int hashCode(){
+		return id;
+	}
+	
 	public boolean isVisible(){
 		return visible;
 	}

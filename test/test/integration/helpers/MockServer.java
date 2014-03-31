@@ -6,6 +6,7 @@ import java.util.List;
 
 import server.content.CreateGridException;
 import server.content.GridLoader;
+import server.controllers.AIScheduler;
 import server.controllers.Server;
 import common.models.units.Player;
 
@@ -34,5 +35,11 @@ public class MockServer extends Server {
 		}
 		
 		return player;
+	}
+	
+	public void changeAIScheduler(AIScheduler newScheduler){
+		removeListenerFromTimer(aiScheduler);
+		aiScheduler = newScheduler;
+		addListenerToTimer(newScheduler);
 	}
 }
