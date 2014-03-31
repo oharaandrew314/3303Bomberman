@@ -3,12 +3,8 @@ package client.controllers;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
-import common.events.Event;
 import common.events.GameKeyEvent;
-import common.events.GameKeyEventAck;
 
 public class PlayableClient extends Client implements KeyListener {
 	
