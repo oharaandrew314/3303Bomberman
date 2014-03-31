@@ -34,7 +34,7 @@ import common.models.units.Enemy;
 import common.models.units.Player;
 import common.models.units.Unit;
 
-public class Server extends GameController implements SimulationListener {
+public class Server extends GameController {
 	
 	public static final int MAX_PLAYERS = 4;
 	

@@ -2,8 +2,6 @@ package client.controllers;
 
 import java.net.InetSocketAddress;
 
-import server.controllers.SimulationListener;
-
 import common.controllers.GameController;
 import common.controllers.NetworkController;
 import common.events.ConnectAcceptedEvent;
@@ -17,7 +15,7 @@ import common.events.GameKeyEventAck;
 import common.events.GameStartEvent;
 import common.events.PlayerDeadEvent;
 
-public abstract class Client extends GameController implements SimulationListener {
+public abstract class Client extends GameController {
 
 	protected int playerId;
 	
