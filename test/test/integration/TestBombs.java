@@ -49,6 +49,7 @@ public class TestBombs {
 		client.stop();
 		client.waitFor(ConnectRejectedEvent.class);
 		server.stop();
+		SimulationTimer.setTimeCompression(false);
 	}
 
 	@Test
